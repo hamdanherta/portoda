@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+echo "Running pnpm build..."
+pnpm build
+if [ $? -eq 0 ]; then
+    echo -e "\nStarting Laravel server..."
+    php artisan serve
+else
+    echo -e "\n[ERROR] pnpm build failed! Aborting php artisan serve."
+    exit 1
+fi

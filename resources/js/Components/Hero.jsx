@@ -104,31 +104,31 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '0.4rem',
-                  padding: '0.35rem 0.9rem',
+                  padding: '0.45rem 1.15rem',
                   borderRadius: '999px',
                   background: '#FFF3DD',
                   border: '2px solid #005BAB',
                   color: '#005BAB',
-                  fontSize: '0.82rem',
+                  fontSize: '1.03rem',
                   fontWeight: 800
                 }}>
-                  <Sparkles size={15} />
+                  <Sparkles size={19} />
                   <span>{t('hero_welcome')}</span>
                 </span>
 
                 <span style={{
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '0.35rem',
-                  padding: '0.35rem 0.9rem',
+                  gap: '0.4rem',
+                  padding: '0.45rem 1.15rem',
                   borderRadius: '999px',
                   background: '#005BAB',
                   color: '#FFFFFF',
-                  fontSize: '0.82rem',
+                  fontSize: '1.03rem',
                   fontWeight: 800,
                   border: '2px solid #005BAB'
                 }}>
-                  <MapPin size={15} />
+                  <MapPin size={19} />
                   <span>{(lang === 'en' ? profile?.domisili_en : profile?.domisili) || t('hero_location')}</span>
                 </span>
               </div>

@@ -81,7 +81,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
               position: 'relative'
             }} className="hero-photo-wrapper">
               <img
-                src="/hamdani.jpg"
+                src="/hamdani.webp"
                 alt="Foto Hamdani"
                 style={{
                   width: '260px',

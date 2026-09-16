@@ -93,7 +93,7 @@ export default function CertificateSection({ onSelectCertificate }) {
               style={{
                 padding: '1.35rem',
                 background: '#FFFFFF',
-                borderRadius: '24px',
+                borderRadius: '32px',
                 border: '2.5px solid #005BAB',
                 display: 'flex',
                 flexDirection: 'column',

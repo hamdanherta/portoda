@@ -521,12 +521,18 @@ img, video, iframe, canvas {
   -webkit-overflow-scrolling: touch;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .modal-overlay {
     padding: 0.65rem !important;
   }
+  .herta-card,
+  .herta-card-cream,
+  .hero-stats-bar,
+  .hero-photo-wrapper img,
+  .mobile-drawer .herta-card {
+    border-radius: 32px !important;
+  }
   .herta-card {
-    border-radius: 24px !important;
     padding: 1rem !important;
   }
   .btn-primary, .btn-secondary, .btn-white, .btn-danger {

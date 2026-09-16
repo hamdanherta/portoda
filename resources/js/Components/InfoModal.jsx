@@ -21,7 +21,7 @@ function VisitorEmptyState({
           alignItems: 'center',
           gap: '1rem',
           background: '#FFFFFF',
-          borderRadius: '24px',
+          borderRadius: '32px',
           border: '2.5px solid #005BAB'
         }}
       >

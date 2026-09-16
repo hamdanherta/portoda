@@ -88,7 +88,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
                   height: '310px',
                   maxHeight: '320px',
                   objectFit: 'cover',
-                  borderRadius: '24px',
+                  borderRadius: '32px',
                   border: '3px solid #005BAB',
                   boxShadow: '0 8px 24px rgba(0, 91, 171, 0.15)',
                   display: 'block'
@@ -365,7 +365,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
             padding: 1.25rem 1rem !important;
             justify-items: center !important;
             align-items: center !important;
-            border-radius: 24px !important;
+            border-radius: 32px !important;
           }
           .hero-stats-bar .stat-divider {
             display: none !important;

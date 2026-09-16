@@ -177,7 +177,7 @@ export default function App() {
 
   return (
     <LanguageProvider>
-      <Head title="Portoda - Portofolio Hamdani (Desain Grafis, Multimedia & Aplikasi)" />
+      <Head title="Portoda - Aplikasi Portofolio Karya Hamdani" />
       <div className="app-container" style={{
         minHeight: '100vh',
         display: 'flex',

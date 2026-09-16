@@ -327,6 +327,7 @@ export default function Navbar({ onOpenNavModal }) {
       <style>{`
         @media (max-width: 960px) {
           .desktop-nav { display: none !important; }
+          .lang-switcher-pill { display: none !important; }
           .herta-header-card {
             padding: 1rem 1.25rem !important;
             min-height: 84px !important;
@@ -335,6 +336,7 @@ export default function Navbar({ onOpenNavModal }) {
         @media (min-width: 961px) {
           .mobile-toggle { display: none !important; }
           .mobile-drawer { display: none !important; }
+          .lang-switcher-pill { display: inline-flex !important; }
           .herta-header-card {
             padding: 1.25rem 2.25rem !important;
             min-height: 94px !important;

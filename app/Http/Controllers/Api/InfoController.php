@@ -160,7 +160,7 @@ class InfoController extends Controller
         return response()->json($profile);
     }
 
-    // RESET ALL INFO
+    // RESET ALL INFO & DATA
     public function resetAllInfo()
     {
         Experience::truncate();
@@ -168,9 +168,7 @@ class InfoController extends Controller
         Contact::truncate();
         Certificate::truncate();
         Profile::truncate();
-
-        $seeder = new DatabaseSeeder();
-        $seeder->seedInfo();
+        PortfolioItem::truncate();
 
         return response()->json(['success' => true]);
     }

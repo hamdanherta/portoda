@@ -92,9 +92,12 @@ class PortfolioController extends Controller
     public function reset()
     {
         PortfolioItem::truncate();
-        $seeder = new DatabaseSeeder();
-        $seeder->seedPortfolioItems();
+        Experience::truncate();
+        Document::truncate();
+        Contact::truncate();
+        Certificate::truncate();
+        Profile::truncate();
 
-        return response()->json(PortfolioItem::orderBy('created_at', 'desc')->get());
+        return response()->json([]);
     }
 }

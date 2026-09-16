@@ -810,7 +810,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
     const label = deletingTarget.label;
     const title = deletingTarget.title;
 
-    startProcessing(deletingTarget.targetType === 'reset-mock' ? 'Mereset data sampel karya...' : `Menghapus ${label} "${title}"...`);
+    startProcessing(deletingTarget.targetType === 'reset-mock' ? 'Mereset & menghapus seluruh data dari database...' : `Menghapus ${label} "${title}"...`);
 
     try {
       if (deletingTarget.targetType === 'karya') {
@@ -819,6 +819,11 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
       } else if (deletingTarget.targetType === 'reset-mock') {
         await onResetMock();
         await refreshKaryaData();
+        setExperiences([]);
+        setDocuments([]);
+        setContacts([]);
+        setCertificates([]);
+        setProfileForm({});
       } else if (deletingTarget.targetType === 'exp') {
         const updated = await infoService.deleteExperience(deletingTarget.id);
         setExperiences(updated);
@@ -844,7 +849,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
       }
       const isReset = deletingTarget.targetType === 'reset-mock';
       setDeletingTarget(null);
-      finishProcessingSuccess(isReset ? 'Semua sampel karya berhasil direset kembali ke awal!' : `Data ${label} "${title}" berhasil dihapus!`);
+      finishProcessingSuccess(isReset ? 'Seluruh data karya, pengalaman, sertifikat, dan informasi berhasil dihapus dari database!' : `Data ${label} "${title}" berhasil dihapus!`);
     } catch (err) {
       finishProcessingError('Gagal menghapus data.');
     }
@@ -1819,9 +1824,9 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                         <Grid size={18} />
                         <span>Kelola & Lihat Daftar Karya</span>
                       </button>
-                      <button onClick={() => setDeletingTarget({ id: 'reset-all', title: 'Semua Sampel Karya Awal', label: 'Reset Data', targetType: 'reset-mock' })} className="btn-secondary" style={{ width: '100%', justifyContent: 'center', fontSize: '0.82rem' }}>
-                        <RefreshCw size={16} />
-                        <span>Reset Sampel Karya</span>
+                      <button onClick={() => setDeletingTarget({ id: 'reset-all', title: 'Seluruh Data Karya, Pengalaman, & Sertifikat', label: 'Reset Data', targetType: 'reset-mock' })} className="btn-danger" style={{ width: '100%', justifyContent: 'center', background: '#DC2626', color: '#FFFFFF', border: '2.5px solid #DC2626' }}>
+                        <RefreshCw size={18} />
+                        <span>Reset Data</span>
                       </button>
                     </div>
                   </div>

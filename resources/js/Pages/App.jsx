@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Navbar from '../Components/Navbar';
 import Hero from '../Components/Hero';
 import CategoryFilter from '../Components/CategoryFilter';
@@ -18,7 +18,6 @@ export default function App() {
   const [activeSubcategory, setActiveSubcategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   
-  const [items, setItems] = useState([]);
   const [allItems, setAllItems] = useState([]);
   const [loading, setLoading] = useState(true);
   
@@ -30,8 +29,61 @@ export default function App() {
   const [isFullGallery, setIsFullGallery] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
+  // In-memory instant filtering (responsif, tanpa lag / network latency)
+  const filteredItems = useMemo(() => {
+    let result = [...allItems];
+
+    if (activeCategory !== 'all') {
+      result = result.filter(i => i.category === activeCategory);
+    }
+
+    if (activeSubcategory !== 'all') {
+      const reqSub = activeSubcategory.toLowerCase().trim();
+      result = result.filter(item => {
+        const itemSub = (item.subcategory || '').toLowerCase().trim();
+        return item.subcategory === activeSubcategory ||
+               itemSub.includes(reqSub) ||
+               reqSub.includes(itemSub) ||
+               (reqSub.includes('kemasan') && itemSub.includes('kemasan')) ||
+               (reqSub.includes('packaging') && itemSub.includes('kemasan')) ||
+               (reqSub.includes('poster') && itemSub.includes('poster')) ||
+               (reqSub.includes('banner') && itemSub.includes('banner')) ||
+               (reqSub.includes('logo') && itemSub.includes('logo')) ||
+               (reqSub.includes('lain') && itemSub.includes('lain')) ||
+               (reqSub.includes('other') && itemSub.includes('lain'));
+      });
+    }
+
+    if (searchQuery && searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      result = result.filter(item => {
+        const title = (item.title || '').toLowerCase();
+        const titleEn = (item.title_en || '').toLowerCase();
+        const desc = (item.description || '').toLowerCase();
+        const descEn = (item.description_en || '').toLowerCase();
+        const subcat = (item.subcategory || '').toLowerCase();
+        const subcatEn = (item.subcategory_en || '').toLowerCase();
+        const tools = (item.tools_used || '').toLowerCase();
+        const method = (item.development_method || '').toLowerCase();
+        const tagsStr = Array.isArray(item.tags) ? item.tags.join(' ').toLowerCase() : '';
+
+        return title.includes(q) ||
+               titleEn.includes(q) ||
+               desc.includes(q) ||
+               descEn.includes(q) ||
+               subcat.includes(q) ||
+               subcatEn.includes(q) ||
+               tools.includes(q) ||
+               method.includes(q) ||
+               tagsStr.includes(q);
+      });
+    }
+
+    return result;
+  }, [allItems, activeCategory, activeSubcategory, searchQuery]);
+
   // Hook scroll reveal saat scroll kebawah & keatas
-  useScrollReveal([items, activeCategory, activeSubcategory, searchQuery, loading, isFullGallery, currentPage]);
+  useScrollReveal([filteredItems, activeCategory, activeSubcategory, searchQuery, loading, isFullGallery, currentPage]);
 
   // URL Hash/Query Listener untuk membuka Dashboard Admin via URL (misal: #admin atau ?admin=true)
   useEffect(() => {
@@ -55,19 +107,12 @@ export default function App() {
     }
   };
 
-  // Fetch portfolio items (Selalu ambil allItems untuk Admin Dashboard & items terfilter untuk halaman publik)
+  // Fetch portfolio items dari backend
   const loadPortfolioData = async () => {
     setLoading(true);
     try {
       const allData = await portfolioService.getItems();
-      setAllItems(allData);
-
-      const data = await portfolioService.getItems({
-        category: activeCategory,
-        subcategory: activeSubcategory,
-        searchQuery: searchQuery
-      });
-      setItems(data);
+      setAllItems(allData || []);
     } catch (err) {
       console.error('Failed to load portfolio items:', err);
     } finally {
@@ -77,6 +122,9 @@ export default function App() {
 
   useEffect(() => {
     loadPortfolioData();
+  }, []);
+
+  useEffect(() => {
     setCurrentPage(1);
   }, [activeCategory, activeSubcategory, searchQuery]);
 
@@ -168,7 +216,7 @@ export default function App() {
           <div style={{ position: 'relative', zIndex: 5 }}>
             <Hero
               onExploreClick={scrollToGallery}
-              totalItems={allItems.length > 0 ? allItems.length : items.length}
+              totalItems={allItems.length}
               onOpenContact={() => setActiveNavModal('kontak')}
             />
           </div>
@@ -204,14 +252,14 @@ export default function App() {
                 setIsFullGallery(true);
               }
             }}
-            itemCount={items.length}
+            itemCount={filteredItems.length}
           />
         </div>
 
         {/* Portfolio Card Grid */}
         <main style={{ flex: 1, position: 'relative', zIndex: 5 }}>
           <PortfolioGrid
-            items={items}
+            items={filteredItems}
             loading={loading}
             onItemClick={(item) => setSelectedItem(item)}
             onResetFilter={handleResetFilter}
@@ -242,7 +290,7 @@ export default function App() {
         <AdminDashboard
           isOpen={isAdminOpen}
           onClose={handleCloseAdmin}
-          items={allItems.length > 0 ? allItems : items}
+          items={allItems}
           onCreateItem={handleCreateItem}
           onUpdateItem={handleUpdateItem}
           onDeleteItem={handleDeleteItem}

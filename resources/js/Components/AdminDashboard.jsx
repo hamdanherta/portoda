@@ -1249,11 +1249,11 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
               <AlertTriangle size={36} />
             </div>
             <h3 style={{ fontSize: '1.3rem', color: '#005BAB', fontWeight: 800, marginBottom: '0.5rem' }}>
-              {deletingTarget.targetType === 'reset-mock' ? 'Konfirmasi Reset Sampel Karya' : 'Konfirmasi Hapus Data'}
+              {deletingTarget.targetType === 'reset-mock' ? 'Konfirmasi Hapus Data' : 'Konfirmasi Hapus Data'}
             </h3>
             <p style={{ fontSize: '0.9rem', color: '#005BAB', fontWeight: 600, marginBottom: '1.5rem', lineHeight: 1.5 }}>
               {deletingTarget.targetType === 'reset-mock'
-                ? 'Apakah Anda yakin ingin mereset kembali semua sampel karya ke kondisi awal?'
+                ? 'Apakah Anda yakin ingin menghapus semua data?'
                 : <>Apakah Anda yakin ingin menghapus {deletingTarget.label} <strong style={{ textDecoration: 'underline' }}>"{deletingTarget.title}"</strong>?</>
               }
             </p>
@@ -1265,7 +1265,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                 style={{ background: '#005BAB', color: '#FFFFFF', padding: '0.65rem 1.4rem' }}
               >
                 <Trash2 size={16} />
-                <span>{deletingTarget.targetType === 'reset-mock' ? 'Ya, Reset Sampel' : 'Ya, Hapus Data'}</span>
+                <span>{deletingTarget.targetType === 'reset-mock' ? 'Ya, Hapus Saja' : 'Ya, Hapus Data'}</span>
               </button>
               <button
                 onClick={() => setDeletingTarget(null)}
@@ -1350,7 +1350,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                   {activeTab === 'tambah-karya' && 'Tambah Karya'}
                   {activeTab === 'kelola-karya' && 'Kelola Karya'}
                   {activeTab === 'pengalaman' && 'Pengalaman Kerja'}
-                  {activeTab === 'dokumen' && 'Dokumen PDF'}
+                  {activeTab === 'dokumen' && 'Dokumen'}
                   {activeTab === 'sertifikat' && 'Kelola Sertifikat'}
                   {activeTab === 'kontak' && 'Kelola Kontak'}
                   {activeTab === 'profil' && 'Kelola Profil'}
@@ -1395,7 +1395,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                 { id: 'tambah-karya', label: 'Tambah Karya Baru', icon: PlusCircle },
                 { id: 'kelola-karya', label: 'Kelola & Daftar Karya', icon: FolderKanban },
                 { id: 'pengalaman', label: 'Pengalaman Kerja', icon: Briefcase },
-                { id: 'dokumen', label: 'Dokumen PDF', icon: FileText },
+                { id: 'dokumen', label: 'Dokumen', icon: FileText },
                 { id: 'sertifikat', label: 'Kelola Sertifikat', icon: Award },
                 { id: 'kontak', label: 'Kelola Kontak', icon: Phone },
                 { id: 'profil', label: 'Kelola Profil', icon: User }
@@ -1497,9 +1497,9 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                 {[
                   { id: 'overview', label: 'Ringkasan & Statistik', icon: BarChart3 },
                   { id: 'tambah-karya', label: 'Tambah Karya Baru', icon: PlusCircle },
-                  { id: 'kelola-karya', label: 'Kelola & Daftar Karya', icon: FolderKanban },
-                  { id: 'pengalaman', label: 'Pengalaman Kerja', icon: Briefcase },
-                  { id: 'dokumen', label: 'Dokumen PDF', icon: FileText },
+                  { id: 'kelola-karya', label: 'Kelola Karya', icon: FolderKanban },
+                  { id: 'pengalaman', label: 'Kelola Pengalaman Kerja', icon: Briefcase },
+                  { id: 'dokumen', label: 'Kelola Dokumen', icon: FileText },
                   { id: 'sertifikat', label: 'Kelola Sertifikat', icon: Award },
                   { id: 'kontak', label: 'Kelola Kontak', icon: Phone },
                   { id: 'profil', label: 'Kelola Profil', icon: User }
@@ -1783,7 +1783,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                       <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', borderBottom: '1px solid rgba(0,91,171,0.15)', fontSize: '0.9rem', fontWeight: 700, color: '#005BAB' }}>
                         <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                           <FileText size={16} color="#005BAB" />
-                          <span>Dokumen PDF</span>
+                          <span>Dokumen</span>
                         </span>
                         <span style={{ fontWeight: 800 }}>{documents.length} Dokumen</span>
                       </div>
@@ -1797,7 +1797,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', fontWeight: 700, color: '#005BAB' }}>
                         <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                           <Phone size={16} color="#005BAB" />
-                          <span>Kontak Direct</span>
+                          <span>Kontak</span>
                         </span>
                         <span style={{ fontWeight: 800 }}>{contacts.length} Kontak</span>
                       </div>

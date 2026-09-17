@@ -126,7 +126,12 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
                 marginBottom: '1rem',
                 letterSpacing: '-0.02em'
               }}>
-                {profile?.name || 'Hamdani'} — {lang === 'en' ? (profile?.tagline_en || profile?.tagline || t('hero_title')) : (profile?.tagline || t('hero_title'))}
+                <span className="hero-title-name">{profile?.name || 'Hamdani'}</span>
+                <span className="hero-title-sep"> — </span>
+                <br className="hero-title-br" />
+                <span className="hero-title-tagline">
+                  {lang === 'en' ? (profile?.tagline_en || profile?.tagline || t('hero_title')) : (profile?.tagline || t('hero_title'))}
+                </span>
               </h1>
 
               {/* Deskripsi Singkat */}
@@ -348,6 +353,12 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
 
       <style>{`
         @media (max-width: 640px) {
+          .hero-title-br {
+            display: block !important;
+          }
+          .hero-title-sep {
+            display: none !important;
+          }
           .hero-photo-wrapper {
             margin-top: 0.85rem !important;
           }
@@ -387,6 +398,14 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
             justify-content: center !important;
             text-align: center !important;
             margin-top: 0.25rem !important;
+          }
+        }
+        @media (min-width: 641px) {
+          .hero-title-br {
+            display: none !important;
+          }
+          .hero-title-sep {
+            display: inline !important;
           }
         }
       `}</style>

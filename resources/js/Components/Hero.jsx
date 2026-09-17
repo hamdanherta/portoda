@@ -98,7 +98,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
 
             {/* Di Samping Foto: Welcome, Title, Stat Bar, Deskripsi & Lokasi Jambi */}
             <div style={{ flex: 1, minWidth: '280px', textAlign: 'left' }} className="hero-profile-text">
-              {/* Row 1: Badges Welcome & Lokasi Jambi */}
+              {/* Row 1: Badge Welcome */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap', marginBottom: '0.85rem' }}>
                 <span style={{
                   display: 'inline-flex',
@@ -114,22 +114,6 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
                 }}>
                   <Sparkles size={19} />
                   <span>{t('hero_welcome')}</span>
-                </span>
-
-                <span style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.4rem',
-                  padding: '0.45rem 1.15rem',
-                  borderRadius: '999px',
-                  background: '#005BAB',
-                  color: '#FFFFFF',
-                  fontSize: '1.03rem',
-                  fontWeight: 800,
-                  border: '2px solid #005BAB'
-                }}>
-                  <MapPin size={19} />
-                  <span>{(lang === 'en' ? profile?.domisili_en : profile?.domisili) || t('hero_location')}</span>
                 </span>
               </div>
 
@@ -156,6 +140,25 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
               }}>
                 {lang === 'en' ? (profile?.bio_en || profile?.bio || t('hero_bio')) : (profile?.bio || t('hero_bio'))}
               </p>
+
+              {/* Badge Lokasi (Di Atas Button Jelajahi Karya) */}
+              <div style={{ marginBottom: '0.85rem', display: 'flex', alignItems: 'center' }}>
+                <span style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  padding: '0.4rem 1rem',
+                  borderRadius: '999px',
+                  background: '#005BAB',
+                  color: '#FFFFFF',
+                  fontSize: '0.92rem',
+                  fontWeight: 800,
+                  border: '2px solid #005BAB'
+                }}>
+                  <MapPin size={17} />
+                  <span>{(lang === 'en' ? profile?.domisili_en : profile?.domisili) || t('hero_location')}</span>
+                </span>
+              </div>
 
               {/* CTA Action Buttons */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flexWrap: 'wrap' }}>

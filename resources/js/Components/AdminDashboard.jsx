@@ -2442,7 +2442,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
 
                   {/* Subcategory Pills (Tampil bila kategori spesifik dipilih) */}
                   {adminKaryaCategory !== 'all' && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap', paddingTop: '0.5rem', borderTop: '1.5px dashed rgba(0, 91, 171, 0.25)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap', paddingTop: '0.5rem', borderTop: '1.5px solid rgba(0, 91, 171, 0.25)' }}>
                       <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#005BAB', marginRight: '0.25rem' }}>
                         Subkategori:
                       </span>
@@ -3666,7 +3666,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                     </div>
 
                     {/* Domisili & Data Diri (Bahasa Indonesia & English) */}
-                    <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1.5px dashed #005BAB' }}>
+                    <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1.5px solid #005BAB' }}>
                       <h4 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#005BAB', marginBottom: '1rem' }}>
                         Informasi Domisili & Data Diri
                       </h4>

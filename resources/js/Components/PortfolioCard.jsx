@@ -216,8 +216,7 @@ export default function PortfolioCard({ item, onClick }) {
             alignItems: 'center',
             gap: '0.35rem',
             flexWrap: 'wrap',
-            paddingTop: '0.75rem',
-            borderTop: '1.5px dashed #005BAB'
+            paddingTop: '0.5rem'
           }}>
             {item.tags.slice(0, 3).map((tag, idx) => (
               <span key={idx} style={{

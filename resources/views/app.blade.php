@@ -10,10 +10,16 @@
     <!-- Meta Tags untuk WhatsApp & Sosmed -->
     <meta name="description" content="Portofolio Resmi Hamdani - Desain Grafis, Multimedia & Pengembang Aplikasi.">
     <meta property="og:title" content="Portoda - Aplikasi Portofolio Karya Hamdani">
-    <meta property="og:description" content="Portofolio Resmi Hamdani - Desain Grafis, Multimedia & Pengembang Aplikasi.">
-    <meta property="og:image" content="https://www.portoda.my.id/sosmed.png">
+    <meta property="og:description"
+        content="Portofolio Resmi Hamdani - Desain Grafis, Multimedia & Pengembang Aplikasi.">
+    <meta property="og:image" content="https://www.portoda.my.id/og-image.png">
+    <meta property="og:image:secure_url" content="https://www.portoda.my.id/og-image.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="600">
+    <meta property="og:image:height" content="600">
     <meta property="og:url" content="https://www.portoda.my.id">
     <meta property="og:type" content="website">
+    <link rel="image_src" href="https://www.portoda.my.id/og-image.png">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">

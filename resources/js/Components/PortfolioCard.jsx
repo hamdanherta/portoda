@@ -1,6 +1,7 @@
 import React from 'react';
 import { Play, Eye, Sparkles, Calendar, Tag } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import WatermarkedImage from './WatermarkedImage';
 
 export default function PortfolioCard({ item, onClick }) {
   const { lang, t, getLocalizedField } = useLanguage();
@@ -100,20 +101,19 @@ export default function PortfolioCard({ item, onClick }) {
           }}
         />
 
-        {/* Layer 2: Gambar Asli — contain, tidak terpotong */}
-        <img
+        {/* Layer 2: Gambar Asli — contain, tidak terpotong (Watermarked on save) */}
+        <WatermarkedImage
           src={item.image_url}
           alt={titleText}
           loading="lazy"
+          objectFit="contain"
+          objectPosition="center center"
           style={{
             position: 'absolute',
             top: 0,
             left: 0,
             width: '100%',
             height: '100%',
-            objectFit: 'contain',
-            objectPosition: 'center center',
-            transition: 'transform 0.4s ease',
             zIndex: 2
           }}
           className="card-img"

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { X, ExternalLink, Calendar, User, Tag, Play, ChevronLeft, ChevronRight, Award, Briefcase, Building2, Sparkles, FolderKanban, Wrench, Code, Layers, Smartphone, Share2, Check } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import WatermarkedImage from './WatermarkedImage';
 
 export default function DetailModal({ item, onClose }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -337,18 +338,18 @@ export default function DetailModal({ item, onClose }) {
                         zIndex: 1
                       }}
                     />
-                    {/* Layer 2: Main Contained Image */}
-                    <img
+                    {/* Layer 2: Main Contained Image (Watermarked on save) */}
+                    <WatermarkedImage
                       src={imgSrc}
                       alt={`${titleText} - Foto ${idx + 1}`}
+                      objectFit="contain"
+                      objectPosition="center center"
                       style={{
                         position: 'absolute',
                         top: 0,
                         left: 0,
                         width: '100%',
                         height: '100%',
-                        objectFit: 'contain',
-                        objectPosition: 'center center',
                         zIndex: 2
                       }}
                     />
@@ -458,7 +459,7 @@ export default function DetailModal({ item, onClose }) {
                     padding: 0
                   }}
                 >
-                  <img src={thumbSrc} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <WatermarkedImage src={thumbSrc} alt="" objectFit="cover" style={{ width: '100%', height: '100%' }} />
                 </button>
               ))}
             </div>

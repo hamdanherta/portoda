@@ -8,6 +8,7 @@ use App\Models\Document;
 use App\Models\Contact;
 use App\Models\Certificate;
 use App\Models\Profile;
+use App\Models\PortfolioItem;
 use Illuminate\Http\Request;
 use Database\Seeders\DatabaseSeeder;
 
@@ -169,6 +170,10 @@ class InfoController extends Controller
         Certificate::truncate();
         Profile::truncate();
         PortfolioItem::truncate();
+
+        $seeder = new DatabaseSeeder();
+        $seeder->seedPortfolioItems();
+        $seeder->seedInfo();
 
         return response()->json(['success' => true]);
     }

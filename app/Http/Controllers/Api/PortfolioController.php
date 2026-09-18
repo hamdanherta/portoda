@@ -4,6 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\PortfolioItem;
+use App\Models\Experience;
+use App\Models\Document;
+use App\Models\Contact;
+use App\Models\Certificate;
+use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Database\Seeders\DatabaseSeeder;
@@ -98,6 +103,10 @@ class PortfolioController extends Controller
         Certificate::truncate();
         Profile::truncate();
 
-        return response()->json([]);
+        $seeder = new DatabaseSeeder();
+        $seeder->seedPortfolioItems();
+        $seeder->seedInfo();
+
+        return response()->json(['success' => true]);
     }
 }

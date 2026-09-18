@@ -819,11 +819,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
       } else if (deletingTarget.targetType === 'reset-mock') {
         await onResetMock();
         await refreshKaryaData();
-        setExperiences([]);
-        setDocuments([]);
-        setContacts([]);
-        setCertificates([]);
-        setProfileForm({});
+        await loadInfoData();
       } else if (deletingTarget.targetType === 'exp') {
         const updated = await infoService.deleteExperience(deletingTarget.id);
         setExperiences(updated);
@@ -1326,147 +1322,271 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
           </div>
         </div>
       ) : (
-        /* Standalone Sidebar Dashboard Layout */
-        <div style={{ display: 'flex', width: '100%', height: '100%', scrollbarWidth: 'none', msOverflowStyle: 'none' }} className="admin-app-wrapper modal-no-scrollbar">
-          {/* MOBILE HEADER BAR FOR ADMIN DASHBOARD (Screen <= 860px) */}
-          <div className="admin-mobile-header" style={{
-            display: 'none',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '0.85rem 1.1rem',
-            background: '#FFFFFF',
-            borderBottom: '2.5px solid #005BAB',
+        /* Standalone Dashboard Layout */
+        <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100vh', background: '#FFF3DD', overflow: 'hidden' }} className="admin-app-wrapper modal-no-scrollbar">
+          {/* HEADER NAVBAR (100% PERSIS NAVBAR BERANDA) */}
+          <header style={{
             position: 'sticky',
             top: 0,
-            zIndex: 100,
-            width: '100%'
+            zIndex: 900,
+            padding: '1.25rem 1.5rem 0.5rem',
+            width: '100%',
+            background: '#FFF3DD',
+            flexShrink: 0
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-              <img src="/logoblue.png" alt="Portoda Logo" style={{ height: '36px', width: 'auto', objectFit: 'contain' }} />
-              <div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#005BAB', margin: 0, lineHeight: 1.1 }}>Portoda Admin</h3>
-                <span style={{ fontSize: '0.72rem', color: '#005BAB', fontWeight: 700, opacity: 0.85 }}>
-                  {activeTab === 'overview' && 'Ringkasan & Statistik'}
-                  {activeTab === 'tambah-karya' && 'Tambah Karya'}
-                  {activeTab === 'kelola-karya' && 'Kelola Karya'}
-                  {activeTab === 'pengalaman' && 'Pengalaman Kerja'}
-                  {activeTab === 'dokumen' && 'Dokumen'}
-                  {activeTab === 'sertifikat' && 'Kelola Sertifikat'}
-                  {activeTab === 'kontak' && 'Kelola Kontak'}
-                  {activeTab === 'profil' && 'Kelola Profil'}
-                </span>
-              </div>
-            </div>
-
-            <button
-              onClick={() => setMobileAdminNavOpen(!mobileAdminNavOpen)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-                padding: '0.55rem 0.85rem',
+            <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+              <div className="herta-card herta-admin-header-card" style={{
                 background: '#005BAB',
                 color: '#FFFFFF',
-                borderRadius: '12px',
-                border: '2px solid #005BAB',
-                fontWeight: 800,
-                fontSize: '0.82rem',
-                cursor: 'pointer'
-              }}
-            >
-              {mobileAdminNavOpen ? <X size={20} /> : <Menu size={20} />}
-              <span>Menu</span>
-            </button>
-          </div>
-
-          {/* MOBILE ADMIN DRAWER MENU */}
-          {mobileAdminNavOpen && (
-            <div className="admin-mobile-drawer" style={{
-              background: '#FFFFFF',
-              borderBottom: '2.5px solid #005BAB',
-              padding: '1rem',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0.5rem',
-              width: '100%'
-            }}>
-              {[
-                { id: 'overview', label: 'Ringkasan & Statistik', icon: BarChart3 },
-                { id: 'tambah-karya', label: 'Tambah Karya Baru', icon: PlusCircle },
-                { id: 'kelola-karya', label: 'Kelola & Daftar Karya', icon: FolderKanban },
-                { id: 'pengalaman', label: 'Pengalaman Kerja', icon: Briefcase },
-                { id: 'dokumen', label: 'Dokumen', icon: FileText },
-                { id: 'sertifikat', label: 'Kelola Sertifikat', icon: Award },
-                { id: 'kontak', label: 'Kelola Kontak', icon: Phone },
-                { id: 'profil', label: 'Kelola Profil', icon: User }
-              ].map((item) => {
-                const IconComp = item.icon;
-                const isActive = activeTab === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => {
-                      setActiveTab(item.id);
-                      setMobileAdminNavOpen(false);
-                      setFormSuccess('');
-                    }}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.65rem',
-                      padding: '0.65rem 0.85rem',
-                      borderRadius: '14px',
-                      fontSize: '0.85rem',
-                      fontWeight: 800,
-                      textAlign: 'left',
-                      color: isActive ? '#FFFFFF' : '#005BAB',
-                      background: isActive ? '#005BAB' : '#FFF3DD',
-                      border: '2px solid #005BAB',
-                      width: '100%',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    <IconComp size={18} />
-                    <span>{item.label}</span>
-                  </button>
-                );
-              })}
-
-              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '2px solid #005BAB' }}>
-                <button
-                  onClick={onClose}
-                  className="btn-primary"
-                  style={{ flex: 1, justifyContent: 'center', padding: '0.55rem', fontSize: '0.82rem' }}
+                borderRadius: '32px',
+                border: '2.5px solid #005BAB',
+                padding: '1.25rem 2.25rem',
+                boxShadow: '0 14px 36px rgba(0, 91, 171, 0.25)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                minHeight: '94px'
+              }}>
+                {/* Brand Logo & Title */}
+                <div 
+                  onClick={() => setActiveTab('overview')}
+                  style={{ display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer', position: 'relative', zIndex: 1 }}
                 >
-                  <Globe size={16} /> Ke Beranda
-                </button>
-                <button
-                  onClick={handleLogout}
-                  className="btn-secondary"
-                  style={{ flex: 1, justifyContent: 'center', padding: '0.55rem', fontSize: '0.82rem' }}
-                >
-                  <LogOut size={16} /> Logout
-                </button>
+                  <img
+                    src="/logocream.png"
+                    alt="Portoda Logo"
+                    style={{ height: '56px', width: 'auto', objectFit: 'contain' }}
+                  />
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <span style={{ fontSize: '1.6rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.02em' }}>
+                        Portoda
+                      </span>
+                      <span style={{ background: '#FFF3DD', color: '#005BAB', fontSize: '0.72rem', fontWeight: 800, padding: '0.2rem 0.65rem', borderRadius: '999px', border: '1.5px solid #005BAB' }}>
+                        Admin
+                      </span>
+                    </div>
+                    <p style={{ fontSize: '0.8rem', color: '#FFF3DD', opacity: 0.9, marginTop: '-2px', fontWeight: 600 }}>
+                      Dashboard Portofolio Digital
+                    </p>
+                  </div>
+                </div>
+
+                {/* Right Navigation & Action Items */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  {/* Desktop Navigation Links */}
+                  <nav style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', position: 'relative', zIndex: 1 }} className="admin-desktop-nav">
+                    {[
+                      { id: 'overview', label: 'Ringkasan', icon: BarChart3 },
+                      { id: 'tambah-karya', label: 'Tambah Karya', icon: PlusCircle },
+                      { id: 'kelola-karya', label: 'Kelola Karya', icon: FolderKanban },
+                      { id: 'pengalaman', label: 'Pengalaman', icon: Briefcase },
+                      { id: 'dokumen', label: 'Dokumen', icon: FileText },
+                      { id: 'sertifikat', label: 'Sertifikat', icon: Award },
+                      { id: 'kontak', label: 'Kontak', icon: Phone },
+                      { id: 'profil', label: 'Profil', icon: User }
+                    ].map((item) => {
+                      const IconComp = item.icon;
+                      const isActive = activeTab === item.id;
+                      return (
+                        <button
+                          key={item.id}
+                          onClick={() => {
+                            setActiveTab(item.id);
+                            setFormSuccess('');
+                          }}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.4rem',
+                            padding: '0.55rem 0.95rem',
+                            borderRadius: '999px',
+                            fontSize: '0.84rem',
+                            fontWeight: 800,
+                            color: isActive ? '#005BAB' : '#FFFFFF',
+                            background: isActive ? '#FFF3DD' : 'rgba(255, 255, 255, 0.18)',
+                            border: isActive ? '2px solid #FFF3DD' : '1.5px solid rgba(255, 255, 255, 0.35)',
+                            transition: 'all 0.2s ease',
+                            whiteSpace: 'nowrap',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <IconComp size={15} />
+                          <span>{item.label}</span>
+                        </button>
+                      );
+                    })}
+                  </nav>
+
+                  {/* Action Buttons (Ke Beranda & Logout) */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }} className="admin-nav-actions">
+                    <button
+                      onClick={onClose}
+                      className="btn-primary"
+                      style={{
+                        padding: '0.55rem 1rem',
+                        borderRadius: '999px',
+                        fontSize: '0.84rem',
+                        fontWeight: 800,
+                        gap: '0.45rem',
+                        whiteSpace: 'nowrap'
+                      }}
+                      title="Kembali ke Beranda"
+                    >
+                      <Globe size={15} />
+                      <span>Ke Beranda</span>
+                    </button>
+                    <button
+                      onClick={handleLogout}
+                      className="btn-secondary"
+                      style={{
+                        padding: '0.55rem 1rem',
+                        borderRadius: '999px',
+                        fontSize: '0.84rem',
+                        fontWeight: 800,
+                        gap: '0.45rem',
+                        background: '#FFF3DD',
+                        color: '#005BAB',
+                        border: '2px solid #005BAB',
+                        whiteSpace: 'nowrap'
+                      }}
+                      title="Logout Admin"
+                    >
+                      <LogOut size={15} />
+                      <span>Logout</span>
+                    </button>
+                  </div>
+
+                  {/* Mobile Menu Toggle Button */}
+                  <div style={{ display: 'flex', alignItems: 'center' }} className="admin-mobile-toggle">
+                    <button
+                      onClick={() => setMobileAdminNavOpen(!mobileAdminNavOpen)}
+                      style={{
+                        padding: '0.65rem',
+                        color: '#005BAB',
+                        background: '#FFFFFF',
+                        borderRadius: '14px',
+                        border: '2px solid #FFFFFF',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {mobileAdminNavOpen ? <X size={24} /> : <Menu size={24} />}
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
-          )}
 
-          {/* LEFT SIDEBAR NAVIGATION PANEL */}
-          <aside style={{
-            width: '275px',
-            flexShrink: 0,
-            background: '#FFFFFF',
-            borderRight: '2.5px solid #005BAB',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            padding: '1.5rem 1.25rem',
-            overflowY: 'auto',
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none'
-          }} className="admin-sidebar modal-no-scrollbar">
-            <div>
-              {/* Sidebar Header / Brand Logo */}
+            {/* Mobile Menu Drawer */}
+            {mobileAdminNavOpen && (
+              <div className="container admin-mobile-drawer" style={{ maxWidth: '1400px', marginTop: '0.75rem' }}>
+                <div className="herta-card" style={{
+                  background: '#005BAB',
+                  borderRadius: '24px',
+                  border: '2.5px solid #005BAB',
+                  padding: '1.25rem 1.5rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.75rem'
+                }}>
+                  {[
+                    { id: 'overview', label: 'Ringkasan & Statistik', icon: BarChart3 },
+                    { id: 'tambah-karya', label: 'Tambah Karya Baru', icon: PlusCircle },
+                    { id: 'kelola-karya', label: 'Kelola & Daftar Karya', icon: FolderKanban },
+                    { id: 'pengalaman', label: 'Pengalaman Kerja', icon: Briefcase },
+                    { id: 'dokumen', label: 'Dokumen', icon: FileText },
+                    { id: 'sertifikat', label: 'Kelola Sertifikat', icon: Award },
+                    { id: 'kontak', label: 'Kelola Kontak', icon: Phone },
+                    { id: 'profil', label: 'Kelola Profil', icon: User }
+                  ].map((item) => {
+                    const IconComp = item.icon;
+                    const isActive = activeTab === item.id;
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => {
+                          setActiveTab(item.id);
+                          setMobileAdminNavOpen(false);
+                          setFormSuccess('');
+                        }}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.65rem',
+                          padding: '0.75rem 1rem',
+                          borderRadius: '16px',
+                          fontSize: '0.88rem',
+                          fontWeight: 800,
+                          textAlign: 'left',
+                          color: isActive ? '#005BAB' : '#FFFFFF',
+                          background: isActive ? '#FFF3DD' : 'rgba(255, 255, 255, 0.15)',
+                          border: isActive ? '2px solid #FFF3DD' : '1.5px solid rgba(255, 255, 255, 0.25)',
+                          width: '100%',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <IconComp size={18} />
+                        <span>{item.label}</span>
+                      </button>
+                    );
+                  })}
+
+                  <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255,243,221,0.2)' }}>
+                    <button
+                      onClick={onClose}
+                      className="btn-primary"
+                      style={{ flex: 1, justifyContent: 'center', padding: '0.65rem', fontSize: '0.85rem' }}
+                    >
+                      <Globe size={16} /> Ke Beranda
+                    </button>
+                    <button
+                      onClick={handleLogout}
+                      className="btn-secondary"
+                      style={{ flex: 1, justifyContent: 'center', padding: '0.65rem', fontSize: '0.85rem', background: '#FFF3DD', color: '#005BAB' }}
+                    >
+                      <LogOut size={16} /> Logout
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <style>{`
+              @media (max-width: 1250px) {
+                .admin-desktop-nav { display: none !important; }
+                .admin-nav-actions { display: none !important; }
+                .herta-admin-header-card {
+                  padding: 1rem 1.25rem !important;
+                  min-height: 84px !important;
+                }
+              }
+              @media (min-width: 1251px) {
+                .admin-mobile-toggle { display: none !important; }
+                .admin-mobile-drawer { display: none !important; }
+                .herta-admin-header-card {
+                  padding: 1.25rem 2.25rem !important;
+                  min-height: 94px !important;
+                }
+              }
+            `}</style>
+          </header>
+
+          <div style={{ display: 'flex', flex: 1, width: '100%', overflow: 'hidden' }}>
+            <aside style={{
+              width: '275px',
+              flexShrink: 0,
+              background: '#FFFFFF',
+              borderRight: '2.5px solid #005BAB',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              padding: '1.5rem 1.25rem',
+              overflowY: 'auto',
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none'
+            }} className="admin-sidebar modal-no-scrollbar">
+              <div>
+                {/* Sidebar Header / Brand Logo */}
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -3912,7 +4032,8 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
             )}
           </main>
         </div>
-      )}
+      </div>
+    )}
 
       <style>{`
         /* Hide scrollbars visually across all dashboard containers while retaining full scrollability */

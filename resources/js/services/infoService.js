@@ -176,7 +176,12 @@ export const infoService = {
   async getProfile() {
     try {
       const response = await axios.get('/api/profile');
-      return response.data || {};
+      const data = response.data || {};
+      if (typeof window !== 'undefined') {
+        const isEnabled = data.watermark_enabled !== false && data.watermark_enabled !== 0 && data.watermark_enabled !== '0';
+        localStorage.setItem('portoda_watermark_enabled', isEnabled ? 'true' : 'false');
+      }
+      return data;
     } catch (err) {
       console.error('Failed to get profile:', err);
       return {};
@@ -187,6 +192,8 @@ export const infoService = {
     try {
       const response = await axios.post('/api/profile', profileData);
       if (typeof window !== 'undefined') {
+        const isEnabled = response.data?.watermark_enabled !== false && response.data?.watermark_enabled !== 0 && response.data?.watermark_enabled !== '0';
+        localStorage.setItem('portoda_watermark_enabled', isEnabled ? 'true' : 'false');
         window.dispatchEvent(new Event('portoda_info_updated'));
       }
       return response.data;

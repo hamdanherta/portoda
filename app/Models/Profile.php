@@ -22,9 +22,11 @@ class Profile extends Model
         'ttl',
         'ttl_en',
         'skills',
+        'watermark_enabled',
     ];
 
     protected $casts = [
         'skills' => 'array',
+        'watermark_enabled' => 'boolean',
     ];
 }

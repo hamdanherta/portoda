@@ -16,10 +16,39 @@ export default function WatermarkedImage({
   onClick,
   ...props
 }) {
-  const [watermarkedSrc, setWatermarkedSrc] = useState(() => watermarkCache.get(src) || null);
+  const [isWatermarkEnabled, setIsWatermarkEnabled] = useState(() => {
+    if (typeof window === 'undefined') return true;
+    const cached = localStorage.getItem('portoda_watermark_enabled');
+    return cached === null ? true : cached === 'true' || cached === '1';
+  });
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      const cached = localStorage.getItem('portoda_watermark_enabled');
+      setIsWatermarkEnabled(cached === null ? true : cached === 'true' || cached === '1');
+    };
+
+    window.addEventListener('portoda_info_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    return () => {
+      window.removeEventListener('portoda_info_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, []);
+
+  const [watermarkedSrc, setWatermarkedSrc] = useState(() => {
+    const enabled = typeof window === 'undefined' ? true : localStorage.getItem('portoda_watermark_enabled') !== 'false';
+    if (!enabled) return src;
+    return watermarkCache.get(src) || null;
+  });
 
   useEffect(() => {
     if (!src) return;
+
+    if (!isWatermarkEnabled) {
+      setWatermarkedSrc(src);
+      return;
+    }
 
     if (watermarkCache.has(src)) {
       setWatermarkedSrc(watermarkCache.get(src));
@@ -87,7 +116,7 @@ export default function WatermarkedImage({
     return () => {
       isMounted = false;
     };
-  }, [src, watermarkSrc]);
+  }, [src, watermarkSrc, isWatermarkEnabled]);
 
   return (
     <div

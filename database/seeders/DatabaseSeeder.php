@@ -435,7 +435,8 @@ class DatabaseSeeder extends Seeder
                     ['id' => 'skill-1', 'title' => 'Desain Grafis', 'title_en' => 'Graphic Design', 'desc' => 'Desain Logo, Poster, Banner, Kemasan, Lainnya.', 'desc_en' => 'Logo, Poster, Banner, Packaging & Visual Branding Design.'],
                     ['id' => 'skill-2', 'title' => 'Multimedia', 'title_en' => 'Multimedia', 'desc' => 'Fotografi, Videografi, Motion Graphic, Film', 'desc_en' => 'Photography, 4K Videography, 3D Motion Graphics, Documentary Film.'],
                     ['id' => 'skill-3', 'title' => 'Pengembangan Aplikasi', 'title_en' => 'App Development', 'desc' => 'Mobile UI/UX, Mobile App, Web App.', 'desc_en' => 'UI/UX Research, Design System, Mobile & Web App.']
-                ]
+                ],
+                'watermark_enabled' => true
             ]
         );
     }

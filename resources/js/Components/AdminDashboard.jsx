@@ -641,6 +641,25 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
     }
   };
 
+  const handleToggleWatermark = async () => {
+    const currentVal = profileForm.watermark_enabled !== false;
+    const newVal = !currentVal;
+    const updatedForm = { ...profileForm, watermark_enabled: newVal };
+    setProfileForm(updatedForm);
+
+    try {
+      startProcessing(newVal ? 'Mengaktifkan watermark otomatis saat download gambar...' : 'Menoaktifkan watermark otomatis saat download gambar...');
+      const updated = await infoService.saveProfile(updatedForm);
+      setProfile(updated || updatedForm);
+      setProfileForm(updated || updatedForm);
+      finishProcessingSuccess(newVal ? 'Watermark Otomatis Berhasil DIAKTIFKAN!' : 'Watermark Otomatis Berhasil DINONAKTIFKAN!');
+    } catch (err) {
+      console.error('Failed to toggle watermark:', err);
+      finishProcessingError('Gagal memperbarui status watermark.');
+      setProfileForm(profileForm);
+    }
+  };
+
   const handleEditSkillClick = (skill) => {
     setEditingSkillId(skill.id);
     setSkillForm({
@@ -1805,6 +1824,81 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                         </span>
                         <span style={{ fontWeight: 800 }}>{contacts.length} Kontak</span>
                       </div>
+                    </div>
+                  </div>
+
+                  {/* Watermark Control Card */}
+                  <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF', border: '2.5px solid #005BAB', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+                        <h3 style={{ fontSize: '1.15rem', color: '#005BAB', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0 }}>
+                          <ShieldCheck size={20} />
+                          <span>Watermark Otomatis</span>
+                        </h3>
+                        <span style={{
+                          fontSize: '0.75rem',
+                          fontWeight: 800,
+                          padding: '0.25rem 0.65rem',
+                          borderRadius: '999px',
+                          background: profileForm.watermark_enabled !== false ? '#E0F2FE' : '#FEE2E2',
+                          color: profileForm.watermark_enabled !== false ? '#0284C7' : '#DC2626',
+                          border: `1.5px solid ${profileForm.watermark_enabled !== false ? '#0284C7' : '#DC2626'}`
+                        }}>
+                          {profileForm.watermark_enabled !== false ? 'AKTIF (ON)' : 'NONAKTIF (OFF)'}
+                        </span>
+                      </div>
+                      <p style={{ fontSize: '0.85rem', color: '#005BAB', fontWeight: 600, marginBottom: '1.25rem', lineHeight: 1.5 }}>
+                        Kontrol penempelan watermark otomatis pada semua gambar karya saat diunduh / simpan gambar oleh pengunjung website.
+                      </p>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '0.75rem', borderTop: '1.5px solid rgba(0,91,171,0.15)' }}>
+                      <span style={{ fontSize: '0.88rem', fontWeight: 800, color: '#005BAB' }}>
+                        Status Watermark Gambar
+                      </span>
+
+                      {/* Toggle Switch Button */}
+                      <button
+                        type="button"
+                        onClick={handleToggleWatermark}
+                        style={{
+                          position: 'relative',
+                          width: '58px',
+                          height: '32px',
+                          borderRadius: '999px',
+                          backgroundColor: profileForm.watermark_enabled !== false ? '#005BAB' : '#CBD5E1',
+                          border: '2px solid #005BAB',
+                          cursor: 'pointer',
+                          transition: 'background-color 0.25s ease',
+                          padding: 0,
+                          outline: 'none',
+                          display: 'flex',
+                          alignItems: 'center'
+                        }}
+                        title={profileForm.watermark_enabled !== false ? 'Klik untuk mematikan watermark' : 'Klik untuk mengaktifkan watermark'}
+                      >
+                        <div
+                          style={{
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '50%',
+                            backgroundColor: '#FFFFFF',
+                            border: '1.5px solid #005BAB',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                            transform: profileForm.watermark_enabled !== false ? 'translateX(28px)' : 'translateX(3px)',
+                            transition: 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}
+                        >
+                          {profileForm.watermark_enabled !== false ? (
+                            <Check size={14} color="#005BAB" strokeWidth={3} />
+                          ) : (
+                            <X size={14} color="#DC2626" strokeWidth={3} />
+                          )}
+                        </div>
+                      </button>
                     </div>
                   </div>
 

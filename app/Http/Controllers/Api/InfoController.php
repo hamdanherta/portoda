@@ -171,10 +171,6 @@ class InfoController extends Controller
         Profile::truncate();
         PortfolioItem::truncate();
 
-        $seeder = new DatabaseSeeder();
-        $seeder->seedPortfolioItems();
-        $seeder->seedInfo();
-
         return response()->json(['success' => true]);
     }
 }

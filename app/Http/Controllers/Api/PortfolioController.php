@@ -103,10 +103,6 @@ class PortfolioController extends Controller
         Certificate::truncate();
         Profile::truncate();
 
-        $seeder = new DatabaseSeeder();
-        $seeder->seedPortfolioItems();
-        $seeder->seedInfo();
-
         return response()->json(['success' => true]);
     }
 }

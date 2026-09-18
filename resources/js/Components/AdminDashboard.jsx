@@ -858,13 +858,13 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
   const getSubcategoriesByCategory = (cat) => {
     switch (cat) {
       case 'desain-grafis':
-        return ['Desain Logo', 'Desain Banner', 'Desain Poster', 'Desain Kemasan', 'Lomba', 'Desain Lainnya'];
+        return ['Desain Logo', 'Desain Banner', 'Desain Poster', 'Desain Kemasan', 'Desain Lainnya'];
       case 'multimedia':
-        return ['Fotografi', 'Videografi', 'Motion Graphic', 'Film', 'Lomba'];
+        return ['Fotografi', 'Videografi', 'Motion Graphic', 'Film'];
       case 'aplikasi':
-        return ['UI/UX', 'Mobile App', 'Web App', 'Lomba'];
+        return ['UI/UX', 'Mobile App', 'Web App'];
       default:
-        return ['Desain Logo', 'Lomba'];
+        return ['Desain Logo'];
     }
   };
 

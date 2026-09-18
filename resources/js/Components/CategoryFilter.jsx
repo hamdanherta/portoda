@@ -15,14 +15,14 @@ export default function CategoryFilter({ activeCategory, setActiveCategory, acti
   const subcategoryMap = {
     'all': lang === 'en' ? ['All Subcategories'] : ['Semua'],
     'desain-grafis': lang === 'en' 
-      ? ['All Subcategories', 'Logo Design', 'Poster', 'Banner', 'Packaging', 'Others'] 
-      : ['Semua', 'Desain Logo', 'Poster', 'Banner', 'Kemasan', 'Lainnya'],
+      ? ['All Subcategories', 'Logo Design', 'Poster', 'Banner', 'Packaging', 'Contest', 'Others'] 
+      : ['Semua', 'Desain Logo', 'Poster', 'Banner', 'Kemasan', 'Lomba', 'Lainnya'],
     'multimedia': lang === 'en' 
-      ? ['All Subcategories', 'Photography', 'Videography', 'Motion Graphic', 'Film'] 
-      : ['Semua', 'Fotografi', 'Videografi', 'Motion Graphic', 'Film'],
+      ? ['All Subcategories', 'Photography', 'Videography', 'Motion Graphic', 'Film', 'Contest'] 
+      : ['Semua', 'Fotografi', 'Videografi', 'Motion Graphic', 'Film', 'Lomba'],
     'aplikasi': lang === 'en' 
-      ? ['All Subcategories', 'UI/UX', 'Mobile App', 'Web App'] 
-      : ['Semua', 'UI/UX', 'Mobile App', 'Web App']
+      ? ['All Subcategories', 'UI/UX', 'Mobile App', 'Web App', 'Contest'] 
+      : ['Semua', 'UI/UX', 'Mobile App', 'Web App', 'Lomba']
   };
 
   const defaultSubAll = lang === 'en' ? 'All Subcategories' : 'Semua';

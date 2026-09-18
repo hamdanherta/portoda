@@ -563,6 +563,7 @@ export default function DetailModal({ item, onClose }) {
                   if (t.includes('freelance')) return <Briefcase size={15} />;
                   if (t.includes('pekerjaan') || t.includes('work') || t.includes('job')) return <Building2 size={15} />;
                   if (t.includes('iseng') || t.includes('pribadi') || t.includes('personal')) return <Sparkles size={15} />;
+                  if (t.includes('lomba') || t.includes('contest') || t.includes('competition')) return <Award size={15} />;
                   return <FolderKanban size={15} />;
                 })(item.project_type)}
                 <span>{lang === 'en' ? 'Project Type' : 'Jenis Proyek'}: {item.project_type}</span>

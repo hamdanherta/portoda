@@ -858,18 +858,22 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
   const getSubcategoriesByCategory = (cat) => {
     switch (cat) {
       case 'desain-grafis':
-        return ['Desain Logo', 'Desain Banner', 'Desain Poster', 'Desain Kemasan', 'Desain Lainnya'];
+        return ['Desain Logo', 'Desain Banner', 'Desain Poster', 'Desain Kemasan', 'Lomba', 'Desain Lainnya'];
       case 'multimedia':
-        return ['Fotografi', 'Videografi', 'Motion Graphic', 'Film'];
+        return ['Fotografi', 'Videografi', 'Motion Graphic', 'Film', 'Lomba'];
       case 'aplikasi':
-        return ['UI/UX', 'Mobile App', 'Web App'];
+        return ['UI/UX', 'Mobile App', 'Web App', 'Lomba'];
       default:
-        return ['Desain Logo'];
+        return ['Desain Logo', 'Lomba'];
     }
   };
 
   const getSubcategoryRules = (subcat) => {
     const s = (subcat || '').toLowerCase().trim();
+
+    if (s.includes('lomba') || s.includes('contest') || s.includes('competition')) {
+      return { maxCover: 1, maxGallery: 5, hasVideo: true, hasPrototype: true };
+    }
 
     // DESAIN GRAFIS
     if (s.includes('logo')) return { maxCover: 1, maxGallery: 5, hasVideo: false, hasPrototype: false };
@@ -1921,6 +1925,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                           <option value="Freelance">Freelance</option>
                           <option value="Pekerjaan">Pekerjaan</option>
                           <option value="Iseng">Iseng</option>
+                          <option value="Lomba">Lomba</option>
                         </select>
                       </div>
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { WATERMARK_BASE64 } from '../utils/watermarkDataUri';
 
 // In-memory cache for watermarked data URLs to prevent re-processing canvas
 const watermarkCache = new Map();
@@ -10,7 +11,7 @@ export default function WatermarkedImage({
   style = {},
   objectFit = 'contain',
   objectPosition = 'center center',
-  watermarkSrc = '/watermark.png',
+  watermarkSrc = WATERMARK_BASE64,
   children,
   onClick,
   ...props
@@ -29,7 +30,13 @@ export default function WatermarkedImage({
 
     const generateWatermark = () => {
       const mainImg = new Image();
-      mainImg.crossOrigin = 'anonymous';
+      
+      // Only set crossOrigin if src is an external URL to prevent CORS canvas taint on same-origin storage files
+      const isExternal = src.startsWith('http://') || src.startsWith('https://');
+      if (isExternal && !src.includes(window.location.hostname)) {
+        mainImg.crossOrigin = 'anonymous';
+      }
+
       mainImg.src = src;
 
       mainImg.onload = () => {
@@ -44,10 +51,9 @@ export default function WatermarkedImage({
         // 1. Draw original clean image onto canvas
         ctx.drawImage(mainImg, 0, 0, width, height);
 
-        // 2. Load and overlay watermark image (/watermark.png) across full 100% frame
+        // 2. Load and overlay watermark image (Base64 data URI) across full 100% frame
         const wmImg = new Image();
-        wmImg.crossOrigin = 'anonymous';
-        wmImg.src = watermarkSrc;
+        wmImg.src = watermarkSrc || WATERMARK_BASE64;
 
         wmImg.onload = () => {
           // Stretch and fit watermark to full width & height of the image frame
@@ -64,12 +70,14 @@ export default function WatermarkedImage({
           }
         };
 
-        wmImg.onerror = () => {
+        wmImg.onerror = (err) => {
+          console.warn('Watermark image failed to load:', err);
           if (isMounted) setWatermarkedSrc(src);
         };
       };
 
-      mainImg.onerror = () => {
+      mainImg.onerror = (err) => {
+        console.warn('Main image failed to load for watermark canvas:', err);
         if (isMounted) setWatermarkedSrc(src);
       };
     };

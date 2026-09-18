@@ -13,7 +13,7 @@ import { ArrowLeft } from 'lucide-react';
 import { Head } from '@inertiajs/react';
 import { useScrollReveal } from '../utils/useScrollReveal';
 
-export default function App() {
+export default function App({ karyaId }) {
   const [activeCategory, setActiveCategory] = useState('all');
   const [activeSubcategory, setActiveSubcategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -28,6 +28,33 @@ export default function App() {
   // Halaman Daftar Karya vs Beranda
   const [isFullGallery, setIsFullGallery] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Auto-open Detail Modal jika mengakses link karya (misal ?karya=xxx atau /karya/xxx)
+  useEffect(() => {
+    if (!allItems || allItems.length === 0) return;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    let targetId = karyaId || urlParams.get('karya');
+
+    if (!targetId && window.location.pathname.startsWith('/karya/')) {
+      targetId = window.location.pathname.split('/karya/')[1];
+    }
+
+    if (targetId) {
+      const found = allItems.find(i => String(i.id) === String(targetId));
+      if (found) {
+        setSelectedItem(found);
+      }
+    }
+  }, [allItems, karyaId]);
+
+  const handleCloseDetailModal = () => {
+    setSelectedItem(null);
+    if (window.location.search.includes('karya=') || window.location.pathname.startsWith('/karya/')) {
+      const cleanPath = window.location.pathname.startsWith('/karya/') ? '/' : window.location.pathname;
+      window.history.pushState("", document.title, cleanPath);
+    }
+  };
 
   // In-memory instant filtering (responsif, tanpa lag / network latency)
   const filteredItems = useMemo(() => {
@@ -276,7 +303,7 @@ export default function App() {
         {/* Lightbox / Detail Modal (Karya & Sertifikat) */}
         <DetailModal
           item={selectedItem}
-          onClose={() => setSelectedItem(null)}
+          onClose={handleCloseDetailModal}
         />
 
         {/* Modal Informasi Menu Navbar: Profil, Pengalaman Kerja, Dokumen, Sertifikat, Kontak */}

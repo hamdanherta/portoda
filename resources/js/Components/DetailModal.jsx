@@ -1,13 +1,45 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { X, ExternalLink, Calendar, User, Tag, Play, ChevronLeft, ChevronRight, Award, Briefcase, Building2, Sparkles, FolderKanban, Wrench, Code, Layers, Smartphone } from 'lucide-react';
+import { X, ExternalLink, Calendar, User, Tag, Play, ChevronLeft, ChevronRight, Award, Briefcase, Building2, Sparkles, FolderKanban, Wrench, Code, Layers, Smartphone, Share2, Check } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function DetailModal({ item, onClose }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [copied, setCopied] = useState(false);
   const { lang, t, getLocalizedField } = useLanguage();
   const autoSlideRef = useRef(null);
   const resumeTimerRef = useRef(null);
+
+  const handleShare = () => {
+    if (!item) return;
+    const shareUrl = `${window.location.origin}/?karya=${item.id}`;
+
+    const copyFallback = (text) => {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        setCopied(true);
+        setTimeout(() => setCopied(false), 3000);
+      } catch (err) {
+        console.error('Fallback copy failed', err);
+      }
+      document.body.removeChild(textArea);
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 3000);
+      }).catch(() => {
+        copyFallback(shareUrl);
+      });
+    } else {
+      copyFallback(shareUrl);
+    }
+  };
 
   // Safe image list extraction (handles null item and certificates cleanly)
   const imagesList = item
@@ -717,6 +749,29 @@ export default function DetailModal({ item, onClose }) {
                 </span>
                 <ExternalLink size={16} />
               </a>
+            )}
+
+            {/* Share Link Button (Khusus Karya) */}
+            {item.category && (
+              <button
+                type="button"
+                onClick={handleShare}
+                className="btn-secondary"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  background: copied ? '#005BAB' : '#FFF3DD',
+                  color: copied ? '#FFFFFF' : '#005BAB',
+                  border: '2px solid #005BAB',
+                  transition: 'all 0.2s ease',
+                  fontWeight: 800
+                }}
+                title={lang === 'en' ? 'Share link to this portfolio item' : 'Bagikan link karya ini'}
+              >
+                {copied ? <Check size={16} /> : <Share2 size={16} />}
+                <span>{copied ? (lang === 'en' ? 'Link Copied!' : 'Link Tersalin!') : (lang === 'en' ? 'Share' : 'Bagikan')}</span>
+              </button>
             )}
 
             <button onClick={onClose} className="btn-secondary">

@@ -5,21 +5,25 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title inertia>{{ config('app.name', 'Portoda - Aplikasi Portofolio Karya Hamdani') }}</title>
+    @php
+        $og = $page['props']['ogData'] ?? null;
+        $ogTitle = $og['title'] ?? 'Portoda - Aplikasi Portofolio Karya Hamdani';
+        $ogDesc = $og['description'] ?? 'Portofolio Resmi Hamdani - Desain Grafis, Multimedia & Pengembang Aplikasi.';
+        $ogImage = $og['image'] ?? 'https://www.portoda.my.id/logoblue.png';
+        $ogUrl = $og['url'] ?? 'https://www.portoda.my.id';
+    @endphp
+
+    <title inertia>{{ $ogTitle }}</title>
 
     <!-- Meta Tags untuk WhatsApp & Sosmed -->
-    <meta name="description" content="Portofolio Resmi Hamdani - Desain Grafis, Multimedia & Pengembang Aplikasi.">
-    <meta property="og:title" content="Portoda - Aplikasi Portofolio Karya Hamdani">
-    <meta property="og:description"
-        content="Portofolio Resmi Hamdani - Desain Grafis, Multimedia & Pengembang Aplikasi.">
-    <meta property="og:image" content="https://www.portoda.my.id/logoblue.png">
-    <meta property="og:image:secure_url" content="https://www.portoda.my.id/logoblue.png">
-    <meta property="og:image:type" content="image/png">
-    <meta property="og:image:width" content="590">
-    <meta property="og:image:height" content="538">
-    <meta property="og:url" content="https://www.portoda.my.id">
+    <meta name="description" content="{{ $ogDesc }}">
+    <meta property="og:title" content="{{ $ogTitle }}">
+    <meta property="og:description" content="{{ $ogDesc }}">
+    <meta property="og:image" content="{{ $ogImage }}">
+    <meta property="og:image:secure_url" content="{{ $ogImage }}">
+    <meta property="og:url" content="{{ $ogUrl }}">
     <meta property="og:type" content="website">
-    <link rel="image_src" href="https://www.portoda.my.id/logoblue.png">
+    <link rel="image_src" href="{{ $ogImage }}">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">

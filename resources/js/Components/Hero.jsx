@@ -158,7 +158,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
                   color: '#FFFFFF',
                   fontSize: '0.92rem',
                   fontWeight: 800,
-                  border: '2px solid #005BAB'
+                  border: '2px solid #005BAB' 
                 }}>
                   <MapPin size={17} />
                   <span>{(lang === 'en' ? profile?.domisili_en : profile?.domisili) || t('hero_location')}</span>

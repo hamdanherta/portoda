@@ -316,12 +316,13 @@ body.admin-open *::-webkit-scrollbar-corner,
   font-weight: 700;
   padding: 0.65rem 1.4rem;
   border-radius: var(--radius-pill);
-  border: var(--border-thick);
+  border: 2.5px solid #16A34A;
   transition: var(--transition-fast);
 }
 
 .btn-green:hover {
   background: #15803D;
+  border-color: #15803D;
   transform: translateY(-2px);
 }
 

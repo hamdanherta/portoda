@@ -153,17 +153,17 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
                   <span style={{
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '0.4rem',
-                    padding: '0.4rem 1rem',
+                    gap: '0.5rem',
+                    padding: '0.65rem 1.4rem',
                     borderRadius: '999px',
                     background: '#005BAB',
                     color: '#FFFFFF',
                     fontSize: '0.92rem',
-                    fontWeight: 800,
-                    border: '2px solid #005BAB' 
+                    fontWeight: 400,
+                    border: '2.5px solid #005BAB' 
                   }}>
                     <MapPin size={17} />
-                    <span>{(lang === 'en' ? profile?.domisili_en : profile?.domisili) || t('hero_location')}</span>
+                    <span style={{ fontWeight: 400 }}>{(lang === 'en' ? profile?.domisili_en : profile?.domisili) || t('hero_location')}</span>
                   </span>
                 </div>
 

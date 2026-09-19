@@ -219,9 +219,9 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
               </div>
               <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#005BAB', opacity: 0.85, marginTop: '0.1rem' }}>
                 {lang === 'en' ? (
-                  <>as<br className="hero-subtext-br" />Graphic Designer</>
+                  <>as <br className="hero-subtext-br" />Graphic Designer</>
                 ) : (
-                  <>Sebagai<br className="hero-subtext-br" />Desainer Grafis</>
+                  <>Sebagai <br className="hero-subtext-br" />Desainer Grafis</>
                 )}
               </div>
             </div>
@@ -279,9 +279,9 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
               </div>
               <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#005BAB', opacity: 0.85, marginTop: '0.1rem' }}>
                 {lang === 'en' ? (
-                  <>as<br className="hero-subtext-br" />Graphic Designer</>
+                  <>as <br className="hero-subtext-br" />Graphic Designer</>
                 ) : (
-                  <>Sebagai<br className="hero-subtext-br" />Desainer Grafis</>
+                  <>Sebagai <br className="hero-subtext-br" />Desainer Grafis</>
                 )}
               </div>
             </div>

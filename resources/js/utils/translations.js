@@ -20,7 +20,7 @@ export const translations = {
     hero_stat_completed: 'Proyek Selesai',
     hero_stat_completed_sub: '(2020–2026)',
     hero_stat_hours: 'Jam Terbang',
-    hero_stat_hours_sub: 'Sebagai Desainer Grafis',
+    hero_stat_hours_sub: 'Sebagai Desainer Grafis', 
     hero_stat_exp: 'Pengalaman Kerja',
     hero_skills_title: '3 Jenis Portofolio Hamdani',
     hero_cat_grafis: 'Desain Grafis',

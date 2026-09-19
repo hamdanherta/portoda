@@ -369,7 +369,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
             flex-direction: column !important;
             align-items: center !important;
             justify-content: center !important;
-            gap: 0.75rem !important;
+            gap: 0.95rem !important;
             width: 100% !important;
           }
           .hero-cta-badge {

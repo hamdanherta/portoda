@@ -120,7 +120,7 @@ export default function PortfolioGrid({
               gap: '0.65rem'
             }}
           >
-            <span>Lihat Selengkapnya ({items.length} Karya)</span>
+            <span>Lihat Selengkapnya</span> 
             <ArrowRight size={20} />
           </button>
         </div>

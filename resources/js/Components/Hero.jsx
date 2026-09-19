@@ -300,7 +300,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
             position: 'relative',
             zIndex: 1
           }}>
-            <div className="herta-card-cream reveal-on-scroll" style={{ padding: '1.25rem', textAlign: 'center', transitionDelay: '0.2s', borderRadius: '22px' }}>
+            <div className="herta-card-cream reveal-on-scroll" style={{ background: '#FFFFFF', border: '2.5px solid #005BAB', padding: '1.25rem', textAlign: 'center', transitionDelay: '0.2s', borderRadius: '22px' }}>
               <div style={{
                 display: 'inline-flex',
                 padding: '0.6rem',
@@ -316,7 +316,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
               <p style={{ fontSize: '0.85rem', color: '#005BAB', fontWeight: 600 }}>{t('hero_cat_grafis_desc')}</p>
             </div>
 
-            <div className="herta-card-cream reveal-on-scroll" style={{ padding: '1.25rem', textAlign: 'center', transitionDelay: '0.3s', borderRadius: '22px' }}>
+            <div className="herta-card-cream reveal-on-scroll" style={{ background: '#FFF3DD', border: '2.5px solid #005BAB', padding: '1.25rem', textAlign: 'center', transitionDelay: '0.3s', borderRadius: '22px' }}>
               <div style={{
                 display: 'inline-flex',
                 padding: '0.6rem',
@@ -332,20 +332,20 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
               <p style={{ fontSize: '0.85rem', color: '#005BAB', fontWeight: 600 }}>{t('hero_cat_multimedia_desc')}</p>
             </div>
 
-            <div className="herta-card-cream reveal-on-scroll" style={{ padding: '1.25rem', textAlign: 'center', transitionDelay: '0.4s', borderRadius: '22px' }}>
+            <div className="herta-card-cream reveal-on-scroll" style={{ background: '#005BAB', border: '2.5px solid #005BAB', padding: '1.25rem', textAlign: 'center', transitionDelay: '0.4s', borderRadius: '22px' }}>
               <div style={{
                 display: 'inline-flex',
                 padding: '0.6rem',
                 borderRadius: '16px',
-                background: '#005BAB',
-                color: '#FFFFFF',
+                background: '#FFF3DD',
+                color: '#005BAB',
                 marginBottom: '0.6rem',
-                border: '2px solid #005BAB'
+                border: '2px solid #FFF3DD'
               }}>
                 <Code size={22} />
               </div>
-              <h3 style={{ fontSize: '1.1rem', color: '#005BAB', marginBottom: '0.2rem' }}>{t('hero_cat_aplikasi')}</h3>
-              <p style={{ fontSize: '0.85rem', color: '#005BAB', fontWeight: 600 }}>{t('hero_cat_aplikasi_desc')}</p>
+              <h3 style={{ fontSize: '1.1rem', color: '#FFFFFF', marginBottom: '0.2rem' }}>{t('hero_cat_aplikasi')}</h3>
+              <p style={{ fontSize: '0.85rem', color: '#FFF3DD', fontWeight: 600 }}>{t('hero_cat_aplikasi_desc')}</p>
             </div>
           </div>
         </div>

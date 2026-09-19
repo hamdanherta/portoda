@@ -146,37 +146,40 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
                 {lang === 'en' ? (profile?.bio_en || profile?.bio || t('hero_bio')) : (profile?.bio || t('hero_bio'))}
               </p>
 
-              {/* Badge Lokasi (Di Atas Button Jelajahi Karya) */}
-              <div style={{ marginBottom: '0.85rem', display: 'flex', alignItems: 'center' }}>
-                <span style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.4rem',
-                  padding: '0.4rem 1rem',
-                  borderRadius: '999px',
-                  background: '#005BAB',
-                  color: '#FFFFFF',
-                  fontSize: '0.92rem',
-                  fontWeight: 800,
-                  border: '2px solid #005BAB' 
-                }}>
-                  <MapPin size={17} />
-                  <span>{(lang === 'en' ? profile?.domisili_en : profile?.domisili) || t('hero_location')}</span>
-                </span>
-              </div>
+              {/* Badge Lokasi & CTA Action Buttons Container */}
+              <div className="hero-cta-container">
+                {/* Badge Lokasi */}
+                <div className="hero-cta-badge">
+                  <span style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                    padding: '0.4rem 1rem',
+                    borderRadius: '999px',
+                    background: '#005BAB',
+                    color: '#FFFFFF',
+                    fontSize: '0.92rem',
+                    fontWeight: 800,
+                    border: '2px solid #005BAB' 
+                  }}>
+                    <MapPin size={17} />
+                    <span>{(lang === 'en' ? profile?.domisili_en : profile?.domisili) || t('hero_location')}</span>
+                  </span>
+                </div>
 
-              {/* CTA Action Buttons */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flexWrap: 'wrap' }}>
-                <button onClick={onExploreClick} className="btn-green" style={{ padding: '0.65rem 1.4rem', fontSize: '0.92rem' }}>
-                  <span>{t('hero_btn_explore')}</span>
-                  <ArrowRight size={16} />
-                </button>
+                {/* Button Contact */}
                 {onOpenContact && (
-                  <button onClick={onOpenContact} className="btn-secondary" style={{ padding: '0.65rem 1.4rem', fontSize: '0.92rem' }}>
+                  <button onClick={onOpenContact} className="btn-secondary hero-cta-contact" style={{ padding: '0.65rem 1.4rem', fontSize: '0.92rem' }}>
                     <MessageSquare size={16} />
                     <span>{t('hero_btn_contact')}</span>
                   </button>
                 )}
+
+                {/* Button Explore (Jelajahi Karya) - Paling Bawah di Mobile View */}
+                <button onClick={onExploreClick} className="btn-green hero-cta-explore" style={{ padding: '0.65rem 1.4rem', fontSize: '0.92rem' }}>
+                  <span>{t('hero_btn_explore')}</span>
+                  <ArrowRight size={16} />
+                </button>
               </div>
             </div>
           </div>
@@ -361,6 +364,27 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
 
       <style>{`
         @media (max-width: 640px) {
+          .hero-cta-container {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 0.75rem !important;
+            width: 100% !important;
+          }
+          .hero-cta-badge {
+            order: 1 !important;
+            margin: 0 !important;
+            display: flex !important;
+            justify-content: center !important;
+          }
+          .hero-cta-contact {
+            order: 2 !important;
+          }
+          .hero-cta-explore {
+            order: 3 !important;
+          }
+
           .hero-title-br {
             display: block !important;
           }
@@ -426,6 +450,24 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
           }
         }
         @media (min-width: 641px) {
+          .hero-cta-container {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            align-items: center !important;
+            gap: 0.85rem !important;
+          }
+          .hero-cta-badge {
+            width: 100% !important;
+            margin-bottom: 0.25rem !important;
+            order: 1 !important;
+          }
+          .hero-cta-explore {
+            order: 2 !important;
+          }
+          .hero-cta-contact {
+            order: 3 !important;
+          }
+
           .hero-title-br {
             display: none !important;
           }

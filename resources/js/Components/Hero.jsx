@@ -274,7 +274,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
                 {t('hero_stat_exp')}
               </div>
               <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#005BAB', opacity: 0.85, marginTop: '0.1rem' }}>
-                ({expStats.months} {lang === 'en' ? 'Months' : 'Bulan Kerja'})
+                {t('hero_stat_hours_sub')}
               </div>
             </div>
           </div>

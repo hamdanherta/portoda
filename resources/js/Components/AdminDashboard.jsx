@@ -826,16 +826,21 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
   const confirmDeleteTarget = async () => {
     if (!deletingTarget) return;
 
-    const label = deletingTarget.label;
-    const title = deletingTarget.title;
+    const target = deletingTarget;
+    const label = target.label;
+    const title = target.title;
+    const isReset = target.targetType === 'reset-mock';
 
-    startProcessing(deletingTarget.targetType === 'reset-mock' ? 'Mereset & menghapus seluruh data dari database...' : `Menghapus ${label} "${title}"...`);
+    // Set null immediately so confirmation box closes and animated loading modal spinner is clearly visible
+    setDeletingTarget(null);
+
+    startProcessing(isReset ? 'Mereset & menghapus seluruh data dari database...' : `Menghapus ${label} "${title}"...`);
 
     try {
-      if (deletingTarget.targetType === 'karya') {
-        await onDeleteItem(deletingTarget.id);
+      if (target.targetType === 'karya') {
+        await onDeleteItem(target.id);
         await refreshKaryaData();
-      } else if (deletingTarget.targetType === 'reset-mock') {
+      } else if (target.targetType === 'reset-mock') {
         await onResetMock();
         await refreshKaryaData();
         setExperiences([]);
@@ -843,21 +848,21 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
         setContacts([]);
         setCertificates([]);
         setProfileForm({});
-      } else if (deletingTarget.targetType === 'exp') {
-        const updated = await infoService.deleteExperience(deletingTarget.id);
+      } else if (target.targetType === 'exp') {
+        const updated = await infoService.deleteExperience(target.id);
         setExperiences(updated);
-      } else if (deletingTarget.targetType === 'doc') {
-        const updated = await infoService.deleteDocument(deletingTarget.id);
+      } else if (target.targetType === 'doc') {
+        const updated = await infoService.deleteDocument(target.id);
         setDocuments(updated);
-      } else if (deletingTarget.targetType === 'contact') {
-        const updated = await infoService.deleteContact(deletingTarget.id);
+      } else if (target.targetType === 'contact') {
+        const updated = await infoService.deleteContact(target.id);
         setContacts(updated);
-      } else if (deletingTarget.targetType === 'certificate') {
-        const updated = await infoService.deleteCertificate(deletingTarget.id);
+      } else if (target.targetType === 'certificate') {
+        const updated = await infoService.deleteCertificate(target.id);
         setCertificates(updated);
-      } else if (deletingTarget.targetType === 'skill') {
+      } else if (target.targetType === 'skill') {
         const currentSkills = Array.isArray(profileForm.skills) ? [...profileForm.skills] : [];
-        const updatedSkills = currentSkills.filter(s => s.id !== deletingTarget.id);
+        const updatedSkills = currentSkills.filter(s => s.id !== target.id);
         const newProfileData = {
           ...profileForm,
           skills: updatedSkills
@@ -866,8 +871,6 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
         setProfile(updated);
         setProfileForm(updated);
       }
-      const isReset = deletingTarget.targetType === 'reset-mock';
-      setDeletingTarget(null);
       finishProcessingSuccess(isReset ? 'Seluruh data karya, pengalaman, sertifikat, dan informasi berhasil dihapus dari database!' : `Data ${label} "${title}" berhasil dihapus!`);
     } catch (err) {
       finishProcessingError('Gagal menghapus data.');

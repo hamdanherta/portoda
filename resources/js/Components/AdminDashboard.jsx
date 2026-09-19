@@ -2746,19 +2746,19 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                       />
                     </div>
 
-                    {/* MEDIA DOKUMENTASI PENGALAMAN (MAKSIMAL 5 FOTO) */}
+                    {/* MEDIA DOKUMENTASI PENGALAMAN (MAKSIMAL 3 FOTO) */}
                     <div className="form-group" style={{ marginTop: '0.5rem', marginBottom: '1.5rem' }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem', flexWrap: 'wrap', gap: '0.4rem' }}>
                         <label style={{ fontWeight: 800, color: '#005BAB', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                           <Image size={18} />
-                          <span>Media Dokumentasi Pengalaman (Maksimal 5 Foto)</span>
+                          <span>Media Dokumentasi Pengalaman (Maksimal 3 Foto)</span>
                         </label>
                         <span style={{ fontSize: '0.78rem', fontWeight: 800, background: '#005BAB', color: '#FFFFFF', padding: '0.15rem 0.6rem', borderRadius: '999px' }}>
-                          {expForm.media?.length || 0} / 5 Foto Terunggah
+                          {expForm.media?.length || 0} / 3 Foto Terunggah
                         </span>
                       </div>
 
-                      {(!expForm.media || expForm.media.length < 5) && (
+                      {(!expForm.media || expForm.media.length < 3) && (
                         <div style={{
                           position: 'relative',
                           border: '2.5px dashed #005BAB',
@@ -2786,7 +2786,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.3rem', pointerEvents: 'none' }}>
                             <Upload size={24} color="#005BAB" />
                             <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#005BAB' }}>
-                              Pilih / Tarik hingga {5 - (expForm.media?.length || 0)} Berkas Foto Dokumentasi Lagi
+                              Pilih / Tarik hingga {3 - (expForm.media?.length || 0)} Berkas Foto Dokumentasi Lagi
                             </span>
                             <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#005BAB', opacity: 0.85 }}>
                               (Otomatis dikompresi ke format WebP resolusi tinggi, rasio 16:9 dengan background blur jika tidak landscape)

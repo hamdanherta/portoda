@@ -54,46 +54,71 @@ function ExpMediaCarousel({ mediaList, title }) {
 
   if (!mediaList || mediaList.length === 0) return null;
 
-  const currentImg = mediaList[currentIndex];
-
   return (
-    <div style={{ marginTop: '0.85rem', borderRadius: '14px', overflow: 'hidden', border: '2px solid #005BAB' }}>
+    <div style={{ marginTop: '0.85rem', borderRadius: '14px', overflow: 'hidden', border: '2px solid #005BAB', position: 'relative' }}>
       {/* 16:9 Landscape Aspect Ratio with Blurred Backdrop & Contain Foreground */}
       <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%', overflow: 'hidden', background: '#111827' }}>
-        {/* Layer 1: Blurred Backdrop */}
-        <img
-          src={currentImg}
-          alt=""
-          aria-hidden="true"
-          style={{
-            position: 'absolute',
-            top: '-10%',
-            left: '-10%',
-            width: '120%',
-            height: '120%',
-            objectFit: 'cover',
-            filter: 'blur(20px) brightness(0.5) saturate(1.4)',
-            transform: 'scale(1.05)',
-            pointerEvents: 'none',
-            zIndex: 1
-          }}
-        />
+        {/* Sliding Track for Smooth Carousel Slide Animation */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: `${mediaList.length * 100}%`,
+          height: '100%',
+          display: 'flex',
+          transform: `translateX(-${(currentIndex * 100) / mediaList.length}%)`,
+          transition: 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)',
+          willChange: 'transform'
+        }}>
+          {mediaList.map((imgSrc, idx) => (
+            <div
+              key={idx}
+              style={{
+                position: 'relative',
+                width: `${100 / mediaList.length}%`,
+                height: '100%',
+                flexShrink: 0,
+                overflow: 'hidden',
+                background: '#111827'
+              }}
+            >
+              {/* Layer 1: Blurred Backdrop */}
+              <img
+                src={imgSrc}
+                alt=""
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  top: '-10%',
+                  left: '-10%',
+                  width: '120%',
+                  height: '120%',
+                  objectFit: 'cover',
+                  filter: 'blur(20px) brightness(0.5) saturate(1.4)',
+                  transform: 'scale(1.05)',
+                  pointerEvents: 'none',
+                  zIndex: 1
+                }}
+              />
 
-        {/* Layer 2: Main Image contain (no crop) */}
-        <img
-          src={currentImg}
-          alt={`${title} - Foto ${currentIndex + 1}`}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'contain',
-            objectPosition: 'center center',
-            zIndex: 2
-          }}
-        />
+              {/* Layer 2: Main Image contain (no crop) */}
+              <img
+                src={imgSrc}
+                alt={`${title} - Foto ${idx + 1}`}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  objectPosition: 'center center',
+                  zIndex: 2
+                }}
+              />
+            </div>
+          ))}
+        </div>
 
         {/* Navigation Buttons if > 1 photo */}
         {mediaList.length > 1 && (
@@ -668,54 +693,60 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                     }}
                   >
                     <div>
-                      {/* Media Cover Preview — 16:9 Aspect Ratio with Blurred Backdrop & Contained Image */}
-                      {cert.cover && (
-                        <div style={{
-                          position: 'relative',
-                          width: '100%',
-                          paddingTop: '56.25%',
-                          borderRadius: '14px',
-                          overflow: 'hidden',
-                          border: '1.5px solid #005BAB',
-                          marginBottom: '0.85rem',
-                          backgroundColor: '#111827'
-                        }}>
-                          {/* Layer 1: Blurred Backdrop */}
-                          <img
-                            src={cert.cover}
-                            alt=""
-                            aria-hidden="true"
-                            style={{
-                              position: 'absolute',
-                              top: '-10%',
-                              left: '-10%',
-                              width: '120%',
-                              height: '120%',
-                              objectFit: 'cover',
-                              filter: 'blur(18px) brightness(0.6) saturate(1.4)',
-                              transform: 'scale(1.05)',
-                              pointerEvents: 'none',
-                              userSelect: 'none',
-                              zIndex: 1
-                            }}
-                          />
-                          {/* Layer 2: Main Contained Image */}
-                          <img
-                            src={cert.cover}
-                            alt={cert.title}
-                            style={{
-                              position: 'absolute',
-                              top: 0,
-                              left: 0,
-                              width: '100%',
-                              height: '100%',
-                              objectFit: 'contain',
-                              objectPosition: 'center center',
-                              zIndex: 2
-                            }}
-                          />
-                        </div>
-                      )}
+                      {/* Media Cover & Gallery Carousel — 16:9 Aspect Ratio with Blurred Backdrop & Contained Image */}
+                      {(() => {
+                        const certMedia = Array.from(new Set([cert.cover, ...(cert.gallery || [])].filter(Boolean)));
+                        if (certMedia.length > 1) {
+                          return <ExpMediaCarousel mediaList={certMedia} title={cert.title} />;
+                        }
+                        return cert.cover ? (
+                          <div style={{
+                            position: 'relative',
+                            width: '100%',
+                            paddingTop: '56.25%',
+                            borderRadius: '14px',
+                            overflow: 'hidden',
+                            border: '1.5px solid #005BAB',
+                            marginBottom: '0.85rem',
+                            backgroundColor: '#111827'
+                          }}>
+                            {/* Layer 1: Blurred Backdrop */}
+                            <img
+                              src={cert.cover}
+                              alt=""
+                              aria-hidden="true"
+                              style={{
+                                position: 'absolute',
+                                top: '-10%',
+                                left: '-10%',
+                                width: '120%',
+                                height: '120%',
+                                objectFit: 'cover',
+                                filter: 'blur(18px) brightness(0.6) saturate(1.4)',
+                                transform: 'scale(1.05)',
+                                pointerEvents: 'none',
+                                userSelect: 'none',
+                                zIndex: 1
+                              }}
+                            />
+                            {/* Layer 2: Main Contained Image */}
+                            <img
+                              src={cert.cover}
+                              alt={cert.title}
+                              style={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'contain',
+                                objectPosition: 'center center',
+                                zIndex: 2
+                              }}
+                            />
+                          </div>
+                        ) : null;
+                      })()}
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem', flexWrap: 'wrap' }}>
                         <span style={{ fontSize: '0.72rem', fontWeight: 800, background: '#005BAB', color: '#FFFFFF', padding: '0.15rem 0.55rem', borderRadius: '999px' }}>
                           {cert.category || 'Sertifikasi'}

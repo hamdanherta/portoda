@@ -198,34 +198,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
             zIndex: 2,
             transitionDelay: '0.1s'
           }} className="hero-stats-bar reveal-on-scroll">
-            {/* Stat 1: Proyek Selesai */}
-            <div style={{ textAlign: 'center', minWidth: '120px' }} className="hero-stat-box">
-              <div style={{
-                fontSize: 'clamp(1.9rem, 3.2vw, 2.6rem)',
-                fontWeight: 800,
-                color: '#005BAB',
-                lineHeight: 1.1,
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.15rem',
-                letterSpacing: '-0.03em'
-              }}>
-                <span>{totalItems}</span>
-                <span style={{ fontSize: '1.7rem', fontWeight: 800, color: '#005BAB' }}>+</span>
-              </div>
-              <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#005BAB', marginTop: '0.25rem', lineHeight: 1.3 }}>
-                {t('hero_stat_completed')}
-              </div>
-              <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#005BAB', opacity: 0.85, marginTop: '0.1rem' }}>
-                {t('hero_stat_completed_sub')}
-              </div>
-            </div>
-
-            {/* Divider Vertical */}
-            <div style={{ width: '2px', height: '48px', background: '#005BAB', opacity: 0.25 }} className="stat-divider" />
-
-            {/* Stat 2: Jam Terbang */}
+            {/* Stat 1: Jam Terbang */}
             <div style={{ textAlign: 'center', minWidth: '120px' }} className="hero-stat-box">
               <div style={{
                 fontSize: 'clamp(1.9rem, 3.2vw, 2.6rem)',
@@ -246,6 +219,33 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
               </div>
               <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#005BAB', opacity: 0.85, marginTop: '0.1rem' }}>
                 {t('hero_stat_hours_sub')}
+              </div>
+            </div>
+
+            {/* Divider Vertical */}
+            <div style={{ width: '2px', height: '48px', background: '#005BAB', opacity: 0.25 }} className="stat-divider" />
+
+            {/* Stat 2: Proyek Selesai */}
+            <div style={{ textAlign: 'center', minWidth: '120px' }} className="hero-stat-box">
+              <div style={{
+                fontSize: 'clamp(1.9rem, 3.2vw, 2.6rem)',
+                fontWeight: 800,
+                color: '#005BAB',
+                lineHeight: 1.1,
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.15rem',
+                letterSpacing: '-0.03em'
+              }}>
+                <span>{totalItems}</span>
+                <span style={{ fontSize: '1.7rem', fontWeight: 800, color: '#005BAB' }}>+</span>
+              </div>
+              <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#005BAB', marginTop: '0.25rem', lineHeight: 1.3 }}>
+                {t('hero_stat_completed')}
+              </div>
+              <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#005BAB', opacity: 0.85, marginTop: '0.1rem' }}>
+                {t('hero_stat_completed_sub')}
               </div>
             </div>
 

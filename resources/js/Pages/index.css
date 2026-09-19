@@ -307,6 +307,24 @@ body.admin-open *::-webkit-scrollbar-corner,
   transform: translateY(-2px);
 }
 
+.btn-green {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #16A34A;
+  color: var(--text-white);
+  font-weight: 700;
+  padding: 0.65rem 1.4rem;
+  border-radius: var(--radius-pill);
+  border: var(--border-thick);
+  transition: var(--transition-fast);
+}
+
+.btn-green:hover {
+  background: #15803D;
+  transform: translateY(-2px);
+}
+
 .btn-white {
   display: inline-flex;
   align-items: center;

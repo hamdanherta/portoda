@@ -167,7 +167,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
 
               {/* CTA Action Buttons */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flexWrap: 'wrap' }}>
-                <button onClick={onExploreClick} className="btn-primary" style={{ padding: '0.65rem 1.4rem', fontSize: '0.92rem' }}>
+                <button onClick={onExploreClick} className="btn-green" style={{ padding: '0.65rem 1.4rem', fontSize: '0.92rem' }}>
                   <span>{t('hero_btn_explore')}</span>
                   <ArrowRight size={16} />
                 </button>
@@ -199,7 +199,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
             transitionDelay: '0.1s'
           }} className="hero-stats-bar reveal-on-scroll">
             {/* Stat 1: Jam Terbang */}
-            <div style={{ textAlign: 'center', minWidth: '120px' }} className="hero-stat-box">
+            <div style={{ textAlign: 'center', minWidth: '120px' }} className="hero-stat-box hero-stat-hours">
               <div style={{
                 fontSize: 'clamp(1.9rem, 3.2vw, 2.6rem)',
                 fontWeight: 800,
@@ -218,7 +218,11 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
                 {t('hero_stat_hours')}
               </div>
               <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#005BAB', opacity: 0.85, marginTop: '0.1rem' }}>
-                {t('hero_stat_hours_sub')}
+                {lang === 'en' ? (
+                  <>as<br className="hero-subtext-br" />Graphic Designer</>
+                ) : (
+                  <>Sebagai<br className="hero-subtext-br" />Desainer Grafis</>
+                )}
               </div>
             </div>
 
@@ -226,7 +230,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
             <div style={{ width: '2px', height: '48px', background: '#005BAB', opacity: 0.25 }} className="stat-divider" />
 
             {/* Stat 2: Proyek Selesai */}
-            <div style={{ textAlign: 'center', minWidth: '120px' }} className="hero-stat-box">
+            <div style={{ textAlign: 'center', minWidth: '120px' }} className="hero-stat-box hero-stat-completed">
               <div style={{
                 fontSize: 'clamp(1.9rem, 3.2vw, 2.6rem)',
                 fontWeight: 800,
@@ -253,7 +257,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
             <div style={{ width: '2px', height: '48px', background: '#005BAB', opacity: 0.25 }} className="stat-divider" />
 
             {/* Stat 3: Pengalaman Kerja */}
-            <div style={{ textAlign: 'center', minWidth: '120px' }} className="hero-stat-box hero-stat-box-last">
+            <div style={{ textAlign: 'center', minWidth: '120px' }} className="hero-stat-box hero-stat-exp">
               <div style={{
                 fontSize: 'clamp(1.9rem, 3.2vw, 2.6rem)',
                 fontWeight: 800,
@@ -274,7 +278,11 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
                 {t('hero_stat_exp')}
               </div>
               <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#005BAB', opacity: 0.85, marginTop: '0.1rem' }}>
-                {t('hero_stat_hours_sub')}
+                {lang === 'en' ? (
+                  <>as<br className="hero-subtext-br" />Graphic Designer</>
+                ) : (
+                  <>Sebagai<br className="hero-subtext-br" />Desainer Grafis</>
+                )}
               </div>
             </div>
           </div>
@@ -389,7 +397,21 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
             min-width: 0 !important;
             text-align: center !important;
           }
-          .hero-stat-box-last {
+          .hero-stat-hours {
+            order: 1 !important;
+          }
+          .hero-stat-exp {
+            order: 2 !important;
+            grid-column: auto !important;
+            width: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            text-align: center !important;
+          }
+          .hero-stat-completed {
+            order: 3 !important;
             grid-column: 1 / -1 !important;
             width: 100% !important;
             display: flex !important;
@@ -399,6 +421,9 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
             text-align: center !important;
             margin-top: 0.25rem !important;
           }
+          .hero-subtext-br {
+            display: block !important;
+          }
         }
         @media (min-width: 641px) {
           .hero-title-br {
@@ -406,6 +431,9 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
           }
           .hero-title-sep {
             display: inline !important;
+          }
+          .hero-subtext-br {
+            display: none !important;
           }
         }
       `}</style>

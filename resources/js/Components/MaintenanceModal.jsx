@@ -114,20 +114,55 @@ export default function MaintenanceModal({ isOpen }) {
             gap: '1rem'
           }}
         >
-          <span
-            style={{
-              fontSize: '0.92rem',
-              fontWeight: 800,
-              color: '#005BAB',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem'
-            }}
-          >
-            <PhoneCall size={18} />
-            <span>Ada keperluan mendesak? Hubungi Hamdani:</span>
-          </span>
+          <style>{`
+            .maint-contact-prompt {
+              font-size: 0.92rem;
+              font-weight: 800;
+              color: #005BAB;
+              text-align: center;
+              line-height: 1.45;
+              width: 100%;
+            }
+            .maint-desktop-text {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 0.45rem;
+            }
+            .maint-mobile-text {
+              display: none;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              gap: 0.25rem;
+            }
+            @media (max-width: 540px) {
+              .maint-desktop-text {
+                display: none !important;
+              }
+              .maint-mobile-text {
+                display: flex !important;
+              }
+            }
+          `}</style>
 
+          <div className="maint-contact-prompt">
+            {/* Tampilan Desktop (Satu Baris Sejajar) */}
+            <div className="maint-desktop-text">
+              <PhoneCall size={18} style={{ flexShrink: 0 }} />
+              <span>Ada keperluan? Hubungi Hamdani Sekarang</span>
+            </div>
+
+            {/* Tampilan Mobile (Dua Baris Rapi dengan Icon Terpusat di Baris Pertama) */}
+            <div className="maint-mobile-text">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
+                <PhoneCall size={18} style={{ flexShrink: 0 }} />
+                <span>Ada keperluan?</span>
+              </div>
+              <span>Hubungi Hamdani Sekarang</span>
+            </div>
+          </div>
+ 
           {/* WhatsApp Action Button */}
           <a
             href="https://wa.me/6289652109244"

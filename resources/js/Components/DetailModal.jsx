@@ -145,6 +145,24 @@ export default function DetailModal({ item, onClose }) {
         return `https://player.vimeo.com/video/${vimeoId}?autoplay=1`;
       }
     }
+    if (url.includes('instagram.com') || url.includes('instagr.am')) {
+      let igCode = null;
+      if (url.includes('/reel/')) {
+        igCode = url.split('/reel/')[1]?.split('/')[0]?.split('?')[0];
+      } else if (url.includes('/reels/')) {
+        igCode = url.split('/reels/')[1]?.split('/')[0]?.split('?')[0];
+      } else if (url.includes('/p/')) {
+        igCode = url.split('/p/')[1]?.split('/')[0]?.split('?')[0];
+      } else if (url.includes('/tv/')) {
+        igCode = url.split('/tv/')[1]?.split('/')[0]?.split('?')[0];
+      }
+      if (igCode) {
+        return `https://www.instagram.com/p/${igCode}/embed`;
+      }
+      if (url.includes('/embed')) {
+        return url;
+      }
+    }
     if (url.startsWith('http') && (url.includes('embed') || url.includes('player'))) {
       return `${url}${url.includes('?') ? '&' : '?'}autoplay=1`;
     }
@@ -152,8 +170,8 @@ export default function DetailModal({ item, onClose }) {
   };
 
   const rawVideoLink = item.video_url || 
-    (item.project_url && (item.project_url.includes('youtube') || item.project_url.includes('youtu.be') || item.project_url.includes('vimeo')) ? item.project_url : '') ||
-    (item.prototype_url && (item.prototype_url.includes('youtube') || item.prototype_url.includes('youtu.be') || item.prototype_url.includes('vimeo')) ? item.prototype_url : '');
+    (item.project_url && (item.project_url.includes('youtube') || item.project_url.includes('youtu.be') || item.project_url.includes('vimeo') || item.project_url.includes('instagram') || item.project_url.includes('instagr.am')) ? item.project_url : '') ||
+    (item.prototype_url && (item.prototype_url.includes('youtube') || item.prototype_url.includes('youtu.be') || item.prototype_url.includes('vimeo') || item.prototype_url.includes('instagram') || item.prototype_url.includes('instagr.am')) ? item.prototype_url : '');
 
   const videoEmbedUrl = getEmbedVideoUrl(rawVideoLink);
 
@@ -252,12 +270,18 @@ export default function DetailModal({ item, onClose }) {
         {/* Media Header (Video Embed or Image Carousel) */}
         <div style={{ position: 'relative', width: '100%', backgroundColor: '#FFFFFF', borderBottom: '2.5px solid #005BAB' }}>
           {videoEmbedUrl ? (
-            <div style={{ position: 'relative', paddingTop: '56.25%', width: '100%' }}>
+            <div style={{
+              position: 'relative',
+              paddingTop: videoEmbedUrl.includes('instagram.com') ? '90%' : '56.25%',
+              width: '100%',
+              backgroundColor: '#000000'
+            }}>
               <iframe
                 src={videoEmbedUrl}
                 title={titleText}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
+                scrolling="no"
                 style={{
                   position: 'absolute',
                   top: 0,

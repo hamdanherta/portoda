@@ -2288,24 +2288,24 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                             </div>
                           )}
 
-                          {/* 3. LINK VIDEO YOUTUBE (KHUSUS VIDEOGRAFI, MOTION GRAPHIC, FILM) */}
+                          {/* 3. LINK VIDEO (KHUSUS VIDEOGRAFI, MOTION GRAPHIC, FILM) */}
                           {rules.hasVideo && (
                             <div className="form-group" style={{ marginTop: '1rem' }}>
                               <label style={{ fontWeight: 800, color: '#005BAB', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                                 <Video size={18} />
-                                <span>Link Video YouTube (Wajib - Maksimal 1 Link Video) *</span>
+                                <span>Link Video (YouTube / Instagram / Vimeo) *</span>
                               </label>
                               <input
                                 type="url"
                                 required
-                                placeholder="https://www.youtube.com/watch?v=... atau https://youtu.be/..."
+                                placeholder="https://www.youtube.com/... atau https://www.instagram.com/reel/..."
                                 value={formData.video_url || ''}
                                 onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
                                 className="form-input"
                               />
                               <span style={{ fontSize: '0.78rem', color: '#005BAB', marginTop: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.3rem', fontWeight: 700 }}>
                                 <Info size={14} />
-                                <span>Video bersumber langsung dari YouTube dan dapat diputar otomatis langsung di dalam aplikasi saat kartu diklik.</span>
+                                <span>Video bersumber dari YouTube, Instagram (Reels/Post), atau Vimeo dan dapat diputar otomatis langsung di dalam modal detail.</span>
                               </span>
                             </div>
                           )}

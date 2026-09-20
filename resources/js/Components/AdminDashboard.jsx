@@ -1862,11 +1862,11 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                           fontWeight: 800,
                           padding: '0.25rem 0.65rem',
                           borderRadius: '999px',
-                          background: profileForm.watermark_enabled !== false ? '#E0F2FE' : '#FEE2E2',
-                          color: profileForm.watermark_enabled !== false ? '#0284C7' : '#DC2626',
-                          border: `1.5px solid ${profileForm.watermark_enabled !== false ? '#0284C7' : '#DC2626'}`
+                          background: profileForm.watermark_enabled !== false ? '#DCFCE7' : '#FEE2E2',
+                          color: profileForm.watermark_enabled !== false ? '#15803D' : '#DC2626',
+                          border: `1.5px solid ${profileForm.watermark_enabled !== false ? '#16A34A' : '#DC2626'}`
                         }}>
-                          {profileForm.watermark_enabled !== false ? 'AKTIF (ON)' : 'NONAKTIF (OFF)'}
+                          {profileForm.watermark_enabled !== false ? '(ON)' : '(OFF)'}
                         </span>
                       </div>
                       <p style={{ fontSize: '0.85rem', color: '#005BAB', fontWeight: 600, marginBottom: '1.25rem', lineHeight: 1.5 }}>
@@ -1937,11 +1937,11 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                           fontWeight: 800,
                           padding: '0.25rem 0.65rem',
                           borderRadius: '999px',
-                          background: (profileForm.maintenance_mode === true || profileForm.maintenance_mode === 1 || profileForm.maintenance_mode === '1') ? '#FEF3C7' : '#E0F2FE',
-                          color: (profileForm.maintenance_mode === true || profileForm.maintenance_mode === 1 || profileForm.maintenance_mode === '1') ? '#D97706' : '#0284C7',
-                          border: `1.5px solid ${(profileForm.maintenance_mode === true || profileForm.maintenance_mode === 1 || profileForm.maintenance_mode === '1') ? '#D97706' : '#0284C7'}`
+                          background: (profileForm.maintenance_mode === true || profileForm.maintenance_mode === 1 || profileForm.maintenance_mode === '1') ? '#DCFCE7' : '#FEE2E2',
+                          color: (profileForm.maintenance_mode === true || profileForm.maintenance_mode === 1 || profileForm.maintenance_mode === '1') ? '#15803D' : '#DC2626',
+                          border: `1.5px solid ${(profileForm.maintenance_mode === true || profileForm.maintenance_mode === 1 || profileForm.maintenance_mode === '1') ? '#16A34A' : '#DC2626'}`
                         }}>
-                          {(profileForm.maintenance_mode === true || profileForm.maintenance_mode === 1 || profileForm.maintenance_mode === '1') ? 'AKTIF (ON)' : 'NONAKTIF (OFF)'}
+                          {(profileForm.maintenance_mode === true || profileForm.maintenance_mode === 1 || profileForm.maintenance_mode === '1') ? '(ON)' : '(OFF)'}
                         </span>
                       </div>
                       <p style={{ fontSize: '0.85rem', color: '#005BAB', fontWeight: 600, marginBottom: '1.25rem', lineHeight: 1.5 }}>

@@ -272,9 +272,11 @@ export default function DetailModal({ item, onClose }) {
           {videoEmbedUrl ? (
             <div style={{
               position: 'relative',
-              paddingTop: videoEmbedUrl.includes('instagram.com') ? '90%' : '56.25%',
               width: '100%',
-              backgroundColor: '#000000'
+              backgroundColor: videoEmbedUrl.includes('instagram.com') ? '#FFFFFF' : '#000000',
+              ...(videoEmbedUrl.includes('instagram.com')
+                ? { height: '520px', maxHeight: '75vh' }
+                : { paddingTop: '56.25%' })
             }}>
               <iframe
                 src={videoEmbedUrl}

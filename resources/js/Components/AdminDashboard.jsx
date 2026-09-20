@@ -2293,19 +2293,19 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                             <div className="form-group" style={{ marginTop: '1rem' }}>
                               <label style={{ fontWeight: 800, color: '#005BAB', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                                 <Video size={18} />
-                                <span>Link Video (YouTube / Instagram / Vimeo) *</span>
+                                <span>Link Video (Google Drive / YouTube / Instagram / Vimeo) *</span>
                               </label>
                               <input
                                 type="url"
                                 required
-                                placeholder="https://www.youtube.com/... atau https://www.instagram.com/reel/..."
+                                placeholder="https://drive.google.com/file/d/... atau https://www.youtube.com/..."
                                 value={formData.video_url || ''}
                                 onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
                                 className="form-input"
                               />
                               <span style={{ fontSize: '0.78rem', color: '#005BAB', marginTop: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.3rem', fontWeight: 700 }}>
                                 <Info size={14} />
-                                <span>Video bersumber dari YouTube, Instagram (Reels/Post), atau Vimeo dan dapat diputar otomatis langsung di dalam modal detail.</span>
+                                <span>Mendukung link Google Drive, YouTube, Instagram (Reels/Post), & Vimeo. Pemutar video langsung tampil di modal.</span>
                               </span>
                             </div>
                           )}

@@ -163,15 +163,34 @@ export default function DetailModal({ item, onClose }) {
         return url;
       }
     }
+    if (url.includes('drive.google.com') || url.includes('docs.google.com')) {
+      let fileId = null;
+      if (url.includes('/file/d/')) {
+        fileId = url.split('/file/d/')[1]?.split('/')[0]?.split('?')[0];
+      } else if (url.includes('id=')) {
+        fileId = url.split('id=')[1]?.split('&')[0];
+      }
+      if (fileId) {
+        return `https://drive.google.com/file/d/${fileId}/preview`;
+      }
+      if (url.includes('/preview')) {
+        return url;
+      }
+    }
     if (url.startsWith('http') && (url.includes('embed') || url.includes('player'))) {
       return `${url}${url.includes('?') ? '&' : '?'}autoplay=1`;
     }
     return null;
   };
 
+  const isVideoPlatformLink = (link) => {
+    if (!link) return false;
+    return link.includes('youtube') || link.includes('youtu.be') || link.includes('vimeo') || link.includes('instagram') || link.includes('instagr.am') || link.includes('drive.google.com') || link.includes('docs.google.com');
+  };
+
   const rawVideoLink = item.video_url || 
-    (item.project_url && (item.project_url.includes('youtube') || item.project_url.includes('youtu.be') || item.project_url.includes('vimeo') || item.project_url.includes('instagram') || item.project_url.includes('instagr.am')) ? item.project_url : '') ||
-    (item.prototype_url && (item.prototype_url.includes('youtube') || item.prototype_url.includes('youtu.be') || item.prototype_url.includes('vimeo') || item.prototype_url.includes('instagram') || item.prototype_url.includes('instagr.am')) ? item.prototype_url : '');
+    (isVideoPlatformLink(item.project_url) ? item.project_url : '') ||
+    (isVideoPlatformLink(item.prototype_url) ? item.prototype_url : '');
 
   const videoEmbedUrl = getEmbedVideoUrl(rawVideoLink);
 

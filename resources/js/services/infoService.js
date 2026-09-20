@@ -180,6 +180,9 @@ export const infoService = {
       if (typeof window !== 'undefined') {
         const isEnabled = data.watermark_enabled !== false && data.watermark_enabled !== 0 && data.watermark_enabled !== '0';
         localStorage.setItem('portoda_watermark_enabled', isEnabled ? 'true' : 'false');
+        
+        const isMaint = data.maintenance_mode === true || data.maintenance_mode === 1 || data.maintenance_mode === '1';
+        localStorage.setItem('portoda_maintenance_mode', isMaint ? 'true' : 'false');
       }
       return data;
     } catch (err) {
@@ -194,6 +197,9 @@ export const infoService = {
       if (typeof window !== 'undefined') {
         const isEnabled = response.data?.watermark_enabled !== false && response.data?.watermark_enabled !== 0 && response.data?.watermark_enabled !== '0';
         localStorage.setItem('portoda_watermark_enabled', isEnabled ? 'true' : 'false');
+        
+        const isMaint = response.data?.maintenance_mode === true || response.data?.maintenance_mode === 1 || response.data?.maintenance_mode === '1';
+        localStorage.setItem('portoda_maintenance_mode', isMaint ? 'true' : 'false');
         window.dispatchEvent(new Event('portoda_info_updated'));
       }
       return response.data;

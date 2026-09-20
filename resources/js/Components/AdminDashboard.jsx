@@ -660,6 +660,25 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
     }
   };
 
+  const handleToggleMaintenance = async () => {
+    const isCurrentlyMaint = profileForm.maintenance_mode === true || profileForm.maintenance_mode === 1 || profileForm.maintenance_mode === '1';
+    const newVal = !isCurrentlyMaint;
+    const updatedForm = { ...profileForm, maintenance_mode: newVal };
+    setProfileForm(updatedForm);
+
+    try {
+      startProcessing(newVal ? 'Mengaktifkan Mode Pemeliharaan (Maintenance)...' : 'Menoaktifkan Mode Pemeliharaan (Maintenance)...');
+      const updated = await infoService.saveProfile(updatedForm);
+      setProfile(updated || updatedForm);
+      setProfileForm(updated || updatedForm);
+      finishProcessingSuccess(newVal ? 'Mode Maintenance Berhasil DIAKTIFKAN!' : 'Mode Maintenance Berhasil DINONAKTIFKAN!');
+    } catch (err) {
+      console.error('Failed to toggle maintenance mode:', err);
+      finishProcessingError('Gagal memperbarui status mode maintenance.');
+      setProfileForm(profileForm);
+    }
+  };
+
   const handleEditSkillClick = (skill) => {
     setEditingSkillId(skill.id);
     setSkillForm({
@@ -1896,6 +1915,81 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                           }}
                         >
                           {profileForm.watermark_enabled !== false ? (
+                            <Check size={14} color="#005BAB" strokeWidth={3} />
+                          ) : (
+                            <X size={14} color="#DC2626" strokeWidth={3} />
+                          )}
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Mode Maintenance Control Card */}
+                  <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF', border: '2.5px solid #005BAB', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+                        <h3 style={{ fontSize: '1.15rem', color: '#005BAB', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0 }}>
+                          <AlertTriangle size={20} />
+                          <span>Mode Maintenance</span>
+                        </h3>
+                        <span style={{
+                          fontSize: '0.75rem',
+                          fontWeight: 800,
+                          padding: '0.25rem 0.65rem',
+                          borderRadius: '999px',
+                          background: (profileForm.maintenance_mode === true || profileForm.maintenance_mode === 1 || profileForm.maintenance_mode === '1') ? '#FEF3C7' : '#E0F2FE',
+                          color: (profileForm.maintenance_mode === true || profileForm.maintenance_mode === 1 || profileForm.maintenance_mode === '1') ? '#D97706' : '#0284C7',
+                          border: `1.5px solid ${(profileForm.maintenance_mode === true || profileForm.maintenance_mode === 1 || profileForm.maintenance_mode === '1') ? '#D97706' : '#0284C7'}`
+                        }}>
+                          {(profileForm.maintenance_mode === true || profileForm.maintenance_mode === 1 || profileForm.maintenance_mode === '1') ? 'AKTIF (ON)' : 'NONAKTIF (OFF)'}
+                        </span>
+                      </div>
+                      <p style={{ fontSize: '0.85rem', color: '#005BAB', fontWeight: 600, marginBottom: '1.25rem', lineHeight: 1.5 }}>
+                        Jika diaktifkan, halaman beranda akan menampilkan modal pemberitahuan maintenance yang tidak dapat ditutup. Halaman Login dan Dashboard tetap dapat diakses.
+                      </p>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '0.75rem', borderTop: '1.5px solid rgba(0,91,171,0.15)' }}>
+                      <span style={{ fontSize: '0.88rem', fontWeight: 800, color: '#005BAB' }}>
+                        Status Mode Maintenance
+                      </span>
+
+                      {/* Toggle Switch Button */}
+                      <button
+                        type="button"
+                        onClick={handleToggleMaintenance}
+                        style={{
+                          position: 'relative',
+                          width: '58px',
+                          height: '32px',
+                          borderRadius: '999px',
+                          backgroundColor: (profileForm.maintenance_mode === true || profileForm.maintenance_mode === 1 || profileForm.maintenance_mode === '1') ? '#005BAB' : '#CBD5E1',
+                          border: '2px solid #005BAB',
+                          cursor: 'pointer',
+                          transition: 'background-color 0.25s ease',
+                          padding: 0,
+                          outline: 'none',
+                          display: 'flex',
+                          alignItems: 'center'
+                        }}
+                        title={(profileForm.maintenance_mode === true || profileForm.maintenance_mode === 1 || profileForm.maintenance_mode === '1') ? 'Klik untuk mematikan mode maintenance' : 'Klik untuk mengaktifkan mode maintenance'}
+                      >
+                        <div
+                          style={{
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '50%',
+                            backgroundColor: '#FFFFFF',
+                            border: '1.5px solid #005BAB',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                            transform: (profileForm.maintenance_mode === true || profileForm.maintenance_mode === 1 || profileForm.maintenance_mode === '1') ? 'translateX(28px)' : 'translateX(3px)',
+                            transition: 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}
+                        >
+                          {(profileForm.maintenance_mode === true || profileForm.maintenance_mode === 1 || profileForm.maintenance_mode === '1') ? (
                             <Check size={14} color="#005BAB" strokeWidth={3} />
                           ) : (
                             <X size={14} color="#DC2626" strokeWidth={3} />

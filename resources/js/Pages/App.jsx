@@ -7,7 +7,9 @@ import DetailModal from '../Components/DetailModal';
 import AdminDashboard from '../Components/AdminDashboard';
 import InfoModal from '../Components/InfoModal';
 import Footer from '../Components/Footer';
+import MaintenanceModal from '../Components/MaintenanceModal';
 import { portfolioService } from '../services/portfolioService';
+import { infoService } from '../services/infoService';
 import { LanguageProvider } from '../context/LanguageContext';
 import { ArrowLeft } from 'lucide-react';
 import { Head } from '@inertiajs/react';
@@ -28,6 +30,37 @@ export default function App({ karyaId }) {
   // Halaman Daftar Karya vs Beranda
   const [isFullGallery, setIsFullGallery] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Maintenance Mode State
+  const [isMaintenanceMode, setIsMaintenanceMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('portoda_maintenance_mode') === 'true';
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    const checkMaintenance = async () => {
+      try {
+        const p = await infoService.getProfile();
+        const activeMaint = p?.maintenance_mode === true || p?.maintenance_mode === 1 || p?.maintenance_mode === '1';
+        setIsMaintenanceMode(activeMaint);
+      } catch (err) {
+        console.error('Failed to check maintenance mode status:', err);
+      }
+    };
+    checkMaintenance();
+
+    const handleInfoUpdated = () => {
+      if (typeof window !== 'undefined') {
+        const isMaint = localStorage.getItem('portoda_maintenance_mode') === 'true';
+        setIsMaintenanceMode(isMaint);
+      }
+    };
+
+    window.addEventListener('portoda_info_updated', handleInfoUpdated);
+    return () => window.removeEventListener('portoda_info_updated', handleInfoUpdated);
+  }, []);
 
   // Auto-open Detail Modal jika mengakses link karya (misal ?karya=xxx atau /karya/xxx)
   useEffect(() => {
@@ -322,6 +355,11 @@ export default function App({ karyaId }) {
           onUpdateItem={handleUpdateItem}
           onDeleteItem={handleDeleteItem}
           onResetMock={handleResetMock}
+        />
+
+        {/* Modal Maintenance (Modal Peringatan Pemeliharaan Sistem - Tidak dapat ditutup pada Halaman Beranda) */}
+        <MaintenanceModal
+          isOpen={isMaintenanceMode && !isAdminOpen}
         />
 
         {/* Footer */}

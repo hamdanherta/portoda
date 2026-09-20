@@ -23,10 +23,12 @@ class Profile extends Model
         'ttl_en',
         'skills',
         'watermark_enabled',
+        'maintenance_mode',
     ];
 
     protected $casts = [
         'skills' => 'array',
         'watermark_enabled' => 'boolean',
+        'maintenance_mode' => 'boolean',
     ];
 }

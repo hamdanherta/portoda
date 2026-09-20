@@ -2293,7 +2293,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                             <div className="form-group" style={{ marginTop: '1rem' }}>
                               <label style={{ fontWeight: 800, color: '#005BAB', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                                 <Video size={18} />
-                                <span>Link Video (Google Drive / YouTube / Instagram / Vimeo) *</span>
+                                <span>Link Video (Google Drive / YouTube) *</span>
                               </label>
                               <input
                                 type="url"

@@ -432,29 +432,28 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                   const docTitle = getLocalizedField(doc, 'title');
                   const docType = getLocalizedField(doc, 'type');
                   const docDesc = getLocalizedField(doc, 'description');
+                  const docCategory = doc.category || 'CV ATS';
                   const isCopied = copiedDocId === doc.id;
 
                   return (
                     <div key={doc.id} className="herta-card" style={{ padding: '1.35rem', background: '#FFFFFF', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative' }}>
-                      {doc.category && (
-                        <span style={{
-                          position: 'absolute',
-                          top: '1rem',
-                          right: '1rem',
-                          fontSize: '0.72rem',
-                          fontWeight: 800,
-                          background: doc.category === 'CV Kreatif' ? '#FEF3C7' : doc.category === 'Portofolio' ? '#D1FAE5' : '#EEF2FF',
-                          color: doc.category === 'CV Kreatif' ? '#D97706' : doc.category === 'Portofolio' ? '#059669' : '#4F46E5',
-                          border: `1.5px solid ${doc.category === 'CV Kreatif' ? '#D97706' : doc.category === 'Portofolio' ? '#059669' : '#4F46E5'}`,
-                          padding: '0.15rem 0.6rem',
-                          borderRadius: '999px',
-                          zIndex: 2
-                        }}>
-                          {doc.category}
-                        </span>
-                      )}
+                      <span style={{
+                        position: 'absolute',
+                        top: '1rem',
+                        right: '1rem',
+                        fontSize: '0.72rem',
+                        fontWeight: 800,
+                        background: docCategory === 'CV Kreatif' ? '#FEF3C7' : docCategory === 'Portofolio' ? '#D1FAE5' : '#EEF2FF',
+                        color: docCategory === 'CV Kreatif' ? '#D97706' : docCategory === 'Portofolio' ? '#059669' : '#4F46E5',
+                        border: `1.5px solid ${docCategory === 'CV Kreatif' ? '#D97706' : docCategory === 'Portofolio' ? '#059669' : '#4F46E5'}`,
+                        padding: '0.15rem 0.6rem',
+                        borderRadius: '999px',
+                        zIndex: 2
+                      }}>
+                        {docCategory}
+                      </span>
                       <div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.6rem', paddingRight: doc.category ? '5.5rem' : 0 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.6rem', paddingRight: '5.5rem' }}>
                           <div style={{ padding: '0.5rem', borderRadius: '10px', background: '#FFF3DD', color: '#005BAB', border: '1.5px solid #005BAB', flexShrink: 0 }}>
                             <FileText size={20} />
                           </div>

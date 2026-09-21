@@ -622,12 +622,13 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
     try {
       const updatedList = await infoService.saveDocument({
         id: editingDocId,
-        ...docForm
+        ...docForm,
+        category: docForm.category || 'CV ATS'
       }, (pct) => setProcessingProgress(pct));
       setDocuments(updatedList);
       const successMsg = editingDocId ? 'Dokumen berhasil diperbarui!' : 'Dokumen baru berhasil ditambahkan!';
       setEditingDocId(null);
-      setDocForm({ title: '', type: '', description: '', fileUrl: '', fileName: '', rawFile: null });
+      setDocForm({ title: '', type: '', category: 'CV ATS', description: '', fileUrl: '', fileName: '', rawFile: null });
       finishProcessingSuccess(successMsg);
     } catch (err) {
       console.error('Error saving document:', err);
@@ -3358,25 +3359,23 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                             position: 'relative'
                           }}
                         >
-                          {doc.category && (
-                            <span style={{
-                              position: 'absolute',
-                              top: '1rem',
-                              right: '1rem',
-                              fontSize: '0.72rem',
-                              fontWeight: 800,
-                              background: doc.category === 'CV Kreatif' ? '#FEF3C7' : doc.category === 'Portofolio' ? '#D1FAE5' : '#EEF2FF',
-                              color: doc.category === 'CV Kreatif' ? '#D97706' : doc.category === 'Portofolio' ? '#059669' : '#4F46E5',
-                              border: `1.5px solid ${doc.category === 'CV Kreatif' ? '#D97706' : doc.category === 'Portofolio' ? '#059669' : '#4F46E5'}`,
-                              padding: '0.15rem 0.6rem',
-                              borderRadius: '999px',
-                              zIndex: 2
-                            }}>
-                              {doc.category}
-                            </span>
-                          )}
+                          <span style={{
+                            position: 'absolute',
+                            top: '1rem',
+                            right: '1rem',
+                            fontSize: '0.72rem',
+                            fontWeight: 800,
+                            background: (doc.category || 'CV ATS') === 'CV Kreatif' ? '#FEF3C7' : (doc.category || 'CV ATS') === 'Portofolio' ? '#D1FAE5' : '#EEF2FF',
+                            color: (doc.category || 'CV ATS') === 'CV Kreatif' ? '#D97706' : (doc.category || 'CV ATS') === 'Portofolio' ? '#059669' : '#4F46E5',
+                            border: `1.5px solid ${(doc.category || 'CV ATS') === 'CV Kreatif' ? '#D97706' : (doc.category || 'CV ATS') === 'Portofolio' ? '#059669' : '#4F46E5'}`,
+                            padding: '0.15rem 0.6rem',
+                            borderRadius: '999px',
+                            zIndex: 2
+                          }}>
+                            {doc.category || 'CV ATS'}
+                          </span>
                           <div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem', paddingRight: doc.category ? '5.5rem' : 0 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem', paddingRight: '5.5rem' }}>
                               <div style={{ padding: '0.6rem', borderRadius: '12px', background: '#FFF3DD', color: '#005BAB', border: '1.5px solid #005BAB', flexShrink: 0 }}>
                                 <FileText size={24} />
                               </div>
@@ -3430,7 +3429,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                             })()}
 
                             <div style={{ display: 'flex', gap: '0.6rem' }}>
-                              <button onClick={() => { setEditingDocId(doc.id); setDocForm(doc); }} className="btn-secondary" style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}>
+                              <button onClick={() => { setEditingDocId(doc.id); setDocForm({ ...doc, category: doc.category || 'CV ATS' }); }} className="btn-secondary" style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}>
                                 <Edit size={14} />
                                 <span>Edit</span>
                               </button>

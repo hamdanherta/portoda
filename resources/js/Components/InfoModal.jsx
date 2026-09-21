@@ -516,9 +516,34 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                   return (
                     <div key={exp.id} className="herta-card" style={{ padding: '1.35rem', background: '#FFFFFF' }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.4rem' }}>
-                        <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#005BAB' }}>
-                          {getLocalizedField(exp, 'title')}
-                        </h3>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
+                          <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#005BAB', margin: 0 }}>
+                            {getLocalizedField(exp, 'title')}
+                          </h3>
+
+                          {/* Tipe Pengalaman Badge (Hijau = Kerja, Biru = Magang, Kuning = Organisasi, Ungu = Freelance) */}
+                          {(() => {
+                            const type = exp.experience_type || 'Kerja';
+                            let bg = '#DCFCE7', color = '#15803D', border = '#16A34A';
+                            if (type === 'Magang') { bg = '#E0F2FE'; color = '#0284C7'; border = '#0284C7'; }
+                            else if (type === 'Organisasi') { bg = '#FEF3C7'; color = '#D97706'; border = '#D97706'; }
+                            else if (type === 'Freelance') { bg = '#F3E8FF'; color = '#7E22CE'; border = '#A855F7'; }
+
+                            return (
+                              <span style={{ fontSize: '0.72rem', fontWeight: 800, background: bg, color: color, border: `1.5px solid ${border}`, padding: '0.15rem 0.55rem', borderRadius: '999px' }}>
+                                {type}
+                              </span>
+                            );
+                          })()}
+
+                          {/* Tipe Pekerjaan Sub-Badge (Khusus Tipe Kerja) */}
+                          {(exp.experience_type === 'Kerja' || !exp.experience_type) && exp.employment_type && (
+                            <span style={{ fontSize: '0.72rem', fontWeight: 800, background: '#FFF3DD', color: '#005BAB', border: '1.5px solid #005BAB', padding: '0.15rem 0.55rem', borderRadius: '999px' }}>
+                              {exp.employment_type}
+                            </span>
+                          )}
+                        </div>
+
                         <span style={{ fontSize: '0.78rem', fontWeight: 800, background: '#005BAB', color: '#FFFFFF', padding: '0.2rem 0.65rem', borderRadius: '999px' }}>
                           {getLocalizedField(exp, 'period')}
                         </span>

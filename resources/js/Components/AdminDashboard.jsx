@@ -192,7 +192,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
   // --- PENGALAMAN FORM STATE ---
   const [experiences, setExperiences] = useState([]);
   const [editingExpId, setEditingExpId] = useState(null);
-  const [expForm, setExpForm] = useState({ title: '', company: '', period: '', description: '', media: [] });
+  const [expForm, setExpForm] = useState({ title: '', experience_type: 'Kerja', employment_type: 'Full Time', company: '', period: '', description: '', media: [] });
 
   // --- DOKUMEN FORM STATE ---
   const [documents, setDocuments] = useState([]);
@@ -554,7 +554,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
       setExperiences(updatedList);
       const successMsg = editingExpId ? 'Pengalaman kerja berhasil diperbarui!' : 'Pengalaman kerja baru berhasil ditambahkan!';
       setEditingExpId(null);
-      setExpForm({ title: '', company: '', period: '', description: '', media: [] });
+      setExpForm({ title: '', experience_type: 'Kerja', employment_type: 'Full Time', company: '', period: '', description: '', media: [] });
       finishProcessingSuccess(successMsg);
     } catch (err) {
       finishProcessingError('Gagal menyimpan data pengalaman.');
@@ -2792,7 +2792,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                   </h3>
 
                   <form onSubmit={handleSubmitExperience}>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
                       <div className="form-group">
                         <label>Judul Posisi / Jabatan *</label>
                         <input
@@ -2804,6 +2804,35 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                           className="form-input"
                         />
                       </div>
+
+                      <div className="form-group">
+                        <label>Tipe Pengalaman *</label>
+                        <select
+                          value={expForm.experience_type || 'Kerja'}
+                          onChange={(e) => setExpForm({ ...expForm, experience_type: e.target.value })}
+                          className="form-select"
+                        >
+                          <option value="Kerja">Kerja</option>
+                          <option value="Magang">Magang</option>
+                          <option value="Organisasi">Organisasi</option>
+                          <option value="Freelance">Freelance</option>
+                        </select>
+                      </div>
+
+                      {(expForm.experience_type === 'Kerja' || !expForm.experience_type) && (
+                        <div className="form-group">
+                          <label>Tipe Pekerjaan *</label>
+                          <select
+                            value={expForm.employment_type || 'Full Time'}
+                            onChange={(e) => setExpForm({ ...expForm, employment_type: e.target.value })}
+                            className="form-select"
+                          >
+                            <option value="Full Time">Full Time</option>
+                            <option value="Kontrak">Kontrak</option>
+                            <option value="Remote">Remote</option>
+                          </select>
+                        </div>
+                      )}
 
                       <div className="form-group">
                         <label>Nama Perusahaan / Studio / Proyek *</label>
@@ -2928,7 +2957,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                         <span>{editingExpId ? 'Simpan Perubahan' : 'Tambah Pengalaman'}</span>
                       </button>
                       {editingExpId && (
-                        <button type="button" onClick={() => { setEditingExpId(null); setExpForm({ title: '', company: '', period: '', description: '', media: [] }); }} className="btn-secondary">
+                        <button type="button" onClick={() => { setEditingExpId(null); setExpForm({ title: '', experience_type: 'Kerja', employment_type: 'Full Time', company: '', period: '', description: '', media: [] }); }} className="btn-secondary">
                           Batal
                         </button>
                       )}
@@ -2970,7 +2999,32 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                         >
                           <div>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                              <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#005BAB' }}>{exp.title}</h4>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
+                                <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#005BAB', margin: 0 }}>{exp.title}</h4>
+                                
+                                {/* Tipe Pengalaman Badge */}
+                                {(() => {
+                                  const type = exp.experience_type || 'Kerja';
+                                  let bg = '#DCFCE7', color = '#15803D', border = '#16A34A';
+                                  if (type === 'Magang') { bg = '#E0F2FE'; color = '#0284C7'; border = '#0284C7'; }
+                                  else if (type === 'Organisasi') { bg = '#FEF3C7'; color = '#D97706'; border = '#D97706'; }
+                                  else if (type === 'Freelance') { bg = '#F3E8FF'; color = '#7E22CE'; border = '#A855F7'; }
+
+                                  return (
+                                    <span style={{ fontSize: '0.72rem', fontWeight: 800, background: bg, color: color, border: `1.5px solid ${border}`, padding: '0.15rem 0.55rem', borderRadius: '999px' }}>
+                                      {type}
+                                    </span>
+                                  );
+                                })()}
+
+                                {/* Tipe Pekerjaan Sub-Badge (Khusus Tipe Kerja) */}
+                                {(exp.experience_type === 'Kerja' || !exp.experience_type) && exp.employment_type && (
+                                  <span style={{ fontSize: '0.72rem', fontWeight: 800, background: '#FFF3DD', color: '#005BAB', border: '1.5px solid #005BAB', padding: '0.15rem 0.55rem', borderRadius: '999px' }}>
+                                    {exp.employment_type}
+                                  </span>
+                                )}
+                              </div>
+
                               <span style={{ fontSize: '0.78rem', fontWeight: 800, background: '#005BAB', color: '#FFFFFF', padding: '0.2rem 0.65rem', borderRadius: '999px' }}>
                                 {exp.period}
                               </span>
@@ -3012,6 +3066,8 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                               setEditingExpId(exp.id);
                               setExpForm({
                                 title: exp.title || '',
+                                experience_type: exp.experience_type || 'Kerja',
+                                employment_type: exp.employment_type || 'Full Time',
                                 company: exp.company || '',
                                 period: exp.period || '',
                                 description: exp.description || '',

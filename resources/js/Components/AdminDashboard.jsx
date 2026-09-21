@@ -552,7 +552,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
         ...expForm
       });
       setExperiences(updatedList);
-      const successMsg = editingExpId ? 'Pengalaman kerja berhasil diperbarui!' : 'Pengalaman kerja baru berhasil ditambahkan!';
+      const successMsg = editingExpId ? 'Pengalaman berhasil diperbarui!' : 'Pengalaman baru berhasil ditambahkan!';
       setEditingExpId(null);
       setExpForm({ title: '', experience_type: 'Kerja', employment_type: 'Full Time', company: '', period: '', description: '', media: [] });
       finishProcessingSuccess(successMsg);
@@ -1394,7 +1394,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                   {activeTab === 'overview' && 'Ringkasan & Statistik'}
                   {activeTab === 'tambah-karya' && 'Tambah Karya'}
                   {activeTab === 'kelola-karya' && 'Kelola Karya'}
-                  {activeTab === 'pengalaman' && 'Pengalaman Kerja'}
+                  {activeTab === 'pengalaman' && 'Pengalaman'}
                   {activeTab === 'dokumen' && 'Dokumen'}
                   {activeTab === 'sertifikat' && 'Kelola Sertifikat'}
                   {activeTab === 'kontak' && 'Kelola Kontak'}
@@ -1439,7 +1439,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                 { id: 'overview', label: 'Ringkasan & Statistik', icon: BarChart3 },
                 { id: 'tambah-karya', label: 'Tambah Karya Baru', icon: PlusCircle },
                 { id: 'kelola-karya', label: 'Kelola & Daftar Karya', icon: FolderKanban },
-                { id: 'pengalaman', label: 'Pengalaman Kerja', icon: Briefcase },
+                { id: 'pengalaman', label: 'Pengalaman', icon: Briefcase },
                 { id: 'dokumen', label: 'Dokumen', icon: FileText },
                 { id: 'sertifikat', label: 'Kelola Sertifikat', icon: Award },
                 { id: 'kontak', label: 'Kelola Kontak', icon: Phone },
@@ -1543,7 +1543,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                   { id: 'overview', label: 'Ringkasan & Statistik', icon: BarChart3 },
                   { id: 'tambah-karya', label: 'Tambah Karya Baru', icon: PlusCircle },
                   { id: 'kelola-karya', label: 'Kelola Karya', icon: FolderKanban },
-                  { id: 'pengalaman', label: 'Kelola Pengalaman Kerja', icon: Briefcase },
+                  { id: 'pengalaman', label: 'Kelola Pengalaman', icon: Briefcase },
                   { id: 'dokumen', label: 'Kelola Dokumen', icon: FileText },
                   { id: 'sertifikat', label: 'Kelola Sertifikat', icon: Award },
                   { id: 'kontak', label: 'Kelola Kontak', icon: Phone },
@@ -1821,7 +1821,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                       <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', borderBottom: '1px solid rgba(0,91,171,0.15)', fontSize: '0.9rem', fontWeight: 700, color: '#005BAB' }}>
                         <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                           <Briefcase size={16} color="#005BAB" />
-                          <span>Pengalaman Kerja</span>
+                          <span>Pengalaman</span>
                         </span>
                         <span style={{ fontWeight: 800 }}>{experiences.length} Entri</span>
                       </div>
@@ -2788,7 +2788,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                 <div className="herta-card" style={{ padding: '1.5rem', marginBottom: '2rem', background: '#FFFFFF' }}>
                   <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#005BAB', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     {editingExpId ? <Edit size={18} /> : <Plus size={18} />}
-                    <span>{editingExpId ? 'Edit Pengalaman Kerja' : 'Tambah Pengalaman Kerja'}</span>
+                    <span>{editingExpId ? 'Edit Pengalaman' : 'Tambah Pengalaman'}</span>
                   </h3>
 
                   <form onSubmit={handleSubmitExperience}>
@@ -2973,7 +2973,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
                     <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#005BAB' }}>
-                      Daftar Pengalaman Kerja ({filteredExpItems.length} Item{adminSearchQuery ? ` Ditemukan` : ''})
+                      Daftar Pengalaman ({filteredExpItems.length} Item{adminSearchQuery ? ` Ditemukan` : ''})
                     </h3>
                   </div>
 
@@ -2981,7 +2981,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                     <EmptyStateCard
                       icon={SearchX}
                       title="Tidak Ada Pengalaman Ditemukan"
-                      description="Coba ubah kata kunci pencarian atau tambah pengalaman kerja."
+                      description="Coba ubah kata kunci pencarian atau tambah pengalaman."
                       actionLabel={adminSearchQuery ? "Reset Pencarian" : null}
                       onAction={() => setAdminSearchQuery('')}
                     />
@@ -3081,7 +3081,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                               <Edit size={14} />
                               <span>Edit</span>
                             </button>
-                            <button onClick={() => setDeletingTarget({ id: exp.id, title: exp.title, label: 'Pengalaman Kerja', targetType: 'exp' })} className="btn-danger" style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}>
+                            <button onClick={() => setDeletingTarget({ id: exp.id, title: exp.title, label: 'Pengalaman', targetType: 'exp' })} className="btn-danger" style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}>
                               <Trash2 size={14} />
                               <span>Hapus</span>
                             </button>

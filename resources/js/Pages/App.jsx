@@ -264,7 +264,7 @@ export default function App({ karyaId }) {
           }}
         />
 
-        {/* Header Navigation dengan Menu: Pengalaman Kerja, Dokumen, Sertifikat, Kontak, Profil */}
+        {/* Header Navigation dengan Menu: Pengalaman, Dokumen, Sertifikat, Kontak, Profil */}
         <div style={{ position: 'relative', zIndex: 5 }}>
           <Navbar
             onOpenNavModal={(navType) => setActiveNavModal(navType)}

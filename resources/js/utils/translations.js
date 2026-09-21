@@ -1,7 +1,7 @@
 export const translations = {
   id: {
     // Navbar
-    nav_experiences: 'Pengalaman Kerja',
+    nav_experiences: 'Pengalaman',
     nav_documents: 'Dokumen Hamdani',
     nav_certificates: 'Sertifikat',
     nav_contact: 'Kontak',
@@ -21,7 +21,7 @@ export const translations = {
     hero_stat_completed_sub: '(2020–2026)',
     hero_stat_hours: 'Jam Terbang',
     hero_stat_hours_sub: 'Sebagai Desainer Grafis', 
-    hero_stat_exp: 'Pengalaman Kerja',
+    hero_stat_exp: 'Pengalaman',
     hero_skills_title: '3 Jenis Portofolio Hamdani',
     hero_cat_grafis: 'Desain Grafis',
     hero_cat_grafis_desc: 'Logo, Poster, Banner, Kemasan',

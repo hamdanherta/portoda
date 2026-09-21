@@ -503,8 +503,8 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
             {experiences.length === 0 ? (
               <VisitorEmptyState
                 icon={SearchX}
-                title={lang === 'en' ? 'No Work Experience Listed' : 'Belum Ada Pengalaman Kerja'}
-                description={lang === 'en' ? 'Work experience track record will appear here.' : 'Daftar rekam jejak karir dan pengalaman kerja profesional Hamdani akan tampil di sini.'}
+                title={lang === 'en' ? 'No Experience Listed' : 'Belum Ada Pengalaman'}
+                description={lang === 'en' ? 'Experience track record will appear here.' : 'Daftar rekam jejak karir dan pengalaman profesional Hamdani akan tampil di sini.'}
               />
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>

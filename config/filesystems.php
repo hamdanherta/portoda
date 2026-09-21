@@ -40,12 +40,14 @@ return [
 
         'public' => [
             'driver' => 'local',
-            'root' => is_link(public_path('storage')) ? storage_path('app/public') : public_path('storage'),
+            'root' => (is_dir(public_path('storage')) && !is_link(public_path('storage')))
+                ? public_path('storage')
+                : storage_path('app/public'),
             'url' => rtrim(env('APP_URL', 'http://localhost'), '/') . '/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
-        ], 
+        ],
 
         's3' => [
             'driver' => 's3',

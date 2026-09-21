@@ -600,27 +600,14 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
     if (!file) return;
 
     const fileSizeMB = (file.size / (1024 * 1024)).toFixed(1);
-    startProcessing(`Membaca file "${file.name}" (${fileSizeMB} MB)...`, 5);
+    setDocForm(prev => ({
+      ...prev,
+      rawFile: file,
+      fileName: file.name
+    }));
 
-    const reader = new FileReader();
-    reader.onprogress = (event) => {
-      if (event.lengthComputable) {
-        const pct = Math.round((event.loaded / event.total) * 95);
-        setProcessingProgress(pct);
-      }
-    };
-    reader.onload = (event) => {
-      setDocForm(prev => ({
-        ...prev,
-        fileUrl: event.target.result,
-        fileName: file.name
-      }));
-      finishProcessingSuccess(`File "${file.name}" (${fileSizeMB} MB) siap disimpan!`);
-    };
-    reader.onerror = () => {
-      finishProcessingError('Gagal membaca file dokumen.');
-    };
-    reader.readAsDataURL(file);
+    setFormSuccess(`File "${file.name}" (${fileSizeMB} MB) berhasil dipilih! Silakan klik Simpan Dokumen.`);
+    setTimeout(() => setFormSuccess(''), 4000);
   };
 
   const handleSubmitDocument = async (e) => {
@@ -640,10 +627,11 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
       setDocuments(updatedList);
       const successMsg = editingDocId ? 'Dokumen berhasil diperbarui!' : 'Dokumen baru berhasil ditambahkan!';
       setEditingDocId(null);
-      setDocForm({ title: '', type: '', description: '', fileUrl: '', fileName: '' });
+      setDocForm({ title: '', type: '', description: '', fileUrl: '', fileName: '', rawFile: null });
       finishProcessingSuccess(successMsg);
     } catch (err) {
-      finishProcessingError('Gagal menyimpan dokumen.');
+      console.error('Error saving document:', err);
+      finishProcessingError(err.message || 'Gagal menyimpan dokumen. Pastikan ukuran berkas sesuai batas server.');
     }
   };
 

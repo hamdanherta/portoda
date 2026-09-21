@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { uploadBase64ToStorage } from './storageService';
+import { uploadBase64ToStorage, uploadFileToStorage } from './storageService';
 
 export const infoService = {
   // --- EXPERIENCES ---
@@ -76,19 +76,24 @@ export const infoService = {
   },
 
   async saveDocument(docData, onProgress = null) {
-    if (onProgress) onProgress(10);
+    if (onProgress) onProgress(5);
     const payload = { ...docData };
-    if (payload.fileUrl) {
-      payload.file_url = await uploadBase64ToStorage(payload.fileUrl, 'portfolio', 'documents', (p) => {
-        if (onProgress) onProgress(10 + Math.round(p * 0.7)); // 10-80%
+
+    const targetFile = payload.rawFile || payload.fileUrl;
+    if (targetFile) {
+      payload.file_url = await uploadFileToStorage(targetFile, 'portfolio', 'documents', (p) => {
+        if (onProgress) onProgress(5 + Math.round(p * 0.85)); // 5% - 90%
       });
     }
+
+    delete payload.rawFile;
+    delete payload.fileUrl;
 
     try {
       const response = await axios.post('/api/documents', payload, {
         onUploadProgress: (progressEvent) => {
           if (progressEvent.total && onProgress) {
-            const pct = 80 + Math.round((progressEvent.loaded * 20) / progressEvent.total);
+            const pct = 90 + Math.round((progressEvent.loaded * 10) / progressEvent.total);
             onProgress(pct);
           }
         }

@@ -18,9 +18,11 @@ class Document extends Model
         'title_en',
         'type',
         'type_en',
+        'category',
         'description',
         'description_en',
         'file_url',
         'file_name',
+        'sort_order',
     ];
 }

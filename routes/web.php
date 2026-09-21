@@ -9,6 +9,7 @@ use Inertia\Inertia;
 
 Route::get('/', function (Request $request) {
     $karyaId = $request->query('karya');
+    $docId = $request->query('doc') ?: $request->query('document');
     $ogData = null;
 
     if ($karyaId) {
@@ -29,7 +30,8 @@ Route::get('/', function (Request $request) {
 
     return Inertia::render('App', [
         'ogData' => $ogData,
-        'karyaId' => $karyaId
+        'karyaId' => $karyaId,
+        'docId' => $docId
     ]);
 });
 

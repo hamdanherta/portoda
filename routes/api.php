@@ -23,18 +23,22 @@ Route::post('/portfolio-items/reset', [PortfolioController::class, 'reset']);
 // Info Routes
 Route::get('/experiences', [InfoController::class, 'getExperiences']);
 Route::post('/experiences', [InfoController::class, 'saveExperience']);
+Route::post('/experiences/reorder', [InfoController::class, 'reorderExperiences']);
 Route::delete('/experiences/{id}', [InfoController::class, 'deleteExperience']);
 
 Route::get('/documents', [InfoController::class, 'getDocuments']);
 Route::post('/documents', [InfoController::class, 'saveDocument']);
+Route::post('/documents/reorder', [InfoController::class, 'reorderDocuments']);
 Route::delete('/documents/{id}', [InfoController::class, 'deleteDocument']);
 
 Route::get('/contacts', [InfoController::class, 'getContacts']);
 Route::post('/contacts', [InfoController::class, 'saveContact']);
+Route::post('/contacts/reorder', [InfoController::class, 'reorderContacts']);
 Route::delete('/contacts/{id}', [InfoController::class, 'deleteContact']);
 
 Route::get('/certificates', [InfoController::class, 'getCertificates']);
 Route::post('/certificates', [InfoController::class, 'saveCertificate']);
+Route::post('/certificates/reorder', [InfoController::class, 'reorderCertificates']);
 Route::delete('/certificates/{id}', [InfoController::class, 'deleteCertificate']);
 
 Route::get('/profile', [InfoController::class, 'getProfile']);

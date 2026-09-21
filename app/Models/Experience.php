@@ -25,6 +25,7 @@ class Experience extends Model
         'description',
         'description_en',
         'media',
+        'sort_order',
     ];
 
     protected $casts = [

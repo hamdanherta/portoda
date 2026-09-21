@@ -64,6 +64,19 @@ export const infoService = {
     }
   },
 
+  async reorderExperiences(items) {
+    try {
+      const response = await axios.post('/api/experiences/reorder', { items });
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('portoda_info_updated'));
+      }
+      return response.data;
+    } catch (err) {
+      console.error('Failed to reorder experiences:', err);
+      throw err;
+    }
+  },
+
   // --- DOCUMENTS ---
   async getDocuments() {
     try {
@@ -122,6 +135,19 @@ export const infoService = {
     }
   },
 
+  async reorderDocuments(items) {
+    try {
+      const response = await axios.post('/api/documents/reorder', { items });
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('portoda_info_updated'));
+      }
+      return response.data;
+    } catch (err) {
+      console.error('Failed to reorder documents:', err);
+      throw err;
+    }
+  },
+
   // --- CONTACTS ---
   async getContacts() {
     try {
@@ -164,6 +190,19 @@ export const infoService = {
       return response.data;
     } catch (err) {
       console.error('Failed to delete contact:', err);
+      throw err;
+    }
+  },
+
+  async reorderContacts(items) {
+    try {
+      const response = await axios.post('/api/contacts/reorder', { items });
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('portoda_info_updated'));
+      }
+      return response.data;
+    } catch (err) {
+      console.error('Failed to reorder contacts:', err);
       throw err;
     }
   },
@@ -231,6 +270,19 @@ export const infoService = {
       return response.data;
     } catch (err) {
       console.error('Failed to delete certificate:', err);
+      throw err;
+    }
+  },
+
+  async reorderCertificates(items) {
+    try {
+      const response = await axios.post('/api/certificates/reorder', { items });
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('portoda_info_updated'));
+      }
+      return response.data;
+    } catch (err) {
+      console.error('Failed to reorder certificates:', err);
       throw err;
     }
   },

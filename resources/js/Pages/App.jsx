@@ -15,7 +15,7 @@ import { ArrowLeft } from 'lucide-react';
 import { Head } from '@inertiajs/react';
 import { useScrollReveal } from '../utils/useScrollReveal';
 
-export default function App({ karyaId }) {
+export default function App({ karyaId, docId }) {
   const [activeCategory, setActiveCategory] = useState('all');
   const [activeSubcategory, setActiveSubcategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -110,6 +110,17 @@ export default function App({ karyaId }) {
       window.history.pushState("", document.title, cleanPath);
     }
   };
+
+  // Auto-open Document Modal if ?doc=... or ?document=... is accessed
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const targetDocId = docId || urlParams.get('doc') || urlParams.get('document');
+      if (targetDocId) {
+        setActiveNavModal('dokumen');
+      }
+    }
+  }, [docId]);
 
   // In-memory instant filtering (responsif, tanpa lag / network latency)
   const filteredItems = useMemo(() => {

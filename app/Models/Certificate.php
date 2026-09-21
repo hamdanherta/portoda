@@ -21,6 +21,7 @@ class Certificate extends Model
         'institution',
         'cover',
         'gallery',
+        'sort_order',
     ];
 
     protected $casts = [

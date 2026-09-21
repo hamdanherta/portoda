@@ -17,7 +17,7 @@ class InfoController extends Controller
     // --- EXPERIENCES ---
     public function getExperiences()
     {
-        return response()->json(Experience::orderBy('created_at', 'desc')->get());
+        return response()->json(Experience::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
     }
 
     public function saveExperience(Request $request)
@@ -27,13 +27,13 @@ class InfoController extends Controller
             $exp = Experience::find($data['id']);
             if ($exp) {
                 $exp->update($data);
-                return response()->json(Experience::orderBy('created_at', 'desc')->get());
+                return response()->json(Experience::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
             }
         }
 
         $data['id'] = $data['id'] ?? 'exp-' . time();
         Experience::create($data);
-        return response()->json(Experience::orderBy('created_at', 'desc')->get());
+        return response()->json(Experience::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
     }
 
     public function deleteExperience($id)
@@ -42,13 +42,25 @@ class InfoController extends Controller
         if ($exp) {
             $exp->delete();
         }
-        return response()->json(Experience::orderBy('created_at', 'desc')->get());
+        return response()->json(Experience::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
+    }
+
+    public function reorderExperiences(Request $request)
+    {
+        $items = $request->input('items', []);
+        foreach ($items as $index => $item) {
+            $id = is_array($item) ? ($item['id'] ?? null) : $item;
+            if ($id) {
+                Experience::where('id', $id)->update(['sort_order' => $index]);
+            }
+        }
+        return response()->json(Experience::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
     }
 
     // --- DOCUMENTS ---
     public function getDocuments()
     {
-        return response()->json(Document::orderBy('created_at', 'desc')->get());
+        return response()->json(Document::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
     }
 
     public function saveDocument(Request $request)
@@ -58,13 +70,13 @@ class InfoController extends Controller
             $doc = Document::find($data['id']);
             if ($doc) {
                 $doc->update($data);
-                return response()->json(Document::orderBy('created_at', 'desc')->get());
+                return response()->json(Document::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
             }
         }
 
         $data['id'] = $data['id'] ?? 'doc-' . time();
         Document::create($data);
-        return response()->json(Document::orderBy('created_at', 'desc')->get());
+        return response()->json(Document::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
     }
 
     public function deleteDocument($id)
@@ -73,13 +85,25 @@ class InfoController extends Controller
         if ($doc) {
             $doc->delete();
         }
-        return response()->json(Document::orderBy('created_at', 'desc')->get());
+        return response()->json(Document::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
+    }
+
+    public function reorderDocuments(Request $request)
+    {
+        $items = $request->input('items', []);
+        foreach ($items as $index => $item) {
+            $id = is_array($item) ? ($item['id'] ?? null) : $item;
+            if ($id) {
+                Document::where('id', $id)->update(['sort_order' => $index]);
+            }
+        }
+        return response()->json(Document::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
     }
 
     // --- CONTACTS ---
     public function getContacts()
     {
-        return response()->json(Contact::orderBy('created_at', 'desc')->get());
+        return response()->json(Contact::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
     }
 
     public function saveContact(Request $request)
@@ -89,13 +113,13 @@ class InfoController extends Controller
             $contact = Contact::find($data['id']);
             if ($contact) {
                 $contact->update($data);
-                return response()->json(Contact::orderBy('created_at', 'desc')->get());
+                return response()->json(Contact::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
             }
         }
 
         $data['id'] = $data['id'] ?? 'contact-' . time();
         Contact::create($data);
-        return response()->json(Contact::orderBy('created_at', 'desc')->get());
+        return response()->json(Contact::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
     }
 
     public function deleteContact($id)
@@ -104,13 +128,25 @@ class InfoController extends Controller
         if ($contact) {
             $contact->delete();
         }
-        return response()->json(Contact::orderBy('created_at', 'desc')->get());
+        return response()->json(Contact::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
+    }
+
+    public function reorderContacts(Request $request)
+    {
+        $items = $request->input('items', []);
+        foreach ($items as $index => $item) {
+            $id = is_array($item) ? ($item['id'] ?? null) : $item;
+            if ($id) {
+                Contact::where('id', $id)->update(['sort_order' => $index]);
+            }
+        }
+        return response()->json(Contact::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
     }
 
     // --- CERTIFICATES ---
     public function getCertificates()
     {
-        return response()->json(Certificate::orderBy('created_at', 'desc')->get());
+        return response()->json(Certificate::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
     }
 
     public function saveCertificate(Request $request)
@@ -120,13 +156,13 @@ class InfoController extends Controller
             $cert = Certificate::find($data['id']);
             if ($cert) {
                 $cert->update($data);
-                return response()->json(Certificate::orderBy('created_at', 'desc')->get());
+                return response()->json(Certificate::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
             }
         }
 
         $data['id'] = $data['id'] ?? 'cert-' . time();
         Certificate::create($data);
-        return response()->json(Certificate::orderBy('created_at', 'desc')->get());
+        return response()->json(Certificate::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
     }
 
     public function deleteCertificate($id)
@@ -135,7 +171,19 @@ class InfoController extends Controller
         if ($cert) {
             $cert->delete();
         }
-        return response()->json(Certificate::orderBy('created_at', 'desc')->get());
+        return response()->json(Certificate::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
+    }
+
+    public function reorderCertificates(Request $request)
+    {
+        $items = $request->input('items', []);
+        foreach ($items as $index => $item) {
+            $id = is_array($item) ? ($item['id'] ?? null) : $item;
+            if ($id) {
+                Certificate::where('id', $id)->update(['sort_order' => $index]);
+            }
+        }
+        return response()->json(Certificate::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
     }
 
     // --- PROFILE ---

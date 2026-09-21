@@ -21,5 +21,6 @@ class Contact extends Model
         'type',
         'subtext',
         'subtext_en',
+        'sort_order',
     ];
 }

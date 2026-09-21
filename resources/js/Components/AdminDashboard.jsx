@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Plus, Edit, Trash2, ShieldCheck, RefreshCw, Check, Upload, LogOut, AlertTriangle, Loader2, Briefcase, FileText, Mail, User, Grid, Award, ChevronLeft, ChevronRight, Search, SearchX, Palette, Video, Code, BarChart3, PlusCircle, FolderKanban, Globe, Building2, Image, Play, Link, CheckCircle2, Star, Info, Phone } from 'lucide-react';
+import { Menu, X, Plus, Edit, Trash2, ShieldCheck, RefreshCw, Check, Upload, LogOut, AlertTriangle, Loader2, Briefcase, FileText, Mail, User, Grid, Award, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, Search, SearchX, Palette, Video, Code, BarChart3, PlusCircle, FolderKanban, Globe, Building2, Image, Play, Link, CheckCircle2, Star, Info, Phone, Share2 } from 'lucide-react';
 import { compressImageToWebP } from '../utils/imageCompressor';
 import { infoService } from '../services/infoService';
 import { portfolioService } from '../services/portfolioService';
@@ -222,7 +222,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
   // --- DOKUMEN FORM STATE ---
   const [documents, setDocuments] = useState([]);
   const [editingDocId, setEditingDocId] = useState(null);
-  const [docForm, setDocForm] = useState({ title: '', type: '', description: '', fileUrl: '', fileName: '' });
+  const [docForm, setDocForm] = useState({ title: '', type: '', category: 'CV ATS', description: '', fileUrl: '', fileName: '' });
 
   // --- KONTAK FORM STATE ---
   const [contacts, setContacts] = useState([]);
@@ -239,7 +239,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
   const [profile, setProfile] = useState({});
   const [profileForm, setProfileForm] = useState({ name: '', tagline: '', tagline_en: '', bio: '', bio_en: '', skills: [] });
   const [editingSkillId, setEditingSkillId] = useState(null);
-  const [skillForm, setSkillForm] = useState({ title: '', title_en: '', desc: '', desc_en: '' });
+  const [skillForm, setSkillForm] = useState({ title: '', title_en: '', desc: '', desc_en: '', category: 'Soft Skill' });
 
   // Load Info Data when authenticated
   const loadInfoData = async () => {
@@ -719,7 +719,8 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
       title: skill.title || '',
       title_en: skill.title_en || '',
       desc: skill.desc || '',
-      desc_en: skill.desc_en || ''
+      desc_en: skill.desc_en || '',
+      category: skill.category || 'Soft Skill'
     });
   };
 
@@ -745,17 +746,21 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
         title: skillForm.title,
         title_en: skillForm.title_en || skillForm.title,
         desc: skillForm.desc,
-        desc_en: skillForm.desc_en || skillForm.desc
+        desc_en: skillForm.desc_en || skillForm.desc,
+        category: skillForm.category || 'Soft Skill'
       } : s);
     } else {
-      const newSkill = {
-        id: 'skill-' + Date.now(),
-        title: skillForm.title,
-        title_en: skillForm.title_en || skillForm.title,
-        desc: skillForm.desc,
-        desc_en: skillForm.desc_en || skillForm.desc
-      };
-      updatedSkills = [...currentSkills, newSkill];
+      updatedSkills = [
+        ...currentSkills,
+        {
+          id: 'skill-' + Date.now(),
+          title: skillForm.title,
+          title_en: skillForm.title_en || skillForm.title,
+          desc: skillForm.desc,
+          desc_en: skillForm.desc_en || skillForm.desc,
+          category: skillForm.category || 'Soft Skill'
+        }
+      ];
     }
 
     const newProfileData = {
@@ -768,10 +773,37 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
       setProfile(updated);
       setProfileForm(updated);
       setEditingSkillId(null);
-      setSkillForm({ title: '', title_en: '', desc: '', desc_en: '' });
+      setSkillForm({ title: '', title_en: '', desc: '', desc_en: '', category: 'Soft Skill' });
       finishProcessingSuccess(editingSkillId ? 'Keahlian berhasil diperbarui!' : 'Keahlian baru berhasil ditambahkan!');
     } catch (err) {
       finishProcessingError('Gagal menyimpan keahlian.');
+    }
+  };
+
+  const handleReorderEntity = async (entityType, list, index, direction) => {
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= list.length) return;
+
+    const newList = [...list];
+    const temp = newList[index];
+    newList[index] = newList[targetIndex];
+    newList[targetIndex] = temp;
+
+    if (entityType === 'experiences') setExperiences(newList);
+    if (entityType === 'documents') setDocuments(newList);
+    if (entityType === 'certificates') setCertificates(newList);
+    if (entityType === 'contacts') setContacts(newList);
+
+    try {
+      const itemsPayload = newList.map(item => item.id);
+      if (entityType === 'experiences') await infoService.reorderExperiences(itemsPayload);
+      if (entityType === 'documents') await infoService.reorderDocuments(itemsPayload);
+      if (entityType === 'certificates') await infoService.reorderCertificates(itemsPayload);
+      if (entityType === 'contacts') await infoService.reorderContacts(itemsPayload);
+      finishProcessingSuccess('Urutan posisi berhasil diperbarui!');
+    } catch (err) {
+      console.error(`Failed to reorder ${entityType}:`, err);
+      finishProcessingError('Gagal mengubah urutan posisi.');
     }
   };
 
@@ -3128,26 +3160,56 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                             )}
                           </div>
 
-                          <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'flex-end', paddingTop: '0.75rem', borderTop: '1.5px solid #005BAB' }}>
-                            <button onClick={() => {
-                              setEditingExpId(exp.id);
-                              setExpForm({
-                                title: exp.title || '',
-                                experience_type: exp.experience_type || 'Kerja',
-                                employment_type: exp.employment_type || 'Full Time',
-                                company: exp.company || '',
-                                period: exp.period || '',
-                                description: exp.description || '',
-                                media: Array.isArray(exp.media) ? exp.media : []
-                              });
-                            }} className="btn-secondary" style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}>
-                              <Edit size={14} />
-                              <span>Edit</span>
-                            </button>
-                            <button onClick={() => setDeletingTarget({ id: exp.id, title: exp.title, label: 'Pengalaman', targetType: 'exp' })} className="btn-danger" style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}>
-                              <Trash2 size={14} />
-                              <span>Hapus</span>
-                            </button>
+                          <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.75rem', borderTop: '1.5px solid #005BAB' }}>
+                            {(() => {
+                              const realIdx = experiences.findIndex(i => i.id === exp.id);
+                              return (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                                  <button
+                                    type="button"
+                                    disabled={realIdx <= 0}
+                                    onClick={() => handleReorderEntity('experiences', experiences, realIdx, 'up')}
+                                    className="btn-secondary"
+                                    style={{ padding: '0.35rem 0.5rem', fontSize: '0.78rem', opacity: realIdx <= 0 ? 0.3 : 1, cursor: realIdx <= 0 ? 'not-allowed' : 'pointer' }}
+                                    title="Atur Urutan Posisi (Geser ke Atas)"
+                                  >
+                                    <ChevronUp size={15} />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    disabled={realIdx >= experiences.length - 1}
+                                    onClick={() => handleReorderEntity('experiences', experiences, realIdx, 'down')}
+                                    className="btn-secondary"
+                                    style={{ padding: '0.35rem 0.5rem', fontSize: '0.78rem', opacity: realIdx >= experiences.length - 1 ? 0.3 : 1, cursor: realIdx >= experiences.length - 1 ? 'not-allowed' : 'pointer' }}
+                                    title="Atur Urutan Posisi (Geser ke Bawah)"
+                                  >
+                                    <ChevronDown size={15} />
+                                  </button>
+                                </div>
+                              );
+                            })()}
+
+                            <div style={{ display: 'flex', gap: '0.6rem' }}>
+                              <button onClick={() => {
+                                setEditingExpId(exp.id);
+                                setExpForm({
+                                  title: exp.title || '',
+                                  experience_type: exp.experience_type || 'Kerja',
+                                  employment_type: exp.employment_type || 'Full Time',
+                                  company: exp.company || '',
+                                  period: exp.period || '',
+                                  description: exp.description || '',
+                                  media: Array.isArray(exp.media) ? exp.media : []
+                                });
+                              }} className="btn-secondary" style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}>
+                                <Edit size={14} />
+                                <span>Edit</span>
+                              </button>
+                              <button onClick={() => setDeletingTarget({ id: exp.id, title: exp.title, label: 'Pengalaman Kerja', targetType: 'exp' })} className="btn-danger" style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}>
+                                <Trash2 size={14} />
+                                <span>Hapus</span>
+                              </button>
+                            </div>
                           </div>
                         </div>
                       ))}
@@ -3193,6 +3255,20 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                           onChange={(e) => setDocForm({ ...docForm, type: e.target.value })}
                           className="form-input"
                         />
+                      </div>
+
+                      <div className="form-group">
+                        <label>Kategori Dokumen *</label>
+                        <select
+                          value={docForm.category || 'CV ATS'}
+                          onChange={(e) => setDocForm({ ...docForm, category: e.target.value })}
+                          className="form-select"
+                          style={{ fontWeight: 800 }}
+                        >
+                          <option value="CV ATS">CV ATS</option>
+                          <option value="CV Kreatif">CV Kreatif</option>
+                          <option value="Portofolio">Portofolio</option>
+                        </select>
                       </div>
 
                       <div className="form-group">
@@ -3288,7 +3364,22 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                               </div>
                               <div>
                                 <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#005BAB' }}>{doc.title}</h4>
-                                <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#005BAB', opacity: 0.85 }}>{doc.type}</span>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap', marginTop: '0.2rem' }}>
+                                  <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#005BAB', opacity: 0.85 }}>{doc.type}</span>
+                                  {doc.category && (
+                                    <span style={{
+                                      fontSize: '0.72rem',
+                                      fontWeight: 800,
+                                      background: doc.category === 'CV Kreatif' ? '#FEF3C7' : doc.category === 'Portofolio' ? '#D1FAE5' : '#EEF2FF',
+                                      color: doc.category === 'CV Kreatif' ? '#D97706' : doc.category === 'Portofolio' ? '#059669' : '#4F46E5',
+                                      border: `1.5px solid ${doc.category === 'CV Kreatif' ? '#D97706' : doc.category === 'Portofolio' ? '#059669' : '#4F46E5'}`,
+                                      padding: '0.15rem 0.55rem',
+                                      borderRadius: '999px'
+                                    }}>
+                                      {doc.category}
+                                    </span>
+                                  )}
+                                </div>
                               </div>
                             </div>
                             {doc.fileName && (
@@ -3304,15 +3395,45 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                             )}
                           </div>
 
-                          <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'flex-end', paddingTop: '0.75rem', borderTop: '1.5px solid #005BAB' }}>
-                            <button onClick={() => { setEditingDocId(doc.id); setDocForm(doc); }} className="btn-secondary" style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}>
-                              <Edit size={14} />
-                              <span>Edit</span>
-                            </button>
-                            <button onClick={() => setDeletingTarget({ id: doc.id, title: doc.title, label: 'Dokumen', targetType: 'doc' })} className="btn-danger" style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}>
-                              <Trash2 size={14} />
-                              <span>Hapus</span>
-                            </button>
+                          <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.75rem', borderTop: '1.5px solid #005BAB' }}>
+                            {(() => {
+                              const realIdx = documents.findIndex(i => i.id === doc.id);
+                              return (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                                  <button
+                                    type="button"
+                                    disabled={realIdx <= 0}
+                                    onClick={() => handleReorderEntity('documents', documents, realIdx, 'up')}
+                                    className="btn-secondary"
+                                    style={{ padding: '0.35rem 0.5rem', fontSize: '0.78rem', opacity: realIdx <= 0 ? 0.3 : 1, cursor: realIdx <= 0 ? 'not-allowed' : 'pointer' }}
+                                    title="Atur Urutan Posisi (Geser ke Atas)"
+                                  >
+                                    <ChevronUp size={15} />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    disabled={realIdx >= documents.length - 1}
+                                    onClick={() => handleReorderEntity('documents', documents, realIdx, 'down')}
+                                    className="btn-secondary"
+                                    style={{ padding: '0.35rem 0.5rem', fontSize: '0.78rem', opacity: realIdx >= documents.length - 1 ? 0.3 : 1, cursor: realIdx >= documents.length - 1 ? 'not-allowed' : 'pointer' }}
+                                    title="Atur Urutan Posisi (Geser ke Bawah)"
+                                  >
+                                    <ChevronDown size={15} />
+                                  </button>
+                                </div>
+                              );
+                            })()}
+
+                            <div style={{ display: 'flex', gap: '0.6rem' }}>
+                              <button onClick={() => { setEditingDocId(doc.id); setDocForm(doc); }} className="btn-secondary" style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}>
+                                <Edit size={14} />
+                                <span>Edit</span>
+                              </button>
+                              <button onClick={() => setDeletingTarget({ id: doc.id, title: doc.title, label: 'Dokumen', targetType: 'doc' })} className="btn-danger" style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}>
+                                <Trash2 size={14} />
+                                <span>Hapus</span>
+                              </button>
+                            </div>
                           </div>
                         </div>
                       ))}
@@ -3487,15 +3608,45 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                             )}
                           </div>
 
-                          <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'flex-end', paddingTop: '0.75rem', marginTop: '1rem', borderTop: '1.5px solid #005BAB' }}>
-                            <button onClick={() => { setEditingContactId(c.id); setContactForm(c); }} className="btn-secondary" style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}>
-                              <Edit size={14} />
-                              <span>Edit</span>
-                            </button>
-                            <button onClick={() => setDeletingTarget({ id: c.id, title: c.title, label: 'Kontak', targetType: 'contact' })} className="btn-danger" style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}>
-                              <Trash2 size={14} />
-                              <span>Hapus</span>
-                            </button>
+                          <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.75rem', marginTop: '1rem', borderTop: '1.5px solid #005BAB' }}>
+                            {(() => {
+                              const realIdx = contacts.findIndex(i => i.id === c.id);
+                              return (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                                  <button
+                                    type="button"
+                                    disabled={realIdx <= 0}
+                                    onClick={() => handleReorderEntity('contacts', contacts, realIdx, 'up')}
+                                    className="btn-secondary"
+                                    style={{ padding: '0.35rem 0.5rem', fontSize: '0.78rem', opacity: realIdx <= 0 ? 0.3 : 1, cursor: realIdx <= 0 ? 'not-allowed' : 'pointer' }}
+                                    title="Atur Urutan Posisi (Geser ke Atas)"
+                                  >
+                                    <ChevronUp size={15} />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    disabled={realIdx >= contacts.length - 1}
+                                    onClick={() => handleReorderEntity('contacts', contacts, realIdx, 'down')}
+                                    className="btn-secondary"
+                                    style={{ padding: '0.35rem 0.5rem', fontSize: '0.78rem', opacity: realIdx >= contacts.length - 1 ? 0.3 : 1, cursor: realIdx >= contacts.length - 1 ? 'not-allowed' : 'pointer' }}
+                                    title="Atur Urutan Posisi (Geser ke Bawah)"
+                                  >
+                                    <ChevronDown size={15} />
+                                  </button>
+                                </div>
+                              );
+                            })()}
+
+                            <div style={{ display: 'flex', gap: '0.6rem' }}>
+                              <button onClick={() => { setEditingContactId(c.id); setContactForm(c); }} className="btn-secondary" style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}>
+                                <Edit size={14} />
+                                <span>Edit</span>
+                              </button>
+                              <button onClick={() => setDeletingTarget({ id: c.id, title: c.title, label: 'Kontak', targetType: 'contact' })} className="btn-danger" style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}>
+                                <Trash2 size={14} />
+                                <span>Hapus</span>
+                              </button>
+                            </div>
                           </div>
                         </div>
                       ))}
@@ -3875,30 +4026,60 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                             </div>
                           </div>
 
-                          <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'flex-end', paddingTop: '0.75rem', marginTop: '1rem', borderTop: '1.5px solid #005BAB' }}>
-                            <button onClick={() => {
-                              setEditingCertId(cert.id);
-                              setCertForm({
-                                title: cert.title || '',
-                                description: cert.description || '',
-                                category: cert.category || 'Sertifikasi',
-                                year: cert.year || '',
-                                institution: cert.institution || '',
-                                cover: cert.cover || '',
-                                gallery: [
-                                  (cert.gallery && cert.gallery[0]) || '',
-                                  (cert.gallery && cert.gallery[1]) || '',
-                                  (cert.gallery && cert.gallery[2]) || ''
-                                ]
-                              });
-                            }} className="btn-secondary" style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}>
-                              <Edit size={14} />
-                              <span>Edit</span>
-                            </button>
-                            <button onClick={() => setDeletingTarget({ id: cert.id, title: cert.title, label: 'Sertifikat', targetType: 'certificate' })} className="btn-danger" style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}>
-                              <Trash2 size={14} />
-                              <span>Hapus</span>
-                            </button>
+                          <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.75rem', marginTop: '1rem', borderTop: '1.5px solid #005BAB' }}>
+                            {(() => {
+                              const realIdx = certificates.findIndex(i => i.id === cert.id);
+                              return (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                                  <button
+                                    type="button"
+                                    disabled={realIdx <= 0}
+                                    onClick={() => handleReorderEntity('certificates', certificates, realIdx, 'up')}
+                                    className="btn-secondary"
+                                    style={{ padding: '0.35rem 0.5rem', fontSize: '0.78rem', opacity: realIdx <= 0 ? 0.3 : 1, cursor: realIdx <= 0 ? 'not-allowed' : 'pointer' }}
+                                    title="Atur Urutan Posisi (Geser ke Atas)"
+                                  >
+                                    <ChevronUp size={15} />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    disabled={realIdx >= certificates.length - 1}
+                                    onClick={() => handleReorderEntity('certificates', certificates, realIdx, 'down')}
+                                    className="btn-secondary"
+                                    style={{ padding: '0.35rem 0.5rem', fontSize: '0.78rem', opacity: realIdx >= certificates.length - 1 ? 0.3 : 1, cursor: realIdx >= certificates.length - 1 ? 'not-allowed' : 'pointer' }}
+                                    title="Atur Urutan Posisi (Geser ke Bawah)"
+                                  >
+                                    <ChevronDown size={15} />
+                                  </button>
+                                </div>
+                              );
+                            })()}
+
+                            <div style={{ display: 'flex', gap: '0.6rem' }}>
+                              <button onClick={() => {
+                                setEditingCertId(cert.id);
+                                setCertForm({
+                                  title: cert.title || '',
+                                  description: cert.description || '',
+                                  category: cert.category || 'Sertifikasi',
+                                  year: cert.year || '',
+                                  institution: cert.institution || '',
+                                  cover: cert.cover || '',
+                                  gallery: [
+                                    (cert.gallery && cert.gallery[0]) || '',
+                                    (cert.gallery && cert.gallery[1]) || '',
+                                    (cert.gallery && cert.gallery[2]) || ''
+                                  ]
+                                });
+                              }} className="btn-secondary" style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}>
+                                <Edit size={14} />
+                                <span>Edit</span>
+                              </button>
+                              <button onClick={() => setDeletingTarget({ id: cert.id, title: cert.title, label: 'Sertifikat', targetType: 'certificate' })} className="btn-danger" style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}>
+                                <Trash2 size={14} />
+                                <span>Hapus</span>
+                              </button>
+                            </div>
                           </div>
                         </div>
                       ))}
@@ -4108,6 +4289,19 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                           className="form-input"
                         />
                       </div>
+
+                      <div className="form-group">
+                        <label>Kategori Keahlian *</label>
+                        <select
+                          value={skillForm.category || 'Soft Skill'}
+                          onChange={(e) => setSkillForm({ ...skillForm, category: e.target.value })}
+                          className="form-select"
+                          style={{ fontWeight: 800, color: skillForm.category === 'Hard Skill' ? '#059669' : '#005BAB' }}
+                        >
+                          <option value="Soft Skill">Soft Skill (Warna Biru)</option>
+                          <option value="Hard Skill">Hard Skill (Warna Hijau)</option>
+                        </select>
+                      </div>
                     </div>
 
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
@@ -4182,9 +4376,21 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                             }}
                           >
                             <div>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 800, color: '#005BAB', fontSize: '1.05rem', marginBottom: '0.4rem' }}>
-                                <Award size={20} color="#005BAB" />
-                                <span>{skill.title}</span>
+                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.4rem', flexWrap: 'wrap' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 800, color: '#005BAB', fontSize: '1.05rem' }}>
+                                  <Award size={20} color="#005BAB" />
+                                  <span>{skill.title}</span>
+                                </div>
+                                <span style={{
+                                  fontSize: '0.72rem',
+                                  fontWeight: 800,
+                                  background: skill.category === 'Hard Skill' ? '#10B981' : '#005BAB',
+                                  color: '#FFFFFF',
+                                  padding: '0.15rem 0.55rem',
+                                  borderRadius: '999px'
+                                }}>
+                                  {skill.category || 'Soft Skill'}
+                                </span>
                               </div>
                               {skill.title_en && skill.title_en !== skill.title && (
                                 <div style={{ fontSize: '0.78rem', color: '#005BAB', opacity: 0.8, fontWeight: 700, marginBottom: '0.4rem' }}>

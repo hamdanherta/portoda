@@ -56,7 +56,7 @@ function ExpMediaCarousel({ mediaList, title }) {
   if (!mediaList || mediaList.length === 0) return null;
 
   return (
-    <div style={{ marginTop: '0.85rem', borderRadius: '14px', overflow: 'hidden', border: '2px solid #005BAB', position: 'relative' }}>
+    <div style={{ marginTop: '0.85rem', marginBottom: '0.85rem', borderRadius: '14px', overflow: 'hidden', border: '2px solid #005BAB', position: 'relative' }}>
       {/* 16:9 Landscape Aspect Ratio with Blurred Backdrop & Contain Foreground */}
       <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%', overflow: 'hidden', background: '#111827' }}>
         {/* Sliding Track for Smooth Carousel Slide Animation */}
@@ -276,6 +276,39 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
     return () => window.removeEventListener('portoda_info_updated', loadAll);
   }, [activeType]);
 
+  const [copiedDocId, setCopiedDocId] = useState(null);
+
+  const handleShareDocument = (doc) => {
+    if (!doc || !doc.id) return;
+    const shareUrl = `${window.location.origin}/?doc=${doc.id}`;
+
+    const copyFallback = (text) => {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        setCopiedDocId(doc.id);
+        setTimeout(() => setCopiedDocId(null), 3000);
+      } catch (err) {
+        console.error('Fallback copy failed', err);
+      }
+      document.body.removeChild(textArea);
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        setCopiedDocId(doc.id);
+        setTimeout(() => setCopiedDocId(null), 3000);
+      }).catch(() => {
+        copyFallback(shareUrl);
+      });
+    } else {
+      copyFallback(shareUrl);
+    }
+  };
+
   if (!activeType) return null;
 
   const handleDownload = async (doc) => {
@@ -314,6 +347,20 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
     a.click();
     document.body.removeChild(a);
   };
+
+  // Auto download document if opened via share link (?doc=ID or ?document=ID)
+  useEffect(() => {
+    if (activeType === 'dokumen' && documentsList && documentsList.length > 0) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const targetDocId = urlParams.get('doc') || urlParams.get('document');
+      if (targetDocId) {
+        const foundDoc = documentsList.find(d => String(d.id) === String(targetDocId));
+        if (foundDoc) {
+          handleDownload(foundDoc);
+        }
+      }
+    }
+  }, [activeType, documentsList]);
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -385,31 +432,61 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                   const docTitle = getLocalizedField(doc, 'title');
                   const docType = getLocalizedField(doc, 'type');
                   const docDesc = getLocalizedField(doc, 'description');
+                  const isCopied = copiedDocId === doc.id;
+
                   return (
                     <div key={doc.id} className="herta-card" style={{ padding: '1.35rem', background: '#FFFFFF', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                       <div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.6rem' }}>
-                          <div style={{ padding: '0.5rem', borderRadius: '10px', background: '#FFF3DD', color: '#005BAB', border: '1.5px solid #005BAB' }}>
+                          <div style={{ padding: '0.5rem', borderRadius: '10px', background: '#FFF3DD', color: '#005BAB', border: '1.5px solid #005BAB', flexShrink: 0 }}>
                             <FileText size={20} />
                           </div>
                           <div>
                             <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#005BAB' }}>{docTitle}</h3>
-                            <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#005BAB', opacity: 0.85 }}>{docType}</span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap', marginTop: '0.15rem' }}>
+                              <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#005BAB', opacity: 0.85 }}>{docType}</span>
+                              {doc.category && (
+                                <span style={{
+                                  fontSize: '0.72rem',
+                                  fontWeight: 800,
+                                  background: doc.category === 'CV Kreatif' ? '#FEF3C7' : doc.category === 'Portofolio' ? '#D1FAE5' : '#EEF2FF',
+                                  color: doc.category === 'CV Kreatif' ? '#D97706' : doc.category === 'Portofolio' ? '#059669' : '#4F46E5',
+                                  border: `1.5px solid ${doc.category === 'CV Kreatif' ? '#D97706' : doc.category === 'Portofolio' ? '#059669' : '#4F46E5'}`,
+                                  padding: '0.15rem 0.55rem',
+                                  borderRadius: '999px'
+                                }}>
+                                  {doc.category}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
-                        <p style={{ fontSize: '0.86rem', color: '#005BAB', fontWeight: 600, lineHeight: 1.5, marginBottom: '1.25rem' }}>
-                          {docDesc}
-                        </p>
+                        {docDesc && (
+                          <p style={{ fontSize: '0.86rem', color: '#005BAB', fontWeight: 600, lineHeight: 1.5, marginBottom: '1.25rem' }}>
+                            {docDesc}
+                          </p>
+                        )}
                       </div>
 
-                      <button
-                        onClick={() => handleDownload(doc)}
-                        className="btn-primary"
-                        style={{ width: '100%', justifyContent: 'center', fontSize: '0.88rem', padding: '0.6rem 1rem' }}
-                      >
-                        <Download size={16} />
-                        <span>{t('doc_download')}</span>
-                      </button>
+                      <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+                        <button
+                          onClick={() => handleDownload(doc)}
+                          className="btn-primary"
+                          style={{ flex: 1, justifyContent: 'center', fontSize: '0.88rem', padding: '0.6rem 1rem' }}
+                        >
+                          <Download size={16} />
+                          <span>{t('doc_download')}</span>
+                        </button>
+                        <button
+                          onClick={() => handleShareDocument(doc)}
+                          className={isCopied ? "btn-green" : "btn-secondary"}
+                          style={{ padding: '0.6rem 0.85rem', borderRadius: '12px', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+                          title="Bagikan Tautan Dokumen"
+                        >
+                          {isCopied ? <Check size={16} /> : <Share2 size={16} />}
+                          <span>{isCopied ? 'Tersalin!' : 'Bagikan'}</span>
+                        </button>
+                      </div>
                     </div>
                   );
                 })}
@@ -491,9 +568,21 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
                   {profileData.skills.map((skill, index) => (
                     <div key={skill.id || index} style={{ background: '#FFF3DD', padding: '1rem', borderRadius: '12px', border: '1.5px solid #005BAB' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 800, color: '#005BAB', marginBottom: '0.3rem' }}>
-                        <Award size={18} />
-                        <span>{getLocalizedField(skill, 'title')}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.4rem', fontWeight: 800, color: '#005BAB', marginBottom: '0.3rem', flexWrap: 'wrap' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <Award size={18} />
+                          <span>{getLocalizedField(skill, 'title')}</span>
+                        </div>
+                        <span style={{
+                          fontSize: '0.7rem',
+                          fontWeight: 800,
+                          background: skill.category === 'Hard Skill' ? '#10B981' : '#005BAB',
+                          color: '#FFFFFF',
+                          padding: '0.12rem 0.5rem',
+                          borderRadius: '999px'
+                        }}>
+                          {skill.category || 'Soft Skill'}
+                        </span>
                       </div>
                       <p style={{ fontSize: '0.82rem', color: '#005BAB', fontWeight: 600 }}>{getLocalizedField(skill, 'desc')}</p>
                     </div>

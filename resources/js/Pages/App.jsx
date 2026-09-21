@@ -31,13 +31,34 @@ export default function App({ karyaId }) {
   const [isFullGallery, setIsFullGallery] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Maintenance Mode State
+  // Admin Auth & Maintenance Mode State
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('portoda_admin_authenticated') === 'true';
+    }
+    return false;
+  });
+
   const [isMaintenanceMode, setIsMaintenanceMode] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('portoda_maintenance_mode') === 'true';
     }
     return false;
   });
+
+  useEffect(() => {
+    const handleAuthChange = () => {
+      if (typeof window !== 'undefined') {
+        setIsAdminAuthenticated(localStorage.getItem('portoda_admin_authenticated') === 'true');
+      }
+    };
+    window.addEventListener('portoda_auth_changed', handleAuthChange);
+    window.addEventListener('storage', handleAuthChange);
+    return () => {
+      window.removeEventListener('portoda_auth_changed', handleAuthChange);
+      window.removeEventListener('storage', handleAuthChange);
+    };
+  }, []);
 
   useEffect(() => {
     const checkMaintenance = async () => {
@@ -61,6 +82,7 @@ export default function App({ karyaId }) {
     window.addEventListener('portoda_info_updated', handleInfoUpdated);
     return () => window.removeEventListener('portoda_info_updated', handleInfoUpdated);
   }, []);
+
 
   // Auto-open Detail Modal jika mengakses link karya (misal ?karya=xxx atau /karya/xxx)
   useEffect(() => {
@@ -357,9 +379,9 @@ export default function App({ karyaId }) {
           onResetMock={handleResetMock}
         />
 
-        {/* Modal Maintenance (Modal Peringatan Pemeliharaan Sistem - Tidak dapat ditutup pada Halaman Beranda) */}
+        {/* Modal Maintenance (Modal Peringatan Pemeliharaan Sistem - Tidak muncul jika admin sedang login) */}
         <MaintenanceModal
-          isOpen={isMaintenanceMode && !isAdminOpen}
+          isOpen={isMaintenanceMode && !isAdminAuthenticated && !isAdminOpen}
         />
 
         {/* Footer */}
@@ -372,6 +394,7 @@ export default function App({ karyaId }) {
               scrollToGallery();
             }}
             onOpenAdmin={() => setIsAdminOpen(true)}
+            isLoggedIn={isAdminAuthenticated}
           />
         </div>
       </div>

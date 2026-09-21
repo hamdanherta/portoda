@@ -71,9 +71,29 @@ function EmptyStateCard({
 }
 
 export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, onUpdateItem, onDeleteItem, onResetMock }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('portoda_admin_authenticated') === 'true';
+    }
+    return false;
+  });
   const [passcodeInput, setPasscodeInput] = useState('');
   const [passcodeError, setPasscodeError] = useState('');
+
+  useEffect(() => {
+    const handleAuthChange = () => {
+      if (typeof window !== 'undefined') {
+        const isAuthed = localStorage.getItem('portoda_admin_authenticated') === 'true';
+        setIsAuthenticated(isAuthed);
+      }
+    };
+    window.addEventListener('portoda_auth_changed', handleAuthChange);
+    window.addEventListener('storage', handleAuthChange);
+    return () => {
+      window.removeEventListener('portoda_auth_changed', handleAuthChange);
+      window.removeEventListener('storage', handleAuthChange);
+    };
+  }, []);
 
   // Internal Full Karya Data State (Memastikan Dashboard selalu menampilkan 100% semua karya tanpa terpengaruh filter beranda)
   const [karyaData, setKaryaData] = useState(() => (Array.isArray(items) && items.length > 0 ? items : []));
@@ -256,6 +276,10 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
     e.preventDefault();
     if (passcodeInput.trim() === 'danidani') {
       setIsAuthenticated(true);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('portoda_admin_authenticated', 'true');
+        window.dispatchEvent(new Event('portoda_auth_changed'));
+      }
       setPasscodeError('');
       loadInfoData();
     } else {
@@ -265,6 +289,10 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
 
   const handleLogout = () => {
     setIsAuthenticated(false);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('portoda_admin_authenticated', 'false');
+      window.dispatchEvent(new Event('portoda_auth_changed'));
+    }
     setPasscodeInput('');
     setPasscodeError('');
     resetAllForms();

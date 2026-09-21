@@ -2,7 +2,7 @@ import React from 'react';
 import { ArrowUp } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
-export default function Footer({ onCategoryClick, onOpenAdmin }) {
+export default function Footer({ onCategoryClick, onOpenAdmin, isLoggedIn }) {
   const { lang, t } = useLanguage();
 
   const scrollToTop = () => {
@@ -112,22 +112,39 @@ export default function Footer({ onCategoryClick, onOpenAdmin }) {
               <div>
                 © {new Date().getFullYear()} Portoda Portfolio by Hamdani. {t('footer_copyright')}
               </div>
-              {onOpenAdmin && (
+              {isLoggedIn && onOpenAdmin && (
                 <button
+                  type="button"
                   onClick={onOpenAdmin}
                   style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.45rem',
                     fontSize: '0.78rem',
-                    color: '#FFF3DD',
-                    background: 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
-                    textDecoration: 'underline',
                     fontWeight: 700,
-                    opacity: 0.8
+                    color: '#005BAB',
+                    backgroundColor: '#FFF3DD',
+                    border: '2px solid #005BAB',
+                    padding: '0.28rem 0.85rem',
+                    borderRadius: '999px',
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                    boxShadow: '0 2px 8px rgba(0, 91, 171, 0.2)'
                   }}
-                  title="Buka Dashboard Admin"
+                  className="hover-lift"
+                  title="Klik untuk langsung masuk ke Dasbor Admin"
                 >
-                  
+                  <span
+                    style={{
+                      width: '8px',
+                      height: '8px',
+                      borderRadius: '50%',
+                      backgroundColor: '#10B981',
+                      boxShadow: '0 0 6px #10B981',
+                      display: 'inline-block'
+                    }}
+                  />
+                  <span>Sedang Login</span>
                 </button>
               )}
             </div>

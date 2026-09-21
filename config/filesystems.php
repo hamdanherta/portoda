@@ -40,9 +40,11 @@ return [
 
         'public' => [
             'driver' => 'local',
-            'root' => (is_dir(public_path('storage')) && !is_link(public_path('storage')))
-                ? public_path('storage')
-                : storage_path('app/public'),
+            'root' => is_dir(base_path('../public_html/storage')) && !is_link(base_path('../public_html/storage'))
+                ? base_path('../public_html/storage')
+                : ((is_dir(public_path('storage')) && !is_link(public_path('storage')))
+                    ? public_path('storage')
+                    : storage_path('app/public')),
             'url' => rtrim(env('APP_URL', 'http://localhost'), '/') . '/storage',
             'visibility' => 'public',
             'throw' => false,

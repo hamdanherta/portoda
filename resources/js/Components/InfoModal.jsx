@@ -309,6 +309,43 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
     }
   };
 
+  const handleDownload = async (doc) => {
+    const docTitle = getLocalizedField(doc, 'title');
+    const fileUrl = doc.file_url || doc.fileUrl || doc.file_path || doc.url || '';
+    const fileName = doc.file_name || doc.fileName || `${docTitle || 'Dokumen'}.pdf`;
+
+    if (!fileUrl) {
+      alert(lang === 'en' ? 'Document file is not available.' : 'Berkas dokumen belum tersedia.');
+      return;
+    }
+
+    if (fileUrl.startsWith('data:')) {
+      try {
+        const res = await fetch(fileUrl);
+        const blob = await res.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+        return;
+      } catch (e) {
+        console.error('Failed to convert base64 data to blob:', e);
+      }
+    }
+
+    const a = document.createElement('a');
+    a.href = fileUrl;
+    a.download = fileName;
+    a.target = '_blank';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
   // Auto download document if opened via share link (?doc=ID or ?document=ID)
   useEffect(() => {
     if (activeType === 'dokumen' && documentsList && documentsList.length > 0) {

@@ -4301,10 +4301,9 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                           value={skillForm.category || 'Soft Skill'}
                           onChange={(e) => setSkillForm({ ...skillForm, category: e.target.value })}
                           className="form-select"
-                          style={{ fontWeight: 800, color: skillForm.category === 'Hard Skill' ? '#059669' : '#005BAB' }}
                         >
-                          <option value="Soft Skill">Soft Skill (Warna Biru)</option>
-                          <option value="Hard Skill">Hard Skill (Warna Hijau)</option>
+                          <option value="Soft Skill">Soft Skill</option>
+                          <option value="Hard Skill">Hard Skill</option>
                         </select>
                       </div>
                     </div>

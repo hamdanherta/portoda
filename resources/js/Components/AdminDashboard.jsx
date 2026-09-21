@@ -132,10 +132,11 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
   const [activeTab, setActiveTab] = useState('overview');
   const [mobileAdminNavOpen, setMobileAdminNavOpen] = useState(false);
 
-  // Loading Modal state & status
+  // Loading Modal state, status & upload progress
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingMessage, setProcessingMessage] = useState('');
   const [processingStatus, setProcessingStatus] = useState('loading'); // 'loading' | 'success' | 'error'
+  const [processingProgress, setProcessingProgress] = useState(0); // 0-100%
 
   // Delete Confirmation Modal state: { id, title, targetType: 'karya'|'exp'|'doc'|'contact' }
   const [deletingTarget, setDeletingTarget] = useState(null);
@@ -143,15 +144,17 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
   const [formSuccess, setFormSuccess] = useState('');
   const [formError, setFormError] = useState('');
 
-  const startProcessing = (message) => {
+  const startProcessing = (message, initialProgress = 5) => {
     setFormSuccess('');
     setFormError('');
     setProcessingStatus('loading');
     setProcessingMessage(message);
+    setProcessingProgress(initialProgress);
     setIsProcessing(true);
   };
 
   const finishProcessingSuccess = (successMsg) => {
+    setProcessingProgress(100);
     setProcessingStatus('success');
     setProcessingMessage(successMsg);
     setFormSuccess(successMsg);
@@ -159,6 +162,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
     setTimeout(() => {
       setIsProcessing(false);
       setProcessingStatus('loading');
+      setProcessingProgress(0);
     }, 1400);
     setTimeout(() => {
       setFormSuccess('');
@@ -173,6 +177,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
     setTimeout(() => {
       setIsProcessing(false);
       setProcessingStatus('loading');
+      setProcessingProgress(0);
     }, 1800);
     setTimeout(() => {
       setFormError('');
@@ -500,10 +505,10 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
 
     try {
       if (editingId) {
-        await onUpdateItem(editingId, payload);
+        await onUpdateItem(editingId, payload, (pct) => setProcessingProgress(pct));
         finishProcessingSuccess('Karya berhasil diperbarui!');
       } else {
-        await onCreateItem(payload);
+        await onCreateItem(payload, (pct) => setProcessingProgress(pct));
         finishProcessingSuccess('Karya baru berhasil ditambahkan!');
       }
 
@@ -572,13 +577,13 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
       return;
     }
 
-    startProcessing(editingExpId ? 'Menyimpan perubahan pengalaman...' : 'Menambahkan pengalaman baru...');
+    startProcessing(editingExpId ? 'Menyimpan perubahan pengalaman...' : 'Menambahkan pengalaman baru...', 10);
 
     try {
       const updatedList = await infoService.saveExperience({
         id: editingExpId,
         ...expForm
-      });
+      }, (pct) => setProcessingProgress(pct));
       setExperiences(updatedList);
       const successMsg = editingExpId ? 'Pengalaman berhasil diperbarui!' : 'Pengalaman baru berhasil ditambahkan!';
       setEditingExpId(null);
@@ -594,13 +599,26 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
     const file = e.target.files?.[0];
     if (!file) return;
 
+    const fileSizeMB = (file.size / (1024 * 1024)).toFixed(1);
+    startProcessing(`Membaca file "${file.name}" (${fileSizeMB} MB)...`, 5);
+
     const reader = new FileReader();
+    reader.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const pct = Math.round((event.loaded / event.total) * 95);
+        setProcessingProgress(pct);
+      }
+    };
     reader.onload = (event) => {
       setDocForm(prev => ({
         ...prev,
         fileUrl: event.target.result,
         fileName: file.name
       }));
+      finishProcessingSuccess(`File "${file.name}" (${fileSizeMB} MB) siap disimpan!`);
+    };
+    reader.onerror = () => {
+      finishProcessingError('Gagal membaca file dokumen.');
     };
     reader.readAsDataURL(file);
   };
@@ -612,13 +630,13 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
       return;
     }
 
-    startProcessing(editingDocId ? 'Menyimpan perubahan dokumen...' : 'Menambahkan dokumen baru...');
+    startProcessing(editingDocId ? 'Menyimpan perubahan dokumen...' : 'Mengunggah & menyimpan dokumen ke server...', 10);
 
     try {
       const updatedList = await infoService.saveDocument({
         id: editingDocId,
         ...docForm
-      });
+      }, (pct) => setProcessingProgress(pct));
       setDocuments(updatedList);
       const successMsg = editingDocId ? 'Dokumen berhasil diperbarui!' : 'Dokumen baru berhasil ditambahkan!';
       setEditingDocId(null);
@@ -637,13 +655,13 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
       return;
     }
 
-    startProcessing(editingContactId ? 'Menyimpan perubahan kontak...' : 'Menambahkan kontak baru...');
+    startProcessing(editingContactId ? 'Menyimpan perubahan kontak...' : 'Menambahkan kontak baru...', 10);
 
     try {
       const updatedList = await infoService.saveContact({
         id: editingContactId,
         ...contactForm
-      });
+      }, (pct) => setProcessingProgress(pct));
       setContacts(updatedList);
       const successMsg = editingContactId ? 'Kontak berhasil diperbarui!' : 'Kontak baru berhasil ditambahkan!';
       setEditingContactId(null);
@@ -657,10 +675,10 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
   // --- PROFIL HANDLERS ---
   const handleSubmitProfile = async (e) => {
     e.preventDefault();
-    startProcessing('Menyimpan perubahan profil Hamdani...');
+    startProcessing('Menyimpan perubahan profil Hamdani...', 10);
 
     try {
-      const updated = await infoService.saveProfile(profileForm);
+      const updated = await infoService.saveProfile(profileForm, (pct) => setProcessingProgress(pct));
       setProfile(updated);
       setProfileForm(updated);
       finishProcessingSuccess('Profil Hamdani berhasil diperbarui!');
@@ -777,14 +795,14 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
       return;
     }
 
-    startProcessing(editingCertId ? 'Menyimpan perubahan sertifikat...' : 'Menambahkan sertifikat baru...');
+    startProcessing(editingCertId ? 'Menyimpan perubahan sertifikat...' : 'Menambahkan sertifikat baru...', 10);
 
     try {
       const updatedList = await infoService.saveCertificate({
         id: editingCertId,
         ...certForm,
         gallery: (certForm.gallery || []).filter(Boolean)
-      });
+      }, (pct) => setProcessingProgress(pct));
       setCertificates(updatedList);
       const successMsg = editingCertId ? 'Sertifikat berhasil diperbarui!' : 'Sertifikat baru berhasil ditambahkan!';
       setEditingCertId(null);
@@ -1200,7 +1218,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
             transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
           }}>
             {processingStatus === 'loading' && (
-              <>
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
                 <div style={{
                   position: 'relative',
                   width: '64px',
@@ -1219,15 +1237,44 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                   }} />
                   <Loader2 size={28} color="#005BAB" />
                 </div>
-                <div>
-                  <h3 style={{ fontSize: '1.15rem', color: '#005BAB', fontWeight: 800, marginBottom: '0.4rem' }}>
+                <div style={{ width: '100%' }}>
+                  <h3 style={{ fontSize: '1.15rem', color: '#005BAB', fontWeight: 800, marginBottom: '0.4rem', textAlign: 'center' }}>
                     {processingMessage || 'Memproses Data...'}
                   </h3>
-                  <p style={{ fontSize: '0.85rem', color: '#64748B', fontWeight: 600 }}>
-                    Mohon tunggu sebentar, sistem sedang memproses.
+                  <p style={{ fontSize: '0.85rem', color: '#64748B', fontWeight: 600, textAlign: 'center', margin: 0 }}>
+                    Mohon tunggu sebentar, sistem sedang memproses data.
                   </p>
+                  
+                  {/* Visual Progress Bar */}
+                  <div style={{ marginTop: '1.25rem', width: '100%' }}>
+                    <div style={{
+                      width: '100%',
+                      height: '14px',
+                      backgroundColor: '#FFF3DD',
+                      borderRadius: '999px',
+                      border: '2px solid #005BAB',
+                      overflow: 'hidden',
+                      position: 'relative',
+                      boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.1)'
+                    }}>
+                      <div style={{
+                        width: `${Math.min(100, Math.max(3, Math.round(processingProgress)))}%`,
+                        height: '100%',
+                        background: 'linear-gradient(90deg, #005BAB 0%, #0284C7 50%, #10B981 100%)',
+                        borderRadius: '999px',
+                        transition: 'width 0.25s ease-out',
+                        boxShadow: '0 0 10px rgba(0, 91, 171, 0.4)'
+                      }} />
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.45rem', fontSize: '0.82rem', color: '#005BAB', fontWeight: 800 }}>
+                      <span>Progres Unggah & Memproses:</span>
+                      <span style={{ color: '#005BAB', fontSize: '0.9rem', fontWeight: 900 }}>
+                        {Math.min(100, Math.max(0, Math.round(processingProgress)))}%
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              </>
+              </div>
             )}
 
             {processingStatus === 'success' && (

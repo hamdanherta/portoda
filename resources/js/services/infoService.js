@@ -13,19 +13,37 @@ export const infoService = {
     }
   },
 
-  async saveExperience(expData) {
+  async saveExperience(expData, onProgress = null) {
+    if (onProgress) onProgress(10);
     const payload = { ...expData };
     if (payload.media && Array.isArray(payload.media)) {
+      const total = payload.media.length;
       payload.media = await Promise.all(
-        payload.media.map(img => uploadBase64ToStorage(img, 'portfolio', 'pengalaman'))
+        payload.media.map((img, idx) =>
+          uploadBase64ToStorage(img, 'portfolio', 'pengalaman', (p) => {
+            if (onProgress) {
+              const basePct = 10 + (idx / total) * 70;
+              const stepPct = (p / 100) * (70 / total);
+              onProgress(Math.round(basePct + stepPct));
+            }
+          })
+        )
       );
     }
     
     try {
-      const response = await axios.post('/api/experiences', payload);
+      const response = await axios.post('/api/experiences', payload, {
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total && onProgress) {
+            const pct = 80 + Math.round((progressEvent.loaded * 20) / progressEvent.total);
+            onProgress(pct);
+          }
+        }
+      });
       if (typeof window !== 'undefined') {
         window.dispatchEvent(new Event('portoda_info_updated'));
       }
+      if (onProgress) onProgress(100);
       return response.data;
     } catch (err) {
       console.error('Failed to save experience:', err);
@@ -57,17 +75,28 @@ export const infoService = {
     }
   },
 
-  async saveDocument(docData) {
+  async saveDocument(docData, onProgress = null) {
+    if (onProgress) onProgress(10);
     const payload = { ...docData };
     if (payload.fileUrl) {
-      payload.file_url = await uploadBase64ToStorage(payload.fileUrl, 'portfolio', 'documents');
+      payload.file_url = await uploadBase64ToStorage(payload.fileUrl, 'portfolio', 'documents', (p) => {
+        if (onProgress) onProgress(10 + Math.round(p * 0.7)); // 10-80%
+      });
     }
 
     try {
-      const response = await axios.post('/api/documents', payload);
+      const response = await axios.post('/api/documents', payload, {
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total && onProgress) {
+            const pct = 80 + Math.round((progressEvent.loaded * 20) / progressEvent.total);
+            onProgress(pct);
+          }
+        }
+      });
       if (typeof window !== 'undefined') {
         window.dispatchEvent(new Event('portoda_info_updated'));
       }
+      if (onProgress) onProgress(100);
       return response.data;
     } catch (err) {
       console.error('Failed to save document:', err);
@@ -99,12 +128,21 @@ export const infoService = {
     }
   },
 
-  async saveContact(contactData) {
+  async saveContact(contactData, onProgress = null) {
+    if (onProgress) onProgress(20);
     try {
-      const response = await axios.post('/api/contacts', contactData);
+      const response = await axios.post('/api/contacts', contactData, {
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total && onProgress) {
+            const pct = 20 + Math.round((progressEvent.loaded * 80) / progressEvent.total);
+            onProgress(pct);
+          }
+        }
+      });
       if (typeof window !== 'undefined') {
         window.dispatchEvent(new Event('portoda_info_updated'));
       }
+      if (onProgress) onProgress(100);
       return response.data;
     } catch (err) {
       console.error('Failed to save contact:', err);
@@ -136,22 +174,42 @@ export const infoService = {
     }
   },
 
-  async saveCertificate(certData) {
+  async saveCertificate(certData, onProgress = null) {
+    if (onProgress) onProgress(10);
     const payload = { ...certData };
     if (payload.cover) {
-      payload.cover = await uploadBase64ToStorage(payload.cover, 'portfolio', 'sertifikat');
+      payload.cover = await uploadBase64ToStorage(payload.cover, 'portfolio', 'sertifikat', (p) => {
+        if (onProgress) onProgress(10 + Math.round(p * 0.35));
+      });
     }
     if (payload.gallery && Array.isArray(payload.gallery)) {
+      const total = payload.gallery.length;
       payload.gallery = await Promise.all(
-        payload.gallery.map(img => uploadBase64ToStorage(img, 'portfolio', 'sertifikat'))
+        payload.gallery.map((img, idx) =>
+          uploadBase64ToStorage(img, 'portfolio', 'sertifikat', (p) => {
+            if (onProgress) {
+              const basePct = 45 + (idx / total) * 35;
+              const stepPct = (p / 100) * (35 / total);
+              onProgress(Math.round(basePct + stepPct));
+            }
+          })
+        )
       );
     }
 
     try {
-      const response = await axios.post('/api/certificates', payload);
+      const response = await axios.post('/api/certificates', payload, {
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total && onProgress) {
+            const pct = 80 + Math.round((progressEvent.loaded * 20) / progressEvent.total);
+            onProgress(pct);
+          }
+        }
+      });
       if (typeof window !== 'undefined') {
         window.dispatchEvent(new Event('portoda_info_updated'));
       }
+      if (onProgress) onProgress(100);
       return response.data;
     } catch (err) {
       console.error('Failed to save certificate:', err);
@@ -191,9 +249,29 @@ export const infoService = {
     }
   },
 
-  async saveProfile(profileData) {
+  async saveProfile(profileData, onProgress = null) {
+    if (onProgress) onProgress(10);
+    const payload = { ...profileData };
+    if (payload.avatar) {
+      payload.avatar = await uploadBase64ToStorage(payload.avatar, 'portfolio', 'profil', (p) => {
+        if (onProgress) onProgress(10 + Math.round(p * 0.35));
+      });
+    }
+    if (payload.brand_logo) {
+      payload.brand_logo = await uploadBase64ToStorage(payload.brand_logo, 'portfolio', 'profil', (p) => {
+        if (onProgress) onProgress(45 + Math.round(p * 0.35));
+      });
+    }
+
     try {
-      const response = await axios.post('/api/profile', profileData);
+      const response = await axios.post('/api/profile', payload, {
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total && onProgress) {
+            const pct = 80 + Math.round((progressEvent.loaded * 20) / progressEvent.total);
+            onProgress(pct);
+          }
+        }
+      });
       if (typeof window !== 'undefined') {
         const isEnabled = response.data?.watermark_enabled !== false && response.data?.watermark_enabled !== 0 && response.data?.watermark_enabled !== '0';
         localStorage.setItem('portoda_watermark_enabled', isEnabled ? 'true' : 'false');
@@ -202,6 +280,7 @@ export const infoService = {
         localStorage.setItem('portoda_maintenance_mode', isMaint ? 'true' : 'false');
         window.dispatchEvent(new Event('portoda_info_updated'));
       }
+      if (onProgress) onProgress(100);
       return response.data;
     } catch (err) {
       console.error('Failed to save profile:', err);

@@ -211,13 +211,13 @@ export default function App({ karyaId }) {
   }, [activeCategory, activeSubcategory, searchQuery]);
 
   // CRUD Actions for Admin
-  const handleCreateItem = async (newItemData) => {
-    await portfolioService.createItem(newItemData);
+  const handleCreateItem = async (newItemData, onProgress = null) => {
+    await portfolioService.createItem(newItemData, onProgress);
     await loadPortfolioData();
   };
 
-  const handleUpdateItem = async (id, updatedFields) => {
-    await portfolioService.updateItem(id, updatedFields);
+  const handleUpdateItem = async (id, updatedFields, onProgress = null) => {
+    await portfolioService.updateItem(id, updatedFields, onProgress);
     await loadPortfolioData();
   };
 

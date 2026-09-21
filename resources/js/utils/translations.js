@@ -71,7 +71,7 @@ export const translations = {
     profile_ttl: 'Tempat, Tanggal Lahir',
 
     // Info Modal - Experiences
-    exp_title: 'Pengalaman Kerja & Riwayat Karier',
+    exp_title: 'Pengalaman & Riwayat Karier', 
 
     // Info Modal - Documents
     doc_title: 'Berkas & Dokumen Hamdani',

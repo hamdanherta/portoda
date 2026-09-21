@@ -1625,7 +1625,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                   {activeTab === 'overview' && <><BarChart3 size={24} /> <span>Ringkasan & Statistik</span></>}
                   {activeTab === 'tambah-karya' && <><PlusCircle size={24} /> <span>Form Tambah & Edit Karya Baru</span></>}
                   {activeTab === 'kelola-karya' && <><FolderKanban size={24} /> <span>Panel Pengelolaan & Daftar Karya</span></>}
-                  {activeTab === 'pengalaman' && <><Briefcase size={24} /> <span>Pengelolaan Riwayat Pengalaman Kerja</span></>}
+                  {activeTab === 'pengalaman' && <><Briefcase size={24} /> <span>Pengelolaan Riwayat Pengalaman</span></>}
                   {activeTab === 'dokumen' && <><FileText size={24} /> <span>Pengelolaan Dokumen PDF</span></>}
                   {activeTab === 'sertifikat' && <><Award size={24} /> <span>Pengelolaan Sertifikat & Penghargaan</span></>}
                   {activeTab === 'kontak' && <><Phone size={24} /> <span>Pengelolaan Kontak & Profil Hamdani</span></>}
@@ -2788,11 +2788,12 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                 <div className="herta-card" style={{ padding: '1.5rem', marginBottom: '2rem', background: '#FFFFFF' }}>
                   <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#005BAB', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     {editingExpId ? <Edit size={18} /> : <Plus size={18} />}
-                    <span>{editingExpId ? 'Edit Pengalaman Kerja' : 'Tambah Pengalaman Kerja Baru'}</span>
+                    <span>{editingExpId ? 'Edit Pengalaman Kerja' : 'Tambah Pengalaman Kerja'}</span>
                   </h3>
 
                   <form onSubmit={handleSubmitExperience}>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
+                    {/* Baris 1: Posisi & Tipe Pengalaman/Pekerjaan */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
                       <div className="form-group">
                         <label>Judul Posisi / Jabatan *</label>
                         <input
@@ -2833,7 +2834,10 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                           </select>
                         </div>
                       )}
+                    </div>
 
+                    {/* Baris 2: Nama Perusahaan & Periode / Tahun */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
                       <div className="form-group">
                         <label>Nama Perusahaan / Studio / Proyek *</label>
                         <input
@@ -2977,7 +2981,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                     <EmptyStateCard
                       icon={SearchX}
                       title="Tidak Ada Pengalaman Ditemukan"
-                      description="Coba ubah kata kunci pencarian atau tambah pengalaman kerja baru."
+                      description="Coba ubah kata kunci pencarian atau tambah pengalaman kerja."
                       actionLabel={adminSearchQuery ? "Reset Pencarian" : null}
                       onAction={() => setAdminSearchQuery('')}
                     />

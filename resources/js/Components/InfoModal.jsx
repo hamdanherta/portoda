@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, User, Briefcase, Mail, MapPin, Palette, Video, Code, FileText, Download, MessageSquare, Award, ExternalLink, ChevronLeft, ChevronRight, Image as ImageIcon, Home, Calendar, Share2, Globe, Send, SearchX } from 'lucide-react';
 import { infoService } from '../services/infoService';
 import { useLanguage } from '../context/LanguageContext';
+import WatermarkedImage from './WatermarkedImage';
 
 function VisitorEmptyState({ 
   icon: Icon = SearchX, 
@@ -102,20 +103,21 @@ function ExpMediaCarousel({ mediaList, title }) {
               />
 
               {/* Layer 2: Main Image contain (no crop) */}
-              <img
+              <WatermarkedImage
                 src={imgSrc}
                 alt={`${title} - Foto ${idx + 1}`}
+                objectFit="contain"
+                objectPosition="center center"
                 style={{
                   position: 'absolute',
                   top: 0,
                   left: 0,
                   width: '100%',
                   height: '100%',
-                  objectFit: 'contain',
-                  objectPosition: 'center center',
                   zIndex: 2
                 }}
               />
+
             </div>
           ))}
         </div>
@@ -755,17 +757,17 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                               }}
                             />
                             {/* Layer 2: Main Contained Image */}
-                            <img
+                            <WatermarkedImage
                               src={cert.cover}
                               alt={cert.title}
+                              objectFit="contain"
+                              objectPosition="center center"
                               style={{
                                 position: 'absolute',
                                 top: 0,
                                 left: 0,
                                 width: '100%',
                                 height: '100%',
-                                objectFit: 'contain',
-                                objectPosition: 'center center',
                                 zIndex: 2
                               }}
                             />

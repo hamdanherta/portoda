@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Award, ExternalLink, Calendar, Building2 } from 'lucide-react';
 import { infoService } from '../services/infoService';
 import { useLanguage } from '../context/LanguageContext';
+import WatermarkedImage from './WatermarkedImage';
 
 export default function CertificateSection({ onSelectCertificate }) {
   const [certificates, setCertificates] = useState([]);
@@ -136,17 +137,17 @@ export default function CertificateSection({ onSelectCertificate }) {
                       }}
                     />
                     {/* Layer 2: Main Contained Image */}
-                    <img
+                    <WatermarkedImage
                       src={cert.cover}
                       alt={cert.title}
+                      objectFit="contain"
+                      objectPosition="center center"
                       style={{
                         position: 'absolute',
                         top: 0,
                         left: 0,
                         width: '100%',
                         height: '100%',
-                        objectFit: 'contain',
-                        objectPosition: 'center center',
                         zIndex: 2
                       }}
                     />

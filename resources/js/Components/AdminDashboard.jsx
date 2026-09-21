@@ -3354,31 +3354,36 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                             border: '2.5px solid #005BAB',
                             display: 'flex',
                             flexDirection: 'column',
-                            justifyContent: 'space-between'
+                            justifyContent: 'space-between',
+                            position: 'relative'
                           }}
                         >
+                          {doc.category && (
+                            <span style={{
+                              position: 'absolute',
+                              top: '1rem',
+                              right: '1rem',
+                              fontSize: '0.72rem',
+                              fontWeight: 800,
+                              background: doc.category === 'CV Kreatif' ? '#FEF3C7' : doc.category === 'Portofolio' ? '#D1FAE5' : '#EEF2FF',
+                              color: doc.category === 'CV Kreatif' ? '#D97706' : doc.category === 'Portofolio' ? '#059669' : '#4F46E5',
+                              border: `1.5px solid ${doc.category === 'CV Kreatif' ? '#D97706' : doc.category === 'Portofolio' ? '#059669' : '#4F46E5'}`,
+                              padding: '0.15rem 0.6rem',
+                              borderRadius: '999px',
+                              zIndex: 2
+                            }}>
+                              {doc.category}
+                            </span>
+                          )}
                           <div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                              <div style={{ padding: '0.6rem', borderRadius: '12px', background: '#FFF3DD', color: '#005BAB', border: '1.5px solid #005BAB' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem', paddingRight: doc.category ? '5.5rem' : 0 }}>
+                              <div style={{ padding: '0.6rem', borderRadius: '12px', background: '#FFF3DD', color: '#005BAB', border: '1.5px solid #005BAB', flexShrink: 0 }}>
                                 <FileText size={24} />
                               </div>
                               <div>
                                 <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#005BAB' }}>{doc.title}</h4>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap', marginTop: '0.2rem' }}>
                                   <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#005BAB', opacity: 0.85 }}>{doc.type}</span>
-                                  {doc.category && (
-                                    <span style={{
-                                      fontSize: '0.72rem',
-                                      fontWeight: 800,
-                                      background: doc.category === 'CV Kreatif' ? '#FEF3C7' : doc.category === 'Portofolio' ? '#D1FAE5' : '#EEF2FF',
-                                      color: doc.category === 'CV Kreatif' ? '#D97706' : doc.category === 'Portofolio' ? '#059669' : '#4F46E5',
-                                      border: `1.5px solid ${doc.category === 'CV Kreatif' ? '#D97706' : doc.category === 'Portofolio' ? '#059669' : '#4F46E5'}`,
-                                      padding: '0.15rem 0.55rem',
-                                      borderRadius: '999px'
-                                    }}>
-                                      {doc.category}
-                                    </span>
-                                  )}
                                 </div>
                               </div>
                             </div>

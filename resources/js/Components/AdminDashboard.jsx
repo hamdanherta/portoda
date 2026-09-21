@@ -790,6 +790,24 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
     newList[index] = newList[targetIndex];
     newList[targetIndex] = temp;
 
+    if (entityType === 'skills') {
+      const newProfileData = {
+        ...profileForm,
+        skills: newList,
+      };
+      setProfileForm(newProfileData);
+      try {
+        const updated = await infoService.saveProfile(newProfileData);
+        setProfile(updated || newProfileData);
+        setProfileForm(updated || newProfileData);
+        finishProcessingSuccess('Urutan posisi keahlian berhasil diperbarui!');
+      } catch (err) {
+        console.error('Failed to reorder skills:', err);
+        finishProcessingError('Gagal mengubah urutan keahlian.');
+      }
+      return;
+    }
+
     if (entityType === 'experiences') setExperiences(newList);
     if (entityType === 'documents') setDocuments(newList);
     if (entityType === 'certificates') setCertificates(newList);
@@ -4410,25 +4428,49 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                               )}
                             </div>
 
-                            <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'flex-end', paddingTop: '0.75rem', marginTop: '1rem', borderTop: '1.5px solid #005BAB' }}>
-                              <button
-                                type="button"
-                                onClick={() => handleEditSkillClick(skill)}
-                                className="btn-secondary"
-                                style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}
-                              >
-                                <Edit size={14} />
-                                <span>Edit</span>
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => setDeletingTarget({ id: skill.id, title: skill.title, label: 'Keahlian', targetType: 'skill' })}
-                                className="btn-danger"
-                                style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}
-                              >
-                                <Trash2 size={14} />
-                                <span>Hapus</span>
-                              </button>
+                            <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.75rem', marginTop: '1rem', borderTop: '1.5px solid #005BAB' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                                <button
+                                  type="button"
+                                  disabled={idx <= 0}
+                                  onClick={() => handleReorderEntity('skills', profileForm.skills || [], idx, 'up')}
+                                  className="btn-secondary"
+                                  style={{ padding: '0.35rem 0.5rem', fontSize: '0.78rem', opacity: idx <= 0 ? 0.3 : 1, cursor: idx <= 0 ? 'not-allowed' : 'pointer' }}
+                                  title="Atur Urutan Posisi (Geser ke Atas)"
+                                >
+                                  <ChevronUp size={15} />
+                                </button>
+                                <button
+                                  type="button"
+                                  disabled={idx >= (profileForm.skills || []).length - 1}
+                                  onClick={() => handleReorderEntity('skills', profileForm.skills || [], idx, 'down')}
+                                  className="btn-secondary"
+                                  style={{ padding: '0.35rem 0.5rem', fontSize: '0.78rem', opacity: idx >= (profileForm.skills || []).length - 1 ? 0.3 : 1, cursor: idx >= (profileForm.skills || []).length - 1 ? 'not-allowed' : 'pointer' }}
+                                  title="Atur Urutan Posisi (Geser ke Bawah)"
+                                >
+                                  <ChevronDown size={15} />
+                                </button>
+                              </div>
+                              <div style={{ display: 'flex', gap: '0.6rem' }}>
+                                <button
+                                  type="button"
+                                  onClick={() => handleEditSkillClick(skill)}
+                                  className="btn-secondary"
+                                  style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}
+                                >
+                                  <Edit size={14} />
+                                  <span>Edit</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setDeletingTarget({ id: skill.id, title: skill.title, label: 'Keahlian', targetType: 'skill' })}
+                                  className="btn-danger"
+                                  style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}
+                                >
+                                  <Trash2 size={14} />
+                                  <span>Hapus</span>
+                                </button>
+                              </div>
                             </div>
                           </div>
                         ))}

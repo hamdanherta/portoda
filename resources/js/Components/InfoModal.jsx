@@ -790,13 +790,10 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                     }}
                   >
                     <div>
-                      {/* Media Cover & Gallery Carousel — 16:9 Aspect Ratio with Blurred Backdrop & Contained Image */}
+                      {/* Media Cover Image — 16:9 Aspect Ratio with Blurred Backdrop & Contained Image */}
                       {(() => {
-                        const certMedia = Array.from(new Set([cert.cover, ...(cert.gallery || [])].filter(Boolean)));
-                        if (certMedia.length > 1) {
-                          return <ExpMediaCarousel mediaList={certMedia} title={cert.title} />;
-                        }
-                        return cert.cover ? (
+                        const coverImg = cert.cover || (Array.isArray(cert.gallery) && cert.gallery[0]) || null;
+                        return coverImg ? (
                           <div style={{
                             position: 'relative',
                             width: '100%',
@@ -809,7 +806,7 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                           }}>
                             {/* Layer 1: Blurred Backdrop */}
                             <img
-                              src={cert.cover}
+                              src={coverImg}
                               alt=""
                               aria-hidden="true"
                               style={{
@@ -828,7 +825,7 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                             />
                             {/* Layer 2: Main Contained Image */}
                             <WatermarkedImage
-                              src={cert.cover}
+                              src={coverImg}
                               alt={cert.title}
                               objectFit="contain"
                               objectPosition="center center"

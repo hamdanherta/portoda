@@ -4397,23 +4397,22 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                             }}
                           >
                             <div>
-                              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.55rem', marginBottom: '0.4rem' }}>
-                                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', fontWeight: 800, color: '#005BAB', fontSize: '1.05rem', flex: 1, minWidth: 0 }}>
-                                  <Award size={20} color="#005BAB" style={{ flexShrink: 0, marginTop: '2px' }} />
-                                  <span style={{ wordBreak: 'break-word', lineHeight: 1.35 }}>{skill.title}</span>
-                                </div>
+                              <div style={{ marginBottom: '0.45rem' }}>
                                 <span style={{
                                   fontSize: '0.72rem',
                                   fontWeight: 800,
                                   background: skill.category === 'Hard Skill' ? '#10B981' : '#005BAB',
                                   color: '#FFFFFF',
-                                  padding: '0.15rem 0.55rem',
+                                  padding: '0.15rem 0.6rem',
                                   borderRadius: '999px',
-                                  flexShrink: 0,
-                                  whiteSpace: 'nowrap'
+                                  display: 'inline-block'
                                 }}>
                                   {skill.category || 'Soft Skill'}
                                 </span>
+                              </div>
+                              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', fontWeight: 800, color: '#005BAB', fontSize: '1.05rem', marginBottom: '0.4rem' }}>
+                                <Award size={20} color="#005BAB" style={{ flexShrink: 0, marginTop: '2px' }} />
+                                <span style={{ wordBreak: 'break-word', lineHeight: 1.35 }}>{skill.title}</span>
                               </div>
                               {skill.title_en && skill.title_en !== skill.title && (
                                 <div style={{ fontSize: '0.78rem', color: '#005BAB', opacity: 0.8, fontWeight: 700, marginBottom: '0.4rem' }}>

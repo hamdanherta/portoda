@@ -624,23 +624,22 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
                   {profileData.skills.map((skill, index) => (
                     <div key={skill.id || index} style={{ background: '#FFF3DD', padding: '1rem', borderRadius: '12px', border: '1.5px solid #005BAB' }}>
-                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.55rem', fontWeight: 800, color: '#005BAB', marginBottom: '0.4rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.4rem', flex: 1, minWidth: 0 }}>
-                          <Award size={18} style={{ flexShrink: 0, marginTop: '2px' }} />
-                          <span style={{ wordBreak: 'break-word', lineHeight: 1.35 }}>{getLocalizedField(skill, 'title')}</span>
-                        </div>
+                      <div style={{ marginBottom: '0.45rem' }}>
                         <span style={{
                           fontSize: '0.7rem',
                           fontWeight: 800,
                           background: skill.category === 'Hard Skill' ? '#10B981' : '#005BAB',
                           color: '#FFFFFF',
-                          padding: '0.12rem 0.5rem',
+                          padding: '0.12rem 0.55rem',
                           borderRadius: '999px',
-                          flexShrink: 0,
-                          whiteSpace: 'nowrap'
+                          display: 'inline-block'
                         }}>
                           {skill.category || 'Soft Skill'}
                         </span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.4rem', fontWeight: 800, color: '#005BAB', marginBottom: '0.4rem' }}>
+                        <Award size={18} style={{ flexShrink: 0, marginTop: '2px' }} />
+                        <span style={{ wordBreak: 'break-word', lineHeight: 1.35 }}>{getLocalizedField(skill, 'title')}</span>
                       </div>
                       <p style={{ fontSize: '0.82rem', color: '#005BAB', fontWeight: 600 }}>{getLocalizedField(skill, 'desc')}</p>
                     </div>

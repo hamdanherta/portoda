@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, User, Briefcase, Mail, MapPin, Palette, Video, Code, FileText, Download, MessageSquare, Award, ExternalLink, ChevronLeft, ChevronRight, Image as ImageIcon, Home, Calendar, Share2, Globe, Send, SearchX, Check } from 'lucide-react';
+import { X, User, Briefcase, Mail, MapPin, Palette, Video, Code, FileText, Download, MessageSquare, Award, ExternalLink, ChevronLeft, ChevronRight, Image as ImageIcon, Home, Calendar, Share2, Globe, Send, SearchX, Check, Loader2 } from 'lucide-react';
 import { infoService } from '../services/infoService';
 import { useLanguage } from '../context/LanguageContext';
 import WatermarkedImage from './WatermarkedImage';
@@ -250,30 +250,49 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
   const [contactsList, setContactsList] = useState([]);
   const [profileData, setProfileData] = useState({});
   const [certificatesList, setCertificatesList] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { lang, t, getLocalizedField } = useLanguage();
 
   useEffect(() => {
+    let isMounted = true;
     const loadAll = async () => {
-      const [exps, docs, cnts, prof, certs] = await Promise.all([
-        infoService.getExperiences(),
-        infoService.getDocuments(),
-        infoService.getContacts(),
-        infoService.getProfile(),
-        infoService.getCertificates()
-      ]);
-      setExperiences(exps || []);
-      setDocumentsList(docs || []);
-      setContactsList(cnts || []);
-      setProfileData(prof || {});
-      setCertificatesList(certs || []);
+      setLoading(true);
+      try {
+        const [exps, docs, cnts, prof, certs] = await Promise.all([
+          infoService.getExperiences(),
+          infoService.getDocuments(),
+          infoService.getContacts(),
+          infoService.getProfile(),
+          infoService.getCertificates()
+        ]);
+        if (isMounted) {
+          setExperiences(exps || []);
+          setDocumentsList(docs || []);
+          setContactsList(cnts || []);
+          setProfileData(prof || {});
+          setCertificatesList(certs || []);
+        }
+      } catch (err) {
+        console.error('Failed to load info modal data:', err);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
     };
 
     if (activeType) {
       loadAll();
+    } else {
+      setLoading(true);
     }
 
-    window.addEventListener('portoda_info_updated', loadAll);
-    return () => window.removeEventListener('portoda_info_updated', loadAll);
+    const handleUpdate = () => loadAll();
+    window.addEventListener('portoda_info_updated', handleUpdate);
+    return () => {
+      isMounted = false;
+      window.removeEventListener('portoda_info_updated', handleUpdate);
+    };
   }, [activeType]);
 
   const [copiedDocId, setCopiedDocId] = useState(null);
@@ -404,6 +423,40 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
           <X size={20} />
         </button>
 
+        {/* Loading Spinner State */}
+        {loading ? (
+          <div style={{
+            padding: '4rem 1rem',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '1.25rem',
+            minHeight: '280px'
+          }}>
+            <div style={{
+              width: '56px',
+              height: '56px',
+              borderRadius: '999px',
+              background: '#FFF3DD',
+              border: '2.5px solid #005BAB',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <Loader2 size={30} color="#005BAB" className="animate-spin" />
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#005BAB', margin: 0 }}>
+                {lang === 'en' ? 'Loading Data...' : 'Memuat Data...'}
+              </h4>
+              <p style={{ fontSize: '0.82rem', fontWeight: 600, color: '#005BAB', opacity: 0.8, marginTop: '0.35rem', margin: 0 }}>
+                {lang === 'en' ? 'Please wait a moment while we prepare the content.' : 'Mohon tunggu sebentar, sedang menyinkronkan data.'}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <>
         {/* --- DOKUMEN HAMDANI --- */}
         {activeType === 'dokumen' && (
           <div>
@@ -453,7 +506,7 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                         {docCategory}
                       </span>
                       <div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.6rem', paddingRight: '5.5rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.85rem', marginBottom: '0.85rem', paddingRight: '5.5rem' }}>
                           <div style={{ padding: '0.5rem', borderRadius: '10px', background: '#FFF3DD', color: '#005BAB', border: '1.5px solid #005BAB', flexShrink: 0 }}>
                             <FileText size={20} />
                           </div>
@@ -571,10 +624,10 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
                   {profileData.skills.map((skill, index) => (
                     <div key={skill.id || index} style={{ background: '#FFF3DD', padding: '1rem', borderRadius: '12px', border: '1.5px solid #005BAB' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.4rem', fontWeight: 800, color: '#005BAB', marginBottom: '0.3rem', flexWrap: 'wrap' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          <Award size={18} />
-                          <span>{getLocalizedField(skill, 'title')}</span>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.55rem', fontWeight: 800, color: '#005BAB', marginBottom: '0.4rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.4rem', flex: 1, minWidth: 0 }}>
+                          <Award size={18} style={{ flexShrink: 0, marginTop: '2px' }} />
+                          <span style={{ wordBreak: 'break-word', lineHeight: 1.35 }}>{getLocalizedField(skill, 'title')}</span>
                         </div>
                         <span style={{
                           fontSize: '0.7rem',
@@ -582,7 +635,9 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                           background: skill.category === 'Hard Skill' ? '#10B981' : '#005BAB',
                           color: '#FFFFFF',
                           padding: '0.12rem 0.5rem',
-                          borderRadius: '999px'
+                          borderRadius: '999px',
+                          flexShrink: 0,
+                          whiteSpace: 'nowrap'
                         }}>
                           {skill.category || 'Soft Skill'}
                         </span>
@@ -923,6 +978,8 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
               </div>
             )}
           </div>
+        )}
+        </>
         )}
 
         {/* Modal Footer Button */}

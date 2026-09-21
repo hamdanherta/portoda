@@ -3393,12 +3393,12 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                             {doc.category || 'CV ATS'}
                           </span>
                           <div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem', paddingRight: '5.5rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '0.75rem', paddingRight: '5.5rem' }}>
                               <div style={{ padding: '0.6rem', borderRadius: '12px', background: '#FFF3DD', color: '#005BAB', border: '1.5px solid #005BAB', flexShrink: 0 }}>
                                 <FileText size={24} />
                               </div>
-                              <div>
-                                <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#005BAB' }}>{doc.title}</h4>
+                              <div style={{ flex: 1, minWidth: 0 }}>
+                                <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.35, margin: 0, wordBreak: 'break-word' }}>{doc.title}</h4>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap', marginTop: '0.2rem' }}>
                                   <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#005BAB', opacity: 0.85 }}>{doc.type}</span>
                                 </div>
@@ -4397,10 +4397,10 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                             }}
                           >
                             <div>
-                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.4rem', flexWrap: 'wrap' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 800, color: '#005BAB', fontSize: '1.05rem' }}>
-                                  <Award size={20} color="#005BAB" />
-                                  <span>{skill.title}</span>
+                              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.55rem', marginBottom: '0.4rem' }}>
+                                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', fontWeight: 800, color: '#005BAB', fontSize: '1.05rem', flex: 1, minWidth: 0 }}>
+                                  <Award size={20} color="#005BAB" style={{ flexShrink: 0, marginTop: '2px' }} />
+                                  <span style={{ wordBreak: 'break-word', lineHeight: 1.35 }}>{skill.title}</span>
                                 </div>
                                 <span style={{
                                   fontSize: '0.72rem',
@@ -4408,7 +4408,9 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                                   background: skill.category === 'Hard Skill' ? '#10B981' : '#005BAB',
                                   color: '#FFFFFF',
                                   padding: '0.15rem 0.55rem',
-                                  borderRadius: '999px'
+                                  borderRadius: '999px',
+                                  flexShrink: 0,
+                                  whiteSpace: 'nowrap'
                                 }}>
                                   {skill.category || 'Soft Skill'}
                                 </span>

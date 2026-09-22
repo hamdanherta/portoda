@@ -827,15 +827,6 @@ export default function DetailModal({ item, onClose }) {
             .video-embed-container {
               padding-top: 56.25% !important;
             }
-            .video-embed-container.is-gdrive {
-              overflow: hidden !important;
-            }
-            .video-embed-container.is-gdrive iframe {
-              width: 133.333% !important;
-              height: 133.333% !important;
-              transform: scale(0.75) !important;
-              transform-origin: top left !important;
-            }
             .detail-modal-header {
               padding: 0.75rem 0.85rem !important;
             }

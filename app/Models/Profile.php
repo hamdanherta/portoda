@@ -24,11 +24,13 @@ class Profile extends Model
         'skills',
         'watermark_enabled',
         'maintenance_mode',
+        'content_notice_enabled',
     ];
 
     protected $casts = [
         'skills' => 'array',
         'watermark_enabled' => 'boolean',
         'maintenance_mode' => 'boolean',
+        'content_notice_enabled' => 'boolean',
     ];
 }

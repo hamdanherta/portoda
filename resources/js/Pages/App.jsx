@@ -8,6 +8,7 @@ import AdminDashboard from '../Components/AdminDashboard';
 import InfoModal from '../Components/InfoModal';
 import Footer from '../Components/Footer';
 import MaintenanceModal from '../Components/MaintenanceModal';
+import ContentNoticeModal from '../Components/ContentNoticeModal';
 import { portfolioService } from '../services/portfolioService';
 import { infoService } from '../services/infoService';
 import { LanguageProvider } from '../context/LanguageContext';
@@ -46,6 +47,10 @@ export default function App({ karyaId, docId }) {
     return false;
   });
 
+  // Content notice: muncul setiap buka/refresh jika diaktifkan
+  const [isContentNoticeEnabled, setIsContentNoticeEnabled] = useState(false);
+  const [isContentNoticeOpen, setIsContentNoticeOpen] = useState(false);
+
   useEffect(() => {
     const handleAuthChange = () => {
       if (typeof window !== 'undefined') {
@@ -66,6 +71,13 @@ export default function App({ karyaId, docId }) {
         const p = await infoService.getProfile();
         const activeMaint = p?.maintenance_mode === true || p?.maintenance_mode === 1 || p?.maintenance_mode === '1';
         setIsMaintenanceMode(activeMaint);
+
+        // Content notice: jika diaktifkan, tampilkan setiap buka/refresh
+        const activeNotice = p?.content_notice_enabled !== false && p?.content_notice_enabled !== 0 && p?.content_notice_enabled !== '0';
+        setIsContentNoticeEnabled(activeNotice);
+        if (activeNotice) {
+          setIsContentNoticeOpen(true);
+        }
       } catch (err) {
         console.error('Failed to check maintenance mode status:', err);
       }
@@ -76,6 +88,9 @@ export default function App({ karyaId, docId }) {
       if (typeof window !== 'undefined') {
         const isMaint = localStorage.getItem('portoda_maintenance_mode') === 'true';
         setIsMaintenanceMode(isMaint);
+
+        const isNotice = localStorage.getItem('portoda_content_notice_enabled') === 'true';
+        setIsContentNoticeEnabled(isNotice);
       }
     };
 
@@ -393,6 +408,12 @@ export default function App({ karyaId, docId }) {
         {/* Modal Maintenance (Modal Peringatan Pemeliharaan Sistem - Tidak muncul jika admin sedang login) */}
         <MaintenanceModal
           isOpen={isMaintenanceMode && !isAdminAuthenticated && !isAdminOpen}
+        />
+
+        {/* Modal Pemberitahuan Pengisian Konten - muncul setiap buka/refresh jika diaktifkan */}
+        <ContentNoticeModal
+          isOpen={isContentNoticeOpen && !isMaintenanceMode && !isAdminAuthenticated && !isAdminOpen}
+          onClose={() => setIsContentNoticeOpen(false)}
         />
 
         {/* Footer */}

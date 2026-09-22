@@ -298,6 +298,9 @@ export const infoService = {
         
         const isMaint = data.maintenance_mode === true || data.maintenance_mode === 1 || data.maintenance_mode === '1';
         localStorage.setItem('portoda_maintenance_mode', isMaint ? 'true' : 'false');
+
+        const isNotice = data.content_notice_enabled !== false && data.content_notice_enabled !== 0 && data.content_notice_enabled !== '0';
+        localStorage.setItem('portoda_content_notice_enabled', isNotice ? 'true' : 'false');
       }
       return data;
     } catch (err) {
@@ -335,6 +338,10 @@ export const infoService = {
         
         const isMaint = response.data?.maintenance_mode === true || response.data?.maintenance_mode === 1 || response.data?.maintenance_mode === '1';
         localStorage.setItem('portoda_maintenance_mode', isMaint ? 'true' : 'false');
+
+        const isNotice = response.data?.content_notice_enabled !== false && response.data?.content_notice_enabled !== 0 && response.data?.content_notice_enabled !== '0';
+        localStorage.setItem('portoda_content_notice_enabled', isNotice ? 'true' : 'false');
+
         window.dispatchEvent(new Event('portoda_info_updated'));
       }
       if (onProgress) onProgress(100);

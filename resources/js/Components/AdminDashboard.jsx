@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Plus, Edit, Trash2, ShieldCheck, RefreshCw, Check, Upload, LogOut, AlertTriangle, Loader2, Briefcase, FileText, Mail, User, Grid, Award, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, Search, SearchX, Palette, Video, Code, BarChart3, PlusCircle, FolderKanban, Globe, Building2, Image, Play, Link, CheckCircle2, Star, Info, Phone, Share2 } from 'lucide-react';
+import { Menu, X, Plus, Edit, Trash2, ShieldCheck, RefreshCw, Check, Upload, LogOut, AlertTriangle, Loader2, Briefcase, FileText, Mail, User, Grid, Award, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, Search, SearchX, Palette, Video, Code, BarChart3, PlusCircle, FolderKanban, Globe, Building2, Image, Play, Link, CheckCircle2, Star, Info, Phone, Share2, Bell } from 'lucide-react';
 import { compressImageToWebP } from '../utils/imageCompressor';
 import { infoService } from '../services/infoService';
 import { portfolioService } from '../services/portfolioService';
@@ -712,6 +712,25 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
     } catch (err) {
       console.error('Failed to toggle maintenance mode:', err);
       finishProcessingError('Gagal memperbarui status mode maintenance.');
+      setProfileForm(profileForm);
+    }
+  };
+
+  const handleToggleContentNotice = async () => {
+    const isCurrentlyNotice = profileForm.content_notice_enabled !== false && profileForm.content_notice_enabled !== 0 && profileForm.content_notice_enabled !== '0';
+    const newVal = !isCurrentlyNotice;
+    const updatedForm = { ...profileForm, content_notice_enabled: newVal };
+    setProfileForm(updatedForm);
+
+    try {
+      startProcessing(newVal ? 'Mengaktifkan Modal Pengisian Konten...' : 'Menonaktifkan Modal Pengisian Konten...');
+      const updated = await infoService.saveProfile(updatedForm);
+      setProfile(updated || updatedForm);
+      setProfileForm(updated || updatedForm);
+      finishProcessingSuccess(newVal ? 'Modal Pengisian Konten Berhasil DIAKTIFKAN!' : 'Modal Pengisian Konten Berhasil DINONAKTIFKAN!');
+    } catch (err) {
+      console.error('Failed to toggle content notice modal:', err);
+      finishProcessingError('Gagal memperbarui status modal pengisian konten.');
       setProfileForm(profileForm);
     }
   };
@@ -2106,6 +2125,81 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                           }}
                         >
                           {(profileForm.maintenance_mode === true || profileForm.maintenance_mode === 1 || profileForm.maintenance_mode === '1') ? (
+                            <Check size={14} color="#005BAB" strokeWidth={3} />
+                          ) : (
+                            <X size={14} color="#DC2626" strokeWidth={3} />
+                          )}
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Pemberitahuan Pengisian Konten Control Card */}
+                  <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF', border: '2.5px solid #005BAB', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+                        <h3 style={{ fontSize: '1.15rem', color: '#005BAB', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0 }}>
+                          <Bell size={20} />
+                          <span>Pemberitahuan Konten</span>
+                        </h3>
+                        <span style={{
+                          fontSize: '0.75rem',
+                          fontWeight: 800,
+                          padding: '0.25rem 0.65rem',
+                          borderRadius: '999px',
+                          background: (profileForm.content_notice_enabled !== false && profileForm.content_notice_enabled !== 0 && profileForm.content_notice_enabled !== '0') ? '#DCFCE7' : '#FEE2E2',
+                          color: (profileForm.content_notice_enabled !== false && profileForm.content_notice_enabled !== 0 && profileForm.content_notice_enabled !== '0') ? '#15803D' : '#DC2626',
+                          border: `1.5px solid ${(profileForm.content_notice_enabled !== false && profileForm.content_notice_enabled !== 0 && profileForm.content_notice_enabled !== '0') ? '#16A34A' : '#DC2626'}`
+                        }}>
+                          {(profileForm.content_notice_enabled !== false && profileForm.content_notice_enabled !== 0 && profileForm.content_notice_enabled !== '0') ? '(ON)' : '(OFF)'}
+                        </span>
+                      </div>
+                      <p style={{ fontSize: '0.85rem', color: '#005BAB', fontWeight: 600, marginBottom: '1.25rem', lineHeight: 1.5 }}>
+                        Jika diaktifkan, setiap pengunjung yang membuka atau me-refresh website akan melihat modal pemberitahuan bahwa website sedang dalam tahap pengisian konten oleh Hamdani.
+                      </p>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '0.75rem', borderTop: '1.5px solid rgba(0,91,171,0.15)' }}>
+                      <span style={{ fontSize: '0.88rem', fontWeight: 800, color: '#005BAB' }}>
+                        Status Modal Pemberitahuan
+                      </span>
+
+                      {/* Toggle Switch Button */}
+                      <button
+                        type="button"
+                        onClick={handleToggleContentNotice}
+                        style={{
+                          position: 'relative',
+                          width: '58px',
+                          height: '32px',
+                          borderRadius: '999px',
+                          backgroundColor: (profileForm.content_notice_enabled !== false && profileForm.content_notice_enabled !== 0 && profileForm.content_notice_enabled !== '0') ? '#005BAB' : '#CBD5E1',
+                          border: '2px solid #005BAB',
+                          cursor: 'pointer',
+                          transition: 'background-color 0.25s ease',
+                          padding: 0,
+                          outline: 'none',
+                          display: 'flex',
+                          alignItems: 'center'
+                        }}
+                        title={(profileForm.content_notice_enabled !== false && profileForm.content_notice_enabled !== 0 && profileForm.content_notice_enabled !== '0') ? 'Klik untuk menonaktifkan modal pemberitahuan konten' : 'Klik untuk mengaktifkan modal pemberitahuan konten'}
+                      >
+                        <div
+                          style={{
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '50%',
+                            backgroundColor: '#FFFFFF',
+                            border: '1.5px solid #005BAB',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                            transform: (profileForm.content_notice_enabled !== false && profileForm.content_notice_enabled !== 0 && profileForm.content_notice_enabled !== '0') ? 'translateX(28px)' : 'translateX(3px)',
+                            transition: 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}
+                        >
+                          {(profileForm.content_notice_enabled !== false && profileForm.content_notice_enabled !== 0 && profileForm.content_notice_enabled !== '0') ? (
                             <Check size={14} color="#005BAB" strokeWidth={3} />
                           ) : (
                             <X size={14} color="#DC2626" strokeWidth={3} />

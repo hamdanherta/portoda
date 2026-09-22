@@ -827,6 +827,10 @@ export default function DetailModal({ item, onClose }) {
             .video-embed-container {
               padding-top: 56.25% !important;
             }
+            .video-embed-container.is-gdrive {
+              padding-top: 68% !important;
+              min-height: 235px !important;
+            }
             .detail-modal-header {
               padding: 0.75rem 0.85rem !important;
             }

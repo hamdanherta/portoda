@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { X, ExternalLink, Calendar, User, Tag, Play, ChevronLeft, ChevronRight, Award, Briefcase, Building2, Sparkles, FolderKanban, Wrench, Code, Layers, Smartphone, Share2, Check } from 'lucide-react';
+import { X, ExternalLink, Calendar, User, Tag, Play, ChevronLeft, ChevronRight, Award, Briefcase, Building2, Sparkles, FolderKanban, Wrench, Code, Layers, Smartphone, Share2, Check, Maximize2 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import WatermarkedImage from './WatermarkedImage';
 
@@ -7,6 +7,7 @@ export default function DetailModal({ item, onClose }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isVideoFullscreen, setIsVideoFullscreen] = useState(false);
   const { lang, t, getLocalizedField } = useLanguage();
   const autoSlideRef = useRef(null);
   const resumeTimerRef = useRef(null);
@@ -194,6 +195,7 @@ export default function DetailModal({ item, onClose }) {
     (isVideoPlatformLink(item.prototype_url) ? item.prototype_url : '');
 
   const videoEmbedUrl = getEmbedVideoUrl(rawVideoLink);
+  const isGdriveVideo = !!(videoEmbedUrl && (videoEmbedUrl.includes('drive.google.com') || videoEmbedUrl.includes('docs.google.com')));
 
   const appOrProjLink = item.prototype_url || item.project_url || item.app_url || item.demo_url || item.link || item.url;
 
@@ -315,6 +317,22 @@ export default function DetailModal({ item, onClose }) {
                   border: 'none'
                 }}
               />
+
+              {/* Mobile-only fullscreen hint — hanya tampil di layar kecil untuk GDrive */}
+              {isGdriveVideo && (
+                <div className="gdrive-mobile-hint">
+                  <p className="gdrive-hint-text">
+                    💡 Tonton dalam fullscreen untuk <br></br> pengalaman yang lebih baik
+                  </p>
+                  <button
+                    className="gdrive-hint-btn"
+                    onClick={() => setIsVideoFullscreen(true)}
+                  >
+                    <Maximize2 size={15} />
+                    <span>Tonton Fullscreen</span>
+                  </button>
+                </div>
+              )}
             </div>
           ) : (
             <div
@@ -817,18 +835,107 @@ export default function DetailModal({ item, onClose }) {
             </button>
           </div>
         </div>
+        {/* ── GDrive Video Fullscreen Overlay ── */}
+        {isVideoFullscreen && videoEmbedUrl && (
+          <div
+            style={{
+              position: 'fixed',
+              inset: 0,
+              backgroundColor: '#000000',
+              zIndex: 999999,
+              display: 'flex',
+              flexDirection: 'column'
+            }}
+          >
+            {/* Tombol tutup fullscreen */}
+            <button
+              onClick={() => setIsVideoFullscreen(false)}
+              style={{
+                position: 'absolute',
+                top: '14px',
+                right: '14px',
+                zIndex: 1000000,
+                background: 'rgba(255,255,255,0.15)',
+                border: '1.5px solid rgba(255,255,255,0.45)',
+                backdropFilter: 'blur(6px)',
+                color: '#FFFFFF',
+                width: '42px',
+                height: '42px',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                transition: 'background 0.2s ease'
+              }}
+              title="Tutup Fullscreen"
+            >
+              <X size={20} />
+            </button>
+            {/* Iframe fullscreen */}
+            <iframe
+              src={videoEmbedUrl}
+              title={titleText}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              style={{ width: '100%', height: '100%', border: 'none' }}
+            />
+          </div>
+        )}
+
         <style>{`
           .detail-modal-scroll::-webkit-scrollbar { display: none; }
           @keyframes slideProgress {
             from { width: 0%; }
             to   { width: 100%; }
           }
+          /* GDrive mobile hint: hidden by default (desktop), shown on mobile via media query */
+          .gdrive-mobile-hint {
+            display: none;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 0.6rem 1rem 0.75rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 100%);
+            flex-direction: column;
+            align-items: center;
+            gap: 0.45rem;
+            z-index: 15;
+          }
+          .gdrive-hint-text {
+            color: rgba(255,255,255,0.92);
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-align: center;
+            margin: 0;
+            line-height: 1.4;
+          }
+          .gdrive-hint-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: #005BAB;
+            color: #FFFFFF;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 999px;
+            padding: 0.42rem 1.1rem;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s ease;
+          }
+          .gdrive-hint-btn:active { background: #003d80; }
           /* Google Drive preview player has its own UI chrome (top timeline + bottom controls)
              that require extra height beyond pure 16:9 to avoid overlap — applies all screen sizes */
           .video-embed-container.is-gdrive {
             padding-top: 66% !important;
           }
           @media (max-width: 640px) {
+            /* Show mobile fullscreen hint on small screens */
+            .gdrive-mobile-hint {
+              display: flex !important;
+            }
             .video-embed-container {
               padding-top: 56.25% !important;
             }

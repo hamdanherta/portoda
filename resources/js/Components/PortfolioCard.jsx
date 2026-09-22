@@ -153,7 +153,7 @@ export default function PortfolioCard({ item, onClick }) {
         background: '#FFFFFF'
       }}>
         <div>
-          {/* Badges & Subcategory */}
+          {/* Badges & Subcategory & Year */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
             <span className={`badge ${getBadgeClass(item.category)}`}>
               {getCategoryLabel(item.category)}
@@ -170,7 +170,18 @@ export default function PortfolioCard({ item, onClick }) {
               {subcatText}
             </span>
             {item.year && (
-              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#005BAB', marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+              <span style={{
+                fontSize: '0.75rem',
+                fontWeight: 800,
+                color: '#005BAB',
+                background: '#FFF3DD',
+                padding: '0.25rem 0.65rem',
+                borderRadius: '999px',
+                border: '1.5px solid #005BAB',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.25rem'
+              }}>
                 <Calendar size={12} />
                 {item.year}
               </span>

@@ -325,7 +325,7 @@ export default function Navbar({ onOpenNavModal }) {
 
       {/* Inline responsive style tweaks */}
       <style>{`
-        @media (max-width: 960px) {
+        @media (max-width: 1200px) {
           .desktop-nav { display: none !important; }
           .lang-switcher-pill { display: none !important; }
           .herta-header-card {
@@ -333,7 +333,7 @@ export default function Navbar({ onOpenNavModal }) {
             min-height: 84px !important;
           }
         }
-        @media (min-width: 961px) {
+        @media (min-width: 1201px) {
           .mobile-toggle { display: none !important; }
           .mobile-drawer { display: none !important; }
           .lang-switcher-pill { display: inline-flex !important; }

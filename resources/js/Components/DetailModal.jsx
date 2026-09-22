@@ -904,12 +904,13 @@ export default function DetailModal({ item, onClose }) {
             z-index: 15;
           }
           .gdrive-hint-text {
-            color: rgba(255,255,255,0.92);
+            color: rgba(255,255,255,0.95);
             font-size: 0.78rem;
             font-weight: 600;
             text-align: center;
             margin: 0;
             line-height: 1.4;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.85);
           }
           .gdrive-hint-btn {
             display: inline-flex;
@@ -917,24 +918,35 @@ export default function DetailModal({ item, onClose }) {
             gap: 0.4rem;
             background: #005BAB;
             color: #FFFFFF;
-            border: 2px solid rgba(255,255,255,0.3);
+            border: 2px solid rgba(255,255,255,0.4);
             border-radius: 999px;
-            padding: 0.42rem 1.1rem;
-            font-size: 0.82rem;
+            padding: 0.5rem 1.25rem;
+            font-size: 0.85rem;
             font-weight: 700;
             cursor: pointer;
-            transition: background 0.2s ease;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+            transition: all 0.2s ease;
           }
-          .gdrive-hint-btn:active { background: #003d80; }
+          .gdrive-hint-btn:active {
+            background: #003d80;
+            transform: scale(0.96);
+          }
           /* Google Drive preview player has its own UI chrome (top timeline + bottom controls)
              that require extra height beyond pure 16:9 to avoid overlap — applies all screen sizes */
           .video-embed-container.is-gdrive {
             padding-top: 66% !important;
           }
           @media (max-width: 640px) {
-            /* Show mobile fullscreen hint on small screens */
+            /* Show mobile fullscreen hint on small screens centered directly over play button */
             .gdrive-mobile-hint {
               display: flex !important;
+              top: 50% !important;
+              left: 50% !important;
+              bottom: auto !important;
+              transform: translate(-50%, -50%) !important;
+              background: transparent !important;
+              padding: 0 !important;
+              width: 90% !important;
             }
             .video-embed-container {
               padding-top: 56.25% !important;

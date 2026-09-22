@@ -129,7 +129,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
                 <span className="hero-title-name">{profile?.name || 'Hamdani'}</span>
                 <span className="hero-title-sep"> — </span>
                 <br className="hero-title-br" />
-                <span className="hero-title-tagline">
+                <span className="hero-title-tagline" style={{ fontWeight: 400 }}>
                   {lang === 'en' ? (profile?.tagline_en || profile?.tagline || t('hero_title')) : (profile?.tagline || t('hero_title'))}
                 </span>
               </h1>

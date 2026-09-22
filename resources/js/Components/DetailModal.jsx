@@ -290,20 +290,22 @@ export default function DetailModal({ item, onClose }) {
         {/* Media Header (Video Embed or Image Carousel) */}
         <div style={{ position: 'relative', width: '100%', backgroundColor: '#FFFFFF', borderBottom: '2.5px solid #005BAB' }}>
           {videoEmbedUrl ? (
-            <div style={{
-              position: 'relative',
-              width: '100%',
-              backgroundColor: videoEmbedUrl.includes('instagram.com') ? '#FFFFFF' : '#000000',
-              ...(videoEmbedUrl.includes('instagram.com')
-                ? { height: '520px', maxHeight: '75vh' }
-                : { paddingTop: '56.25%' })
-            }}>
+            <div
+              className={`video-embed-container ${(videoEmbedUrl.includes('drive.google.com') || videoEmbedUrl.includes('docs.google.com')) ? 'is-gdrive' : ''}`}
+              style={{
+                position: 'relative',
+                width: '100%',
+                backgroundColor: videoEmbedUrl.includes('instagram.com') ? '#FFFFFF' : '#000000',
+                ...(videoEmbedUrl.includes('instagram.com')
+                  ? { height: '520px', maxHeight: '75vh' }
+                  : { paddingTop: '56.25%' })
+              }}
+            >
               <iframe
                 src={videoEmbedUrl}
                 title={titleText}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
-                scrolling="no"
                 style={{
                   position: 'absolute',
                   top: 0,
@@ -834,6 +836,14 @@ export default function DetailModal({ item, onClose }) {
             to   { width: 100%; }
           }
           @media (max-width: 640px) {
+            .video-embed-container {
+              padding-top: 65% !important;
+              min-height: 240px !important;
+            }
+            .video-embed-container.is-gdrive {
+              padding-top: 72% !important;
+              min-height: 260px !important;
+            }
             .detail-modal-header {
               padding: 0.75rem 0.85rem !important;
             }

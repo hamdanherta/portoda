@@ -489,9 +489,11 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
     const gallery = (formData.gallery_images || []).slice(0, rules.maxGallery);
 
     const isMobileOrWeb = formData.subcategory === 'Web App' || formData.subcategory === 'Mobile App';
+    const isMultimediaFilm = formData.category === 'multimedia' && formData.subcategory === 'Film';
 
     const payload = {
       ...formData,
+      role: isMultimediaFilm ? (formData.role || '') : '',
       image_url: cover,
       cover_image: cover,
       gallery_images: gallery,

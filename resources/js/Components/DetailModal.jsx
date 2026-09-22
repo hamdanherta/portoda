@@ -119,6 +119,7 @@ export default function DetailModal({ item, onClose }) {
   const isVideografi = subcatLower.includes('videografi') || subcatLower.includes('videography');
   const isMotionGraphic = subcatLower.includes('motion');
   const isFilm = subcatLower.includes('film') || subcatLower.includes('movie');
+  const isMultimediaFilm = (item.category || '').toLowerCase() === 'multimedia' && isFilm;
   const isMobileApp = subcatLower.includes('mobile') || subcatLower.includes('seluler') || subcatLower.includes('hp');
   const isWebApp = subcatLower.includes('web app') || subcatLower.includes('aplikasi web');
   const isUIUX = subcatLower.includes('ui') || subcatLower.includes('ux');
@@ -696,8 +697,8 @@ export default function DetailModal({ item, onClose }) {
             )}
           </div>
 
-          {/* Peran Hamdani — Khusus Film / Peran Karya */}
-          {item.role && item.role.trim() !== '' && (
+          {/* Peran Hamdani — Khusus Kategori Multimedia Subkategori Film */}
+          {isMultimediaFilm && item.role && item.role.trim() !== '' && (
             <div style={{
               display: 'inline-flex',
               alignItems: 'center',

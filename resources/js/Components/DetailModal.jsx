@@ -290,31 +290,76 @@ export default function DetailModal({ item, onClose }) {
         {/* Media Header (Video Embed or Image Carousel) */}
         <div style={{ position: 'relative', width: '100%', backgroundColor: '#FFFFFF', borderBottom: '2.5px solid #005BAB' }}>
           {videoEmbedUrl ? (
-            <div
-              className={`video-embed-container ${(videoEmbedUrl.includes('drive.google.com') || videoEmbedUrl.includes('docs.google.com')) ? 'is-gdrive' : ''}`}
-              style={{
-                position: 'relative',
-                width: '100%',
-                backgroundColor: videoEmbedUrl.includes('instagram.com') ? '#FFFFFF' : '#000000',
-                ...(videoEmbedUrl.includes('instagram.com')
-                  ? { height: '520px', maxHeight: '75vh' }
-                  : { paddingTop: '56.25%' })
-              }}
-            >
-              <iframe
-                src={videoEmbedUrl}
-                title={titleText}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
+            <div>
+              <div
+                className={`video-embed-container ${(videoEmbedUrl.includes('drive.google.com') || videoEmbedUrl.includes('docs.google.com')) ? 'is-gdrive' : ''}`}
                 style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
+                  position: 'relative',
                   width: '100%',
-                  height: '100%',
-                  border: 'none'
+                  backgroundColor: videoEmbedUrl.includes('instagram.com') ? '#FFFFFF' : '#000000',
+                  ...(videoEmbedUrl.includes('instagram.com')
+                    ? { height: '520px', maxHeight: '75vh' }
+                    : { paddingTop: '56.25%' })
                 }}
-              />
+              >
+                <iframe
+                  src={videoEmbedUrl}
+                  title={titleText}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    border: 'none'
+                  }}
+                />
+              </div>
+
+              {/* Helper Quick Bar for Video Link */}
+              {rawVideoLink && (
+                <div style={{
+                  background: '#005BAB',
+                  color: '#FFFFFF',
+                  padding: '0.5rem 0.85rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  fontSize: '0.8rem',
+                  fontWeight: 700,
+                  flexWrap: 'wrap',
+                  gap: '0.4rem',
+                  borderTop: '1px solid rgba(255,255,255,0.2)'
+                }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <Play size={14} fill="currentColor" />
+                    <span>{lang === 'en' ? 'Playing embedded video' : 'Memutar video'}</span>
+                  </span>
+                  <a
+                    href={rawVideoLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: '#FFFFFF',
+                      background: 'rgba(255,255,255,0.2)',
+                      padding: '0.25rem 0.65rem',
+                      borderRadius: '999px',
+                      fontSize: '0.75rem',
+                      fontWeight: 800,
+                      textDecoration: 'none',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.3rem',
+                      border: '1px solid #FFFFFF'
+                    }}
+                  >
+                    <span>{lang === 'en' ? 'Open in Google Drive / Fullscreen' : 'Buka Layar Penuh (Google Drive)'}</span>
+                    <ExternalLink size={12} />
+                  </a>
+                </div>
+              )}
             </div>
           ) : (
             <div
@@ -769,9 +814,9 @@ export default function DetailModal({ item, onClose }) {
 
           {/* Bottom Actions */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', paddingTop: '1rem', borderTop: '2px solid #005BAB' }}>
-            {item.video_url && !isVideografi && !isMotionGraphic && !isFilm && (
+            {rawVideoLink && (
               <a
-                href={item.video_url}
+                href={rawVideoLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-primary"
@@ -779,6 +824,7 @@ export default function DetailModal({ item, onClose }) {
               >
                 <Play size={16} fill="currentColor" />
                 <span>{t('detail_btn_video')}</span>
+                <ExternalLink size={14} />
               </a>
             )}
 
@@ -837,12 +883,7 @@ export default function DetailModal({ item, onClose }) {
           }
           @media (max-width: 640px) {
             .video-embed-container {
-              padding-top: 65% !important;
-              min-height: 240px !important;
-            }
-            .video-embed-container.is-gdrive {
-              padding-top: 72% !important;
-              min-height: 260px !important;
+              padding-top: 56.25% !important;
             }
             .detail-modal-header {
               padding: 0.75rem 0.85rem !important;

@@ -22,7 +22,7 @@ Route::get('/', function (Request $request) {
             $ogData = [
                 'title' => 'Portoda - ' . $item->title,
                 'description' => Str::limit(strip_tags($item->description ?? ''), 150),
-                'image' => $img ?: url('/logoblue.png'),
+                'image' => $img ?: url('/displaypaste.webp'),
                 'url' => url('/?karya=' . $item->id),
             ];
         }
@@ -47,7 +47,7 @@ Route::get('/karya/{id}', function ($id) {
         $ogData = [
             'title' => 'Portoda - ' . $item->title,
             'description' => Str::limit(strip_tags($item->description ?? ''), 150),
-            'image' => $img ?: url('/logoblue.png'),
+            'image' => $img ?: url('/displaypaste.webp'),
             'url' => url('/karya/' . $item->id),
         ];
     }

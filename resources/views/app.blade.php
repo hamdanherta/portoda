@@ -9,7 +9,7 @@
         $og = $page['props']['ogData'] ?? null;
         $ogTitle = $og['title'] ?? 'Portoda - Aplikasi Portofolio Karya Hamdani';
         $ogDesc = $og['description'] ?? 'Portofolio Resmi Hamdani - Desain Grafis, Multimedia & Pengembang Aplikasi.';
-        $ogImage = $og['image'] ?? 'https://www.portoda.my.id/logoblue.png';
+        $ogImage = $og['image'] ?? 'https://www.portoda.my.id/displaypaste.webp';
         $ogUrl = $og['url'] ?? 'https://www.portoda.my.id';
     @endphp
 
@@ -17,12 +17,18 @@
 
     <!-- Meta Tags untuk WhatsApp & Sosmed -->
     <meta name="description" content="{{ $ogDesc }}">
+    <meta property="og:site_name" content="Portoda">
     <meta property="og:title" content="{{ $ogTitle }}">
     <meta property="og:description" content="{{ $ogDesc }}">
     <meta property="og:image" content="{{ $ogImage }}">
     <meta property="og:image:secure_url" content="{{ $ogImage }}">
+    <meta property="og:image:type" content="image/webp">
     <meta property="og:url" content="{{ $ogUrl }}">
     <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $ogTitle }}">
+    <meta name="twitter:description" content="{{ $ogDesc }}">
+    <meta name="twitter:image" content="{{ $ogImage }}">
     <link rel="image_src" href="{{ $ogImage }}">
 
     <!-- Fonts -->

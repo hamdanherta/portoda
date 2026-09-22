@@ -1949,7 +1949,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                       <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', borderBottom: '1px solid rgba(0,91,171,0.15)', fontSize: '0.9rem', fontWeight: 700, color: '#005BAB' }}>
                         <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                           <Star size={16} color="#005BAB" />
-                          <span>Karya Unggulan (Featured)</span>
+                          <span>Karya Unggulan</span>
                         </span>
                         <span style={{ fontWeight: 800 }}>{effectiveItems.filter(i => i.featured).length} Karya</span>
                       </div>
@@ -1970,7 +1970,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                       <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', borderBottom: '1px solid rgba(0,91,171,0.15)', fontSize: '0.9rem', fontWeight: 700, color: '#005BAB' }}>
                         <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                           <Award size={16} color="#005BAB" />
-                          <span>Sertifikat & Penghargaan</span>
+                          <span>Sertifikat</span>
                         </span>
                         <span style={{ fontWeight: 800 }}>{certificates.length} Sertifikat</span>
                       </div>

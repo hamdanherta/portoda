@@ -701,7 +701,7 @@ export default function DetailModal({ item, onClose }) {
 
           {/* Peran Hamdani — Khusus Kategori Multimedia Subkategori Film */}
           {isMultimediaFilm && item.role && item.role.trim() !== '' && (
-            <div style={{
+            <div className="role-pill-wrapper" style={{
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.5rem',
@@ -715,9 +715,9 @@ export default function DetailModal({ item, onClose }) {
               border: '2px solid #005BAB',
               boxShadow: '0 4px 12px rgba(0,91,171,0.18)'
             }}>
-              <Award size={16} />
+              <Award className="role-pill-icon" size={16} />
               <span>{lang === 'en' ? 'Hamdani as' : 'Peran Hamdani sebagai'}:</span>
-              <span style={{ background: '#FFFFFF', color: '#005BAB', padding: '0.15rem 0.7rem', borderRadius: '999px', fontSize: '0.85rem', fontWeight: 800 }}>
+              <span className="role-pill-value" style={{ background: '#FFFFFF', color: '#005BAB', padding: '0.15rem 0.7rem', borderRadius: '999px', fontSize: '0.85rem', fontWeight: 800 }}>
                 {item.role}
               </span>
             </div>
@@ -846,6 +846,26 @@ export default function DetailModal({ item, onClose }) {
               right: 0.5rem !important;
               width: 36px !important;
               height: 36px !important;
+            }
+            /* Peran Hamdani pill — mobile fix */
+            .role-pill-wrapper {
+              flex-wrap: wrap !important;
+              justify-content: center !important;
+              padding: 0.6rem 1rem !important;
+            }
+            .role-pill-icon {
+              width: 16px !important;
+              height: 16px !important;
+              min-width: 16px !important;
+              flex-shrink: 0 !important;
+            }
+            .role-pill-value {
+              font-weight: 400 !important;
+              text-align: center !important;
+              padding: 0.35rem 0.7rem !important;
+              margin-top: 0.25rem !important;
+              margin-bottom: 0.25rem !important;
+              width: 100% !important;
             }
           }
         `}</style>

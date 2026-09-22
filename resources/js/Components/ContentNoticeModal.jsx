@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, RefreshCw, X, Sparkles } from 'lucide-react';
+import { Bell, RefreshCw, X } from 'lucide-react';
 
 export default function ContentNoticeModal({ isOpen, onClose }) {
   if (!isOpen) return null;
@@ -91,18 +91,7 @@ export default function ContentNoticeModal({ isOpen, onClose }) {
           }}
         >
           <Bell size={32} strokeWidth={2.5} />
-          <div
-            style={{
-              position: 'absolute',
-              bottom: '-2px',
-              right: '-2px',
-              backgroundColor: '#FFF3DD',
-              borderRadius: '50%',
-              padding: '2px'
-            }}
-          >
-            <Sparkles size={16} color="#005BAB" strokeWidth={3} />
-          </div>
+
         </div>
 
         {/* Status Badge */}

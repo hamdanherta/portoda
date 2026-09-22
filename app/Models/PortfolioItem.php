@@ -34,6 +34,7 @@ class PortfolioItem extends Model
         'development_method',
         'framework',
         'platform',
+        'role',
         'tags',
         'featured',
     ];

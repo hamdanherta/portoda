@@ -696,8 +696,8 @@ export default function DetailModal({ item, onClose }) {
             )}
           </div>
 
-          {/* Peran Hamdani — Khusus Film */}
-          {isFilm && item.role && (
+          {/* Peran Hamdani — Khusus Film / Peran Karya */}
+          {item.role && item.role.trim() !== '' && (
             <div style={{
               display: 'inline-flex',
               alignItems: 'center',

@@ -138,7 +138,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
               <p style={{
                 fontSize: 'clamp(0.92rem, 1.6vw, 1.05rem)',
                 color: '#005BAB',
-                fontWeight: 600,
+                fontWeight: 400,
                 lineHeight: 1.65,
                 marginBottom: '1.25rem',
                 opacity: 0.95

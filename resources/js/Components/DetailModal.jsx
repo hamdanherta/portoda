@@ -218,7 +218,7 @@ export default function DetailModal({ item, onClose }) {
           msOverflowStyle: 'none'
         }}
       >
-        {/* ─── JUDUL KARYA HEADER — STICKY ─── */}
+        {/* ─── TAHUN HEADER — STICKY ─── */}
         <div
           className="detail-modal-header"
           style={{
@@ -229,42 +229,32 @@ export default function DetailModal({ item, onClose }) {
             background: '#005BAB',
             borderBottom: '2.5px solid #003d80',
             display: 'flex',
-            alignItems: 'flex-start',
+            alignItems: 'center',
+            justifyContent: 'space-between',
             gap: '0.75rem',
-            flexWrap: 'nowrap',
             boxShadow: '0 4px 16px rgba(0,0,0,0.25)'
           }}
         >
-          {/* Subkategori badge */}
-          {subcatText && (
-            <span style={{
-              fontSize: '0.72rem',
-              fontWeight: 800,
-              background: '#FFFFFF',
-              color: '#005BAB',
-              padding: '0.25rem 0.65rem',
-              borderRadius: '999px',
-              flexShrink: 0,
-              whiteSpace: 'nowrap',
-              marginTop: '0.15rem'
-            }}>
-              {subcatText}
-            </span>
-          )}
-
-          {/* Judul Karya */}
-          <h2 style={{
-            fontSize: '1.25rem',
-            fontWeight: 800,
-            color: '#FFFFFF',
-            margin: 0,
-            lineHeight: 1.3,
-            flex: 1,
-            minWidth: 0,
-            wordBreak: 'break-word'
-          }}>
-            {titleText}
-          </h2>
+          {/* Header left: Tahun saja */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', flex: 1, minWidth: 0 }}>
+            {item?.year && (
+              <span style={{
+                fontSize: '0.78rem',
+                fontWeight: 800,
+                color: '#005BAB',
+                background: '#FFFFFF',
+                padding: '0.35rem 0.85rem',
+                borderRadius: '999px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                border: '1.5px solid #FFFFFF'
+              }}>
+                <Calendar size={14} />
+                {t('detail_year')}: {item.year}
+              </span>
+            )}
+          </div>
 
           {/* Tombol Tutup — di dalam header sticky */}
           <button
@@ -534,6 +524,18 @@ export default function DetailModal({ item, onClose }) {
 
         {/* Detail Content Body */}
         <div className="detail-modal-body" style={{ padding: '1.5rem' }}>
+          {/* Judul Karya — pindah ke bawah gambar/video */}
+          <h2 style={{
+            fontSize: '1.35rem',
+            fontWeight: 800,
+            color: '#005BAB',
+            margin: '0 0 1.15rem 0',
+            lineHeight: 1.3,
+            wordBreak: 'break-word'
+          }}>
+            {titleText}
+          </h2>
+
           {/* Metadata badges — aligned nicely left to right with spacious row gap */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem 0.65rem', flexWrap: 'wrap', marginBottom: '1.35rem' }}>
             <span className={`badge badge-${item.category}`} style={{ border: '1.5px solid #005BAB', padding: '0.4rem 0.95rem', borderRadius: '999px', fontSize: '0.82rem', fontWeight: 800 }}>
@@ -552,23 +554,6 @@ export default function DetailModal({ item, onClose }) {
                 border: '1.5px solid #005BAB'
               }}>
                 {subcatText}
-              </span>
-            )}
-            {item.year && (
-              <span style={{
-                fontSize: '0.82rem',
-                fontWeight: 800,
-                color: '#FFFFFF',
-                background: '#005BAB',
-                padding: '0.4rem 0.95rem',
-                borderRadius: '999px',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.45rem',
-                border: '1.5px solid #005BAB'
-              }}>
-                <Calendar size={14} />
-                {t('detail_year')}: {item.year}
               </span>
             )}
             {item.institution && (

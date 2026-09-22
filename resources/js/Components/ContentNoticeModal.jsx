@@ -149,7 +149,7 @@ export default function ContentNoticeModal({ isOpen, onClose }) {
               margin: 0
             }}
           >
-            Website ini sedang dalam tahap pengisian konten oleh <strong>Hamdani</strong>, harap selalu melakukan refresh untuk melihat konten baru.
+            Website ini sedang dalam Tahap Pengisian Konten oleh <strong>Hamdani</strong>, Maka dari itu Mungkin Kamu akan Melihat Beberapa Kategori Masih Kosong.
           </p>
         </div>
 

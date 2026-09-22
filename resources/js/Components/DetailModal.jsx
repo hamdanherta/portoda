@@ -823,13 +823,25 @@ export default function DetailModal({ item, onClose }) {
             from { width: 0%; }
             to   { width: 100%; }
           }
+          /* Google Drive preview player has its own UI chrome (top timeline + bottom controls)
+             that require extra height beyond pure 16:9 to avoid overlap — applies all screen sizes */
+          .video-embed-container.is-gdrive {
+            padding-top: 66% !important;
+          }
           @media (max-width: 640px) {
             .video-embed-container {
               padding-top: 56.25% !important;
             }
+            /* Mobile: GDrive chrome ~80px on 375px screen → ratio ≈ 80% for safety.
+               Shift iframe up 30px to clip the weird top-timeline bar. */
             .video-embed-container.is-gdrive {
-              padding-top: 68% !important;
-              min-height: 235px !important;
+              padding-top: 80% !important;
+              min-height: 265px !important;
+              overflow: hidden !important;
+            }
+            .video-embed-container.is-gdrive iframe {
+              top: -30px !important;
+              height: calc(100% + 30px) !important;
             }
             .detail-modal-header {
               padding: 0.75rem 0.85rem !important;

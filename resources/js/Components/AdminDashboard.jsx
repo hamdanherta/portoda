@@ -1938,52 +1938,8 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                   </div>
                 </div>
 
-                {/* Additional Metrics & Quick Actions */}
+                {/* Settings & Quick Actions */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.25rem' }}>
-                  <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF', border: '2.5px solid #005BAB' }}>
-                    <h3 style={{ fontSize: '1.15rem', color: '#005BAB', fontWeight: 800, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <Award size={20} />
-                      <span>Status & Data Portofolio</span>
-                    </h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', borderBottom: '1px solid rgba(0,91,171,0.15)', fontSize: '0.9rem', fontWeight: 700, color: '#005BAB' }}>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          <Star size={16} color="#005BAB" />
-                          <span>Karya Unggulan</span>
-                        </span>
-                        <span style={{ fontWeight: 800 }}>{effectiveItems.filter(i => i.featured).length} Karya</span>
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', borderBottom: '1px solid rgba(0,91,171,0.15)', fontSize: '0.9rem', fontWeight: 700, color: '#005BAB' }}>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          <Briefcase size={16} color="#005BAB" />
-                          <span>Pengalaman</span>
-                        </span>
-                        <span style={{ fontWeight: 800 }}>{experiences.length} Entri</span>
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', borderBottom: '1px solid rgba(0,91,171,0.15)', fontSize: '0.9rem', fontWeight: 700, color: '#005BAB' }}>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          <FileText size={16} color="#005BAB" />
-                          <span>Dokumen</span>
-                        </span>
-                        <span style={{ fontWeight: 800 }}>{documents.length} Dokumen</span>
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', borderBottom: '1px solid rgba(0,91,171,0.15)', fontSize: '0.9rem', fontWeight: 700, color: '#005BAB' }}>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          <Award size={16} color="#005BAB" />
-                          <span>Sertifikat</span>
-                        </span>
-                        <span style={{ fontWeight: 800 }}>{certificates.length} Sertifikat</span>
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', fontWeight: 700, color: '#005BAB' }}>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          <Phone size={16} color="#005BAB" />
-                          <span>Kontak</span>
-                        </span>
-                        <span style={{ fontWeight: 800 }}>{contacts.length} Kontak</span>
-                      </div>
-                    </div>
-                  </div>
-
                   {/* Watermark Control Card */}
                   <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF', border: '2.5px solid #005BAB', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                     <div>

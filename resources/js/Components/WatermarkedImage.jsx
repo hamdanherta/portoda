@@ -69,8 +69,15 @@ export default function WatermarkedImage({
       mainImg.src = src;
 
       mainImg.onload = () => {
-        const width = mainImg.naturalWidth || 1920;
-        const height = mainImg.naturalHeight || 1080;
+        let width = mainImg.naturalWidth || 1200;
+        let height = mainImg.naturalHeight || 800;
+
+        // Cap max canvas width to 1200px to maintain crisp high quality while reducing RAM footprint
+        const maxWidth = 1200;
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
 
         const canvas = document.createElement('canvas');
         canvas.width = width;
@@ -88,14 +95,21 @@ export default function WatermarkedImage({
           // Stretch and fit watermark to full width & height of the image frame
           ctx.drawImage(wmImg, 0, 0, width, height);
           try {
-            const dataUrl = canvas.toDataURL('image/png');
+            // Export to high quality WebP
+            const dataUrl = canvas.toDataURL('image/webp', 0.88);
             watermarkCache.set(src, dataUrl);
             if (isMounted) {
               setWatermarkedSrc(dataUrl);
             }
           } catch (err) {
             console.warn('Watermark canvas export warning:', err);
-            if (isMounted) setWatermarkedSrc(src);
+            try {
+              const jpegDataUrl = canvas.toDataURL('image/jpeg', 0.88);
+              watermarkCache.set(src, jpegDataUrl);
+              if (isMounted) setWatermarkedSrc(jpegDataUrl);
+            } catch (e) {
+              if (isMounted) setWatermarkedSrc(src);
+            }
           }
         };
 

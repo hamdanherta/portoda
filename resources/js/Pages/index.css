@@ -520,7 +520,8 @@ body.admin-open *::-webkit-scrollbar-corner,
 
 .reveal-on-scroll.reveal-visible {
   opacity: 1 !important;
-  transform: translateY(0) !important;
+  transform: translateY(0) translateZ(0) !important;
+  backface-visibility: hidden;
 }
 
 /* Global Mobile Responsiveness & Anti-Overflow Rules */

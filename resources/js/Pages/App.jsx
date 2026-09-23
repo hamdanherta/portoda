@@ -30,6 +30,7 @@ export default function App({ karyaId, docId }) {
 
   // Halaman Daftar Karya vs Beranda
   const [isFullGallery, setIsFullGallery] = useState(false);
+  const [isExpandedBeranda, setIsExpandedBeranda] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
   // Admin Auth & Maintenance Mode State
@@ -234,6 +235,7 @@ export default function App({ karyaId, docId }) {
 
   useEffect(() => {
     setCurrentPage(1);
+    setIsExpandedBeranda(false);
   }, [activeCategory, activeSubcategory, searchQuery]);
 
   // CRUD Actions for Admin
@@ -262,6 +264,7 @@ export default function App({ karyaId, docId }) {
     setActiveSubcategory('all');
     setSearchQuery('');
     setCurrentPage(1);
+    setIsExpandedBeranda(false);
   };
 
   const scrollToGallery = () => {
@@ -272,12 +275,12 @@ export default function App({ karyaId, docId }) {
   };
 
   const handleViewMoreWorks = () => {
-    setIsFullGallery(true);
-    setCurrentPage(1);
+    setIsExpandedBeranda(true);
   };
 
   const handleBackToHome = () => {
     setIsFullGallery(false);
+    setIsExpandedBeranda(false);
     setCurrentPage(1);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -371,6 +374,7 @@ export default function App({ karyaId, docId }) {
             onItemClick={(item) => setSelectedItem(item)}
             onResetFilter={handleResetFilter}
             isFullGallery={isFullGallery}
+            isExpanded={isExpandedBeranda}
             currentPage={currentPage}
             onPageChange={(page) => {
               setCurrentPage(page);

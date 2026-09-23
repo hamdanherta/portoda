@@ -9,6 +9,7 @@ export default function PortfolioGrid({
   onItemClick,
   onResetFilter,
   isFullGallery = false,
+  isExpanded = false,
   currentPage = 1,
   onPageChange,
   onViewMore
@@ -79,10 +80,10 @@ export default function PortfolioGrid({
     );
   }
 
-  // If in Beranda mode, show max 12 items. If in Full Gallery mode, use pagination (20 per page).
+  // If in Beranda mode, show max 12 items unless isExpanded is true. If in Full Gallery mode, use pagination (20 per page).
   const displayItems = isFullGallery
     ? items.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
-    : items.slice(0, 12);
+    : (isExpanded ? items : items.slice(0, 12));
 
   const totalPages = Math.ceil(items.length / ITEMS_PER_PAGE);
 
@@ -106,7 +107,7 @@ export default function PortfolioGrid({
       </div>
 
       {/* BERANDA MODE: Tombol Lihat Selengkapnya */}
-      {!isFullGallery && items.length > 0 && (
+      {!isFullGallery && !isExpanded && items.length > 12 && (
         <div className="reveal-on-scroll" style={{ textAlign: 'center', marginTop: '2.5rem', transitionDelay: '0.15s' }}>
           <button
             onClick={onViewMore}

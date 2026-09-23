@@ -274,7 +274,6 @@ export default function App({ karyaId, docId }) {
   const handleViewMoreWorks = () => {
     setIsFullGallery(true);
     setCurrentPage(1);
-    scrollToGallery();
   };
 
   const handleBackToHome = () => {

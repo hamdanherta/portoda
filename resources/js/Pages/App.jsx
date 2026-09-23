@@ -192,7 +192,7 @@ export default function App({ karyaId, docId }) {
   }, [allItems, activeCategory, activeSubcategory, searchQuery]);
 
   // Hook scroll reveal saat scroll kebawah & keatas
-  useScrollReveal([filteredItems, activeCategory, activeSubcategory, searchQuery, loading, isFullGallery, currentPage]);
+  useScrollReveal([filteredItems, activeCategory, activeSubcategory, searchQuery, loading, isFullGallery, currentPage, isExpandedBeranda]);
 
   // URL Hash/Query Listener untuk membuka Dashboard Admin via URL (misal: #admin atau ?admin=true)
   useEffect(() => {

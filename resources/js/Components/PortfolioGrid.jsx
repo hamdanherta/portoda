@@ -98,7 +98,7 @@ export default function PortfolioGrid({
         {displayItems.map((item, index) => (
           <div
             key={item.id}
-            className="reveal-on-scroll"
+            className={`reveal-on-scroll ${isExpanded && index >= 12 ? 'reveal-visible' : ''}`}
             style={{ transitionDelay: `${(index % 6) * 0.08}s` }}
           >
             <PortfolioCard item={item} onClick={onItemClick} />

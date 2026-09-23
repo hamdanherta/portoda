@@ -14,7 +14,7 @@ export default function PortfolioGrid({
   onPageChange,
   onViewMore
 }) {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const ITEMS_PER_PAGE = 20;
 
   if (loading) {
@@ -80,10 +80,10 @@ export default function PortfolioGrid({
     );
   }
 
-  // If in Beranda mode, show max 12 items unless isExpanded is true. If in Full Gallery mode, use pagination (20 per page).
-  const displayItems = isFullGallery
+  // If in Beranda mode, show max 12 items unless isExpanded is true. If expanded or in Full Gallery mode, use pagination (20 per page).
+  const displayItems = (isFullGallery || isExpanded)
     ? items.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
-    : (isExpanded ? items : items.slice(0, 12));
+    : items.slice(0, 12);
 
   const totalPages = Math.ceil(items.length / ITEMS_PER_PAGE);
 
@@ -121,14 +121,14 @@ export default function PortfolioGrid({
               gap: '0.65rem'
             }}
           >
-            <span>Lihat Selengkapnya</span> 
+            <span>{lang === 'en' ? 'View More' : 'Lihat Selengkapnya'}</span> 
             <ArrowRight size={20} />
           </button>
         </div>
       )}
 
-      {/* FULL GALLERY MODE: Control Pagination Max 20 Item */}
-      {isFullGallery && totalPages > 1 && (
+      {/* FULL GALLERY / EXPANDED MODE: Control Pagination Max 20 Item */}
+      {(isFullGallery || isExpanded) && totalPages > 1 && (
         <div style={{
           display: 'flex',
           alignItems: 'center',
@@ -140,7 +140,9 @@ export default function PortfolioGrid({
           gap: '1rem'
         }}>
           <span style={{ fontSize: '0.9rem', fontWeight: 800, color: '#005BAB' }}>
-            Menampilkan {((currentPage - 1) * ITEMS_PER_PAGE) + 1} - {Math.min(currentPage * ITEMS_PER_PAGE, items.length)} dari {items.length} Karya
+            {lang === 'en'
+              ? `Showing ${((currentPage - 1) * ITEMS_PER_PAGE) + 1} - ${Math.min(currentPage * ITEMS_PER_PAGE, items.length)} of ${items.length} Works`
+              : `Menampilkan ${((currentPage - 1) * ITEMS_PER_PAGE) + 1} - ${Math.min(currentPage * ITEMS_PER_PAGE, items.length)} dari ${items.length} Karya`}
           </span>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
@@ -159,7 +161,7 @@ export default function PortfolioGrid({
               }}
             >
               <ChevronLeft size={16} />
-              <span>Sebelumnya</span>
+              <span>{lang === 'en' ? 'Previous' : 'Sebelumnya'}</span>
             </button>
 
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
@@ -195,7 +197,7 @@ export default function PortfolioGrid({
                 gap: '0.3rem'
               }}
             >
-              <span>Selanjutnya</span>
+              <span>{lang === 'en' ? 'Next' : 'Selanjutnya'}</span>
               <ChevronRight size={16} />
             </button>
           </div>

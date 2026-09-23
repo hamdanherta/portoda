@@ -150,16 +150,27 @@ export default function App({ karyaId, docId }) {
       const reqSub = activeSubcategory.toLowerCase().trim();
       result = result.filter(item => {
         const itemSub = (item.subcategory || '').toLowerCase().trim();
-        return item.subcategory === activeSubcategory ||
-               itemSub.includes(reqSub) ||
-               reqSub.includes(itemSub) ||
-               (reqSub.includes('kemasan') && itemSub.includes('kemasan')) ||
-               (reqSub.includes('packaging') && itemSub.includes('kemasan')) ||
-               (reqSub.includes('poster') && itemSub.includes('poster')) ||
-               (reqSub.includes('banner') && itemSub.includes('banner')) ||
-               (reqSub.includes('logo') && itemSub.includes('logo')) ||
-               (reqSub.includes('lain') && itemSub.includes('lain')) ||
-               (reqSub.includes('other') && itemSub.includes('lain'));
+        const itemSubEn = (item.subcategory_en || '').toLowerCase().trim();
+
+        if (item.subcategory === activeSubcategory || itemSub === reqSub || itemSubEn === reqSub) {
+          return true;
+        }
+
+        // Subcategory cross-language mapping (Indonesian <-> English)
+        if ((reqSub.includes('logo')) && (itemSub.includes('logo') || itemSubEn.includes('logo'))) return true;
+        if ((reqSub.includes('poster')) && (itemSub.includes('poster') || itemSubEn.includes('poster'))) return true;
+        if ((reqSub.includes('banner')) && (itemSub.includes('banner') || itemSubEn.includes('banner'))) return true;
+        if ((reqSub.includes('kemasan') || reqSub.includes('packag')) && (itemSub.includes('kemasan') || itemSubEn.includes('packag'))) return true;
+        if ((reqSub.includes('lain') || reqSub.includes('other')) && (itemSub.includes('lain') || itemSubEn.includes('other'))) return true;
+        if ((reqSub.includes('foto') || reqSub.includes('photo')) && (itemSub.includes('foto') || itemSubEn.includes('photo'))) return true;
+        if ((reqSub.includes('video') || reqSub.includes('videogr')) && (itemSub.includes('video') || itemSubEn.includes('video'))) return true;
+        if ((reqSub.includes('motion')) && (itemSub.includes('motion') || itemSubEn.includes('motion'))) return true;
+        if ((reqSub.includes('film')) && (itemSub.includes('film') || itemSubEn.includes('film'))) return true;
+        if ((reqSub.includes('ui') || reqSub.includes('ux')) && (itemSub.includes('ui') || itemSubEn.includes('ui'))) return true;
+        if ((reqSub.includes('mobile')) && (itemSub.includes('mobile') || itemSubEn.includes('mobile'))) return true;
+        if ((reqSub.includes('web')) && (itemSub.includes('web') || itemSubEn.includes('web'))) return true;
+
+        return itemSub.includes(reqSub) || reqSub.includes(itemSub);
       });
     }
 
@@ -172,6 +183,8 @@ export default function App({ karyaId, docId }) {
         const descEn = (item.description_en || '').toLowerCase();
         const subcat = (item.subcategory || '').toLowerCase();
         const subcatEn = (item.subcategory_en || '').toLowerCase();
+        const category = (item.category || '').toLowerCase();
+        const categoryEn = (item.category_en || '').toLowerCase();
         const tools = (item.tools_used || '').toLowerCase();
         const method = (item.development_method || '').toLowerCase();
         const tagsStr = Array.isArray(item.tags) ? item.tags.join(' ').toLowerCase() : '';
@@ -182,6 +195,8 @@ export default function App({ karyaId, docId }) {
                descEn.includes(q) ||
                subcat.includes(q) ||
                subcatEn.includes(q) ||
+               category.includes(q) ||
+               categoryEn.includes(q) ||
                tools.includes(q) ||
                method.includes(q) ||
                tagsStr.includes(q);

@@ -169,7 +169,7 @@ class DatabaseSeeder extends Seeder
                 'client' => 'Portoda Project',
                 'year' => '2024',
                 'project_type' => 'Iseng',
-                'development_method' => 'Vibe Coding',
+                'development_method' => 'AIAD',
                 'framework' => 'React / Inertia.js',
                 'tags' => ['Web Design', 'UI/UX', 'Showcase System'],
                 'featured' => true,

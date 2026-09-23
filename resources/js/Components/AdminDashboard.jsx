@@ -206,7 +206,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
     year: new Date().getFullYear().toString(),
     project_type: 'Freelance',
     tools_used: '',
-    development_method: 'Vibe Coding',
+    development_method: 'AIAD',
     framework: '',
     platform: 'Website',
     tags: '',
@@ -320,7 +320,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
       year: new Date().getFullYear().toString(),
       project_type: 'Freelance',
       tools_used: '',
-      development_method: 'Vibe Coding',
+      development_method: 'AIAD',
       tags: '',
       featured: false
     });
@@ -439,7 +439,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
       year: item.year || new Date().getFullYear().toString(),
       project_type: item.project_type || 'Freelance',
       tools_used: item.tools_used || '',
-      development_method: item.development_method || 'Vibe Coding',
+      development_method: item.development_method || 'AIAD',
       framework: item.framework || '',
       platform: item.platform || 'Website',
       tags: Array.isArray(item.tags) ? item.tags.join(', ') : item.tags || '',
@@ -501,7 +501,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
       video_url: rules.hasVideo ? formData.video_url : '',
       prototype_url: rules.hasPrototype ? formData.prototype_url : '',
       project_url: rules.hasPrototype ? formData.prototype_url : '',
-      development_method: isMobileOrWeb ? (formData.development_method || 'Vibe Coding') : '',
+      development_method: isMobileOrWeb ? (formData.development_method || 'AIAD') : '',
       tags: formattedTags
     };
 
@@ -2310,11 +2310,11 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                             <label>Metode Pengembangan / Pengodingan *</label>
                             <select
                               required
-                              value={formData.development_method || 'Vibe Coding'}
+                              value={formData.development_method || 'AIAD'}
                               onChange={(e) => setFormData({ ...formData, development_method: e.target.value })}
                               className="form-select"
                             >
-                              <option value="Vibe Coding">Vibe Coding</option>
+                              <option value="AIAD">AIAD</option>
                               <option value="Manual Coding (FrontEnd)">Manual Coding (FrontEnd)</option>
                               <option value="Manual Coding (Full Stack)">Manual Coding (Full Stack)</option>
                             </select>

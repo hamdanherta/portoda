@@ -246,6 +246,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
   const [editingClientId, setEditingClientId] = useState(null);
   const [clientForm, setClientForm] = useState({ name: '', logo: '' });
   const [clientPage, setClientPage] = useState(1);
+  const [clientFileKey, setClientFileKey] = useState(0);
 
   // Load Info Data when authenticated
   const loadInfoData = async () => {
@@ -997,6 +998,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
       setClients(updatedList || []);
       setEditingClientId(null);
       setClientForm({ name: '', logo: '' });
+      setClientFileKey(prev => prev + 1);
       finishProcessingSuccess(editingClientId ? 'Data Klien berhasil diperbarui!' : 'Klien Baru berhasil ditambahkan!');
     } catch (err) {
       finishProcessingError('Gagal menyimpan data klien. Silakan coba lagi.');
@@ -4365,6 +4367,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                         <div className="form-group">
                           <label>Logo Klien (Rasio Kotak 1:1) *</label>
                           <input
+                            key={clientFileKey}
                             type="file"
                             accept="image/*"
                             onChange={handleClientLogoChange}

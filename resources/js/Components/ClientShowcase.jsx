@@ -63,10 +63,10 @@ export default function ClientShowcase({ clients = [] }) {
                 lineHeight: 1.45
               }}>
                 {lang === 'en'
-                  ? 'Here is the list of clients, brands, and partners who have collaborated with and entrusted Hamdani for creative projects.'
-                  : 'Berikut adalah daftar klien, brand, dan mitra yang pernah bekerja sama serta menggunakan keahlian Hamdani.'}
+                  ? 'The following are some of the brands, companies, and organizations that have been part of Hamdanis professional journey, whether through freelance projects or corporate employment.'
+                  : 'Berikut adalah beberapa brand, perusahaan, dan instansi yang pernah menjadi bagian dari perjalanan profesional Hamdani, baik melalui proyek freelance maupun pengalaman bekerja di perusahaan.'}
               </p>
-            </div>
+            </div> 
           </div>
 
           {/* Grid Logo Klien (1:1 Ratio Square, Fully Responsive, No Overflow) */}

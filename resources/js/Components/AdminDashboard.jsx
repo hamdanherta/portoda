@@ -2852,14 +2852,14 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                       <Plus size={14} />
                       <span>Tambah Karya Baru</span>
                     </button>
-                    <button 
+                    {/* <button 
                       onClick={() => setDeletingTarget({ id: 'reset-all', title: 'Semua Sampel Karya Awal', label: 'Reset Data', targetType: 'reset-mock' })}
                       className="btn-secondary" 
                       style={{ fontSize: '0.82rem', padding: '0.4rem 0.85rem' }}
                     >
                       <RefreshCw size={14} />
                       <span>Reset Sampel</span>
-                    </button>
+                    </button> */}
                   </div>
                 </div>
 

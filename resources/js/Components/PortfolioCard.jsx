@@ -48,29 +48,6 @@ export default function PortfolioCard({ item, onClick }) {
         overflow: 'hidden'
       }}
     >
-      {/* Featured Star Badge */}
-      {item.featured && (
-        <div style={{
-          position: 'absolute',
-          top: '12px',
-          right: '12px',
-          zIndex: 10,
-          background: '#005BAB',
-          color: '#FFFFFF',
-          padding: '0.35rem 0.75rem',
-          borderRadius: '999px',
-          fontSize: '0.72rem',
-          fontWeight: 800,
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.25rem',
-          border: '1.5px solid #FFFFFF'
-        }}>
-          <Sparkles size={12} />
-          <span>{t('card_featured').toUpperCase()}</span>
-        </div>
-      )}
-
       {/* Thumbnail Container — 16:9 Landscape | Blurred Backdrop + Contained Image */}
       <div style={{
         position: 'relative',
@@ -80,6 +57,29 @@ export default function PortfolioCard({ item, onClick }) {
         borderBottom: '2.5px solid #005BAB',
         backgroundColor: '#111827'
       }}>
+        {/* Featured Star Badge (Kanan Bawah) */}
+        {item.featured && (
+          <div style={{
+            position: 'absolute',
+            bottom: '10px',
+            right: '10px',
+            zIndex: 10,
+            background: '#005BAB',
+            color: '#FFFFFF',
+            padding: '0.35rem 0.75rem',
+            borderRadius: '999px',
+            fontSize: '0.72rem',
+            fontWeight: 800,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.25rem',
+            border: '1.5px solid #FFFFFF'
+          }}>
+            <Sparkles size={12} />
+            <span>{t('card_featured').toUpperCase()}</span>
+          </div>
+        )}
+
         {/* Layer 1: Blurred Backdrop */}
         <img
           src={item.image_url}
@@ -119,28 +119,43 @@ export default function PortfolioCard({ item, onClick }) {
           className="card-img"
         />
 
-        {/* Video Badge */}
-        {item.video_url && (
-          <div style={{
-            position: 'absolute',
-            bottom: '10px',
-            left: '10px',
-            zIndex: 5,
-            background: '#005BAB',
-            color: '#FFFFFF',
-            padding: '0.3rem 0.65rem',
-            borderRadius: '8px',
-            fontSize: '0.75rem',
-            fontWeight: 800,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.3rem',
-            border: '1.5px solid #FFFFFF'
-          }}>
-            <Play size={12} fill="currentColor" />
-            <span>Video</span>
-          </div>
-        )}
+        {/* Video Badge (Kanan Atas) */}
+        {item.video_url && (() => {
+          const subcatLower = (item.subcategory || '').toLowerCase();
+          const isVideoSubcat = subcatLower.includes('videografi') || 
+                                subcatLower.includes('videography') || 
+                                subcatLower.includes('motion graphic') || 
+                                subcatLower.includes('film');
+          
+          const isTopRight = isVideoSubcat;
+
+          return (
+            <div style={{
+              position: 'absolute',
+              ...(isTopRight ? {
+                top: '10px',
+                right: '10px',
+              } : {
+                bottom: '10px',
+                left: '10px',
+              }),
+              zIndex: 5,
+              background: '#005BAB',
+              color: '#FFFFFF',
+              padding: '0.3rem 0.65rem',
+              borderRadius: '8px',
+              fontSize: '0.75rem',
+              fontWeight: 800,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.3rem',
+              border: '1.5px solid #FFFFFF'
+            }}>
+              <Play size={12} fill="currentColor" />
+              <span>Video</span>
+            </div>
+          );
+        })()}
       </div>
 
       {/* Card Content Body */}

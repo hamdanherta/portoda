@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Plus, Edit, Trash2, ShieldCheck, RefreshCw, Check, Upload, LogOut, AlertTriangle, Loader2, Briefcase, FileText, Mail, User, Grid, Award, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, Search, SearchX, Palette, Video, Code, BarChart3, PlusCircle, FolderKanban, Globe, Building2, Image, Play, Link, CheckCircle2, Star, Info, Phone, Share2, Bell } from 'lucide-react';
+import { Menu, X, Plus, Edit, Trash2, ShieldCheck, RefreshCw, Check, Upload, LogOut, AlertTriangle, Loader2, Briefcase, FileText, Mail, User, Grid, Award, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, ChevronsUp, ChevronsDown, Search, SearchX, Palette, Video, Code, BarChart3, PlusCircle, FolderKanban, Globe, Building2, Image, Play, Link, CheckCircle2, Star, Info, Phone, Share2, Bell } from 'lucide-react';
 import { compressImageToWebP } from '../utils/imageCompressor';
 import { infoService } from '../services/infoService';
 import { portfolioService } from '../services/portfolioService';
@@ -241,14 +241,21 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
   const [editingSkillId, setEditingSkillId] = useState(null);
   const [skillForm, setSkillForm] = useState({ title: '', title_en: '', desc: '', desc_en: '', category: 'Soft Skill' });
 
+  // --- KLIEN FORM STATE ---
+  const [clients, setClients] = useState([]);
+  const [editingClientId, setEditingClientId] = useState(null);
+  const [clientForm, setClientForm] = useState({ name: '', logo: '' });
+  const [clientPage, setClientPage] = useState(1);
+
   // Load Info Data when authenticated
   const loadInfoData = async () => {
-    const [exps, docs, cnts, certs, p] = await Promise.all([
+    const [exps, docs, cnts, certs, p, clts] = await Promise.all([
       infoService.getExperiences(),
       infoService.getDocuments(),
       infoService.getContacts(),
       infoService.getCertificates(),
-      infoService.getProfile()
+      infoService.getProfile(),
+      infoService.getClients()
     ]);
     setExperiences(exps || []);
     setDocuments(docs || []);
@@ -256,6 +263,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
     setCertificates(certs || []);
     setProfile(p || {});
     setProfileForm(p || {});
+    setClients(clts || []);
   };
 
   useEffect(() => {
@@ -947,6 +955,111 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
     }));
   };
 
+  // --- KLIEN HANDLERS ---
+  const handleClientLogoChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    startProcessing('Mengompresi Logo Klien (Rasio 1:1)...');
+
+    try {
+      const webpDataUrl = await compressImageToWebP(file, 0.88, 600);
+      setClientForm(prev => ({
+        ...prev,
+        logo: webpDataUrl
+      }));
+      finishProcessingSuccess('Logo klien berhasil dikompresi!');
+    } catch (err) {
+      finishProcessingError('Gagal mengompres logo klien. Pastikan berkas berupa file foto/gambar valid.');
+      console.error(err);
+    }
+  };
+
+  const handleSubmitClient = async (e) => {
+    e.preventDefault();
+    if (!clientForm.name && !clientForm.logo) {
+      finishProcessingError('Mohon isi nama klien atau unggah logo klien!');
+      return;
+    }
+
+    startProcessing(editingClientId ? 'Memperbarui Data Klien...' : 'Menambahkan Klien Baru...');
+
+    try {
+      const payload = { ...clientForm };
+      if (editingClientId) {
+        payload.id = editingClientId;
+      }
+
+      const updatedList = await infoService.saveClient(payload, (pct) => {
+        setProcessingProgress(pct);
+      });
+
+      setClients(updatedList || []);
+      setEditingClientId(null);
+      setClientForm({ name: '', logo: '' });
+      finishProcessingSuccess(editingClientId ? 'Data Klien berhasil diperbarui!' : 'Klien Baru berhasil ditambahkan!');
+    } catch (err) {
+      finishProcessingError('Gagal menyimpan data klien. Silakan coba lagi.');
+      console.error(err);
+    }
+  };
+
+  const handleReorderClient = async (index, direction) => {
+    if (direction === 'up' && index === 0) return;
+    if (direction === 'down' && index === clients.length - 1) return;
+
+    const newClients = [...clients];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    const temp = newClients[index];
+    newClients[index] = newClients[targetIndex];
+    newClients[targetIndex] = temp;
+
+    setClients(newClients);
+
+    try {
+      const updated = await infoService.reorderClients(newClients);
+      setClients(updated || newClients);
+    } catch (err) {
+      console.error('Failed to reorder clients:', err);
+    }
+  };
+
+  const handleReorderKaryaItem = async (index, direction) => {
+    const list = [...filteredKaryaItems];
+    if (list.length === 0) return;
+    if ((direction === 'up' || direction === 'top') && index === 0) return;
+    if ((direction === 'down' || direction === 'bottom') && index === list.length - 1) return;
+
+    const itemToMove = list[index];
+
+    if (direction === 'top') {
+      list.splice(index, 1);
+      list.unshift(itemToMove);
+    } else if (direction === 'bottom') {
+      list.splice(index, 1);
+      list.push(itemToMove);
+    } else if (direction === 'up') {
+      list[index] = list[index - 1];
+      list[index - 1] = itemToMove;
+    } else if (direction === 'down') {
+      list[index] = list[index + 1];
+      list[index + 1] = itemToMove;
+    }
+
+    startProcessing('Memperbarui urutan posisi karya...');
+
+    try {
+      await portfolioService.reorderItems(list);
+      if (refreshKaryaData) {
+        await refreshKaryaData();
+      }
+      finishProcessingSuccess('Urutan posisi karya berhasil diperbarui!');
+    } catch (err) {
+      console.error('Failed to reorder karya items:', err);
+      finishProcessingError('Gagal mengubah urutan posisi karya.');
+    }
+  };
+
   // --- GENERIC DELETE CONFIRMATION HANDLER ---
   const confirmDeleteTarget = async () => {
     if (!deletingTarget) return;
@@ -972,6 +1085,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
         setDocuments([]);
         setContacts([]);
         setCertificates([]);
+        setClients([]);
         setProfileForm({});
       } else if (target.targetType === 'exp') {
         const updated = await infoService.deleteExperience(target.id);
@@ -985,6 +1099,9 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
       } else if (target.targetType === 'certificate') {
         const updated = await infoService.deleteCertificate(target.id);
         setCertificates(updated);
+      } else if (target.targetType === 'client') {
+        const updated = await infoService.deleteClient(target.id);
+        setClients(updated);
       } else if (target.targetType === 'skill') {
         const currentSkills = Array.isArray(profileForm.skills) ? [...profileForm.skills] : [];
         const updatedSkills = currentSkills.filter(s => s.id !== target.id);
@@ -1101,7 +1218,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
           Halaman <strong>{currentPage}</strong> dari <strong>{totalPages}</strong> (Total {totalListLength} Data)
         </span>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
           <button
             disabled={currentPage === 1}
             onClick={() => onPageChange(currentPage - 1)}
@@ -1115,25 +1232,6 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
           >
             &laquo; Sebelumnya
           </button>
-
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
-            <button
-              key={pageNum}
-              onClick={() => onPageChange(pageNum)}
-              style={{
-                padding: '0.4rem 0.75rem',
-                borderRadius: '999px',
-                fontSize: '0.82rem',
-                fontWeight: 800,
-                color: currentPage === pageNum ? '#FFFFFF' : '#005BAB',
-                background: currentPage === pageNum ? '#005BAB' : '#FFF3DD',
-                border: '1.5px solid #005BAB',
-                cursor: 'pointer'
-              }}
-            >
-              {pageNum}
-            </button>
-          ))}
 
           <button
             disabled={currentPage === totalPages}
@@ -1529,6 +1627,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                   {activeTab === 'overview' && 'Ringkasan & Statistik'}
                   {activeTab === 'tambah-karya' && 'Tambah Karya'}
                   {activeTab === 'kelola-karya' && 'Kelola Karya'}
+                  {activeTab === 'klien' && 'Kelola Klien'}
                   {activeTab === 'pengalaman' && 'Pengalaman'}
                   {activeTab === 'dokumen' && 'Dokumen'}
                   {activeTab === 'sertifikat' && 'Kelola Sertifikat'}
@@ -1574,6 +1673,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                 { id: 'overview', label: 'Ringkasan & Statistik', icon: BarChart3 },
                 { id: 'tambah-karya', label: 'Tambah Karya Baru', icon: PlusCircle },
                 { id: 'kelola-karya', label: 'Kelola & Daftar Karya', icon: FolderKanban },
+                { id: 'klien', label: 'Kelola Klien', icon: Building2 },
                 { id: 'pengalaman', label: 'Pengalaman', icon: Briefcase },
                 { id: 'dokumen', label: 'Dokumen', icon: FileText },
                 { id: 'sertifikat', label: 'Kelola Sertifikat', icon: Award },
@@ -1678,6 +1778,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                   { id: 'overview', label: 'Ringkasan & Statistik', icon: BarChart3 },
                   { id: 'tambah-karya', label: 'Tambah Karya Baru', icon: PlusCircle },
                   { id: 'kelola-karya', label: 'Kelola Karya', icon: FolderKanban },
+                  { id: 'klien', label: 'Kelola Klien', icon: Building2 },
                   { id: 'pengalaman', label: 'Kelola Pengalaman', icon: Briefcase },
                   { id: 'dokumen', label: 'Kelola Dokumen', icon: FileText },
                   { id: 'sertifikat', label: 'Kelola Sertifikat', icon: Award },
@@ -1760,6 +1861,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                   {activeTab === 'overview' && <><BarChart3 size={24} /> <span>Ringkasan & Statistik</span></>}
                   {activeTab === 'tambah-karya' && <><PlusCircle size={24} /> <span>Form Tambah & Edit Karya Baru</span></>}
                   {activeTab === 'kelola-karya' && <><FolderKanban size={24} /> <span>Panel Pengelolaan & Daftar Karya</span></>}
+                  {activeTab === 'klien' && <><Building2 size={24} /> <span>Pengelolaan Daftar Klien Hamdani</span></>}
                   {activeTab === 'pengalaman' && <><Briefcase size={24} /> <span>Pengelolaan Riwayat Pengalaman</span></>}
                   {activeTab === 'dokumen' && <><FileText size={24} /> <span>Pengelolaan Dokumen PDF</span></>}
                   {activeTab === 'sertifikat' && <><Award size={24} /> <span>Pengelolaan Sertifikat & Penghargaan</span></>}
@@ -2882,81 +2984,133 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                   />
                 ) : (
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.2rem' }}>
-                    {currentKaryaItems.map((item) => (
-                      <div
-                        key={item.id}
-                        className="herta-card"
-                        style={{
-                          padding: '1.25rem',
-                          background: '#FFFFFF',
-                          borderRadius: '20px',
-                          border: '2.5px solid #005BAB',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          justifyContent: 'space-between'
-                        }}
-                      >
-                        <div>
-                          <div style={{ display: 'flex', gap: '0.85rem', marginBottom: '1rem', alignItems: 'flex-start' }}>
-                            <img
-                              src={item.images?.[0] || item.image_url}
-                              alt=""
-                              style={{
-                                width: '72px',
-                                height: '72px',
-                                borderRadius: '14px',
-                                objectFit: 'cover',
-                                border: '2px solid #005BAB',
-                                flexShrink: 0
-                              }}
-                            />
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexWrap: 'wrap', marginBottom: '0.35rem' }}>
-                                <span style={{ background: '#005BAB', color: '#FFFFFF', padding: '0.15rem 0.55rem', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 800, textTransform: 'capitalize' }}>
-                                  {item.category?.replace('-', ' ')}
-                                </span>
-                                <span style={{ background: '#FFF3DD', color: '#005BAB', padding: '0.15rem 0.55rem', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 800, border: '1.5px solid #005BAB' }}>
-                                  {item.subcategory}
-                                </span>
-                              </div>
-                              <h4 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.3, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                {item.title}
-                              </h4>
-                              <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#005BAB', opacity: 0.85, marginTop: '0.2rem' }}>
-                                Tahun: {item.year} {item.client ? `• Klien: ${item.client}` : ''}
+                    {currentKaryaItems.map((item, index) => {
+                      const globalIdx = (karyaPage - 1) * ITEMS_PER_PAGE + index;
+                      const isFirst = globalIdx === 0;
+                      const isLast = globalIdx === filteredKaryaItems.length - 1;
+
+                      return (
+                        <div
+                          key={item.id}
+                          className="herta-card"
+                          style={{
+                            padding: '1.25rem',
+                            background: '#FFFFFF',
+                            borderRadius: '20px',
+                            border: '2.5px solid #005BAB',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'space-between'
+                          }}
+                        >
+                          <div>
+                            <div style={{ display: 'flex', gap: '0.85rem', marginBottom: '1rem', alignItems: 'flex-start' }}>
+                              <img
+                                src={item.images?.[0] || item.image_url}
+                                alt=""
+                                style={{
+                                  width: '72px',
+                                  height: '72px',
+                                  borderRadius: '14px',
+                                  objectFit: 'cover',
+                                  border: '2px solid #005BAB',
+                                  flexShrink: 0
+                                }}
+                              />
+                              <div style={{ flex: 1, minWidth: 0 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexWrap: 'wrap', marginBottom: '0.35rem' }}>
+                                  <span style={{ background: '#005BAB', color: '#FFFFFF', padding: '0.15rem 0.55rem', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 800, textTransform: 'capitalize' }}>
+                                    {item.category?.replace('-', ' ')}
+                                  </span>
+                                  <span style={{ background: '#FFF3DD', color: '#005BAB', padding: '0.15rem 0.55rem', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 800, border: '1.5px solid #005BAB' }}>
+                                    {item.subcategory}
+                                  </span>
+                                </div>
+                                <h4 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.3, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                  {item.title}
+                                </h4>
+                                <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#005BAB', opacity: 0.85, marginTop: '0.2rem' }}>
+                                  Tahun: {item.year} {item.client ? `• Klien: ${item.client}` : ''}
+                                </div>
                               </div>
                             </div>
+
+                            {item.description && (
+                              <p style={{
+                                fontSize: '0.85rem',
+                                color: '#005BAB',
+                                fontWeight: 600,
+                                lineHeight: 1.5,
+                                marginBottom: '1rem',
+                                display: '-webkit-box',
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: 'vertical',
+                                overflow: 'hidden'
+                              }}>
+                                {item.description}
+                              </p>
+                            )}
                           </div>
 
-                          {item.description && (
-                            <p style={{
-                              fontSize: '0.85rem',
-                              color: '#005BAB',
-                              fontWeight: 600,
-                              lineHeight: 1.5,
-                              marginBottom: '1rem',
-                              display: '-webkit-box',
-                              WebkitLineClamp: 2,
-                              WebkitBoxOrient: 'vertical',
-                              overflow: 'hidden'
-                            }}>
-                              {item.description}
-                            </p>
-                          )}
-                        </div>
+                          <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.75rem', borderTop: '1.5px solid #005BAB', flexWrap: 'wrap' }}>
+                            {/* Tombol Reorder Karya (Paling Atas, Naik, Turun, Paling Bawah) */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+                              <button
+                                type="button"
+                                disabled={isFirst}
+                                onClick={() => handleReorderKaryaItem(globalIdx, 'top')}
+                                className="btn-secondary"
+                                style={{ padding: '0.35rem 0.45rem', fontSize: '0.78rem', opacity: isFirst ? 0.3 : 1, cursor: isFirst ? 'not-allowed' : 'pointer' }}
+                                title="Geser Paling Atas"
+                              >
+                                <ChevronsUp size={14} />
+                              </button>
+                              <button
+                                type="button"
+                                disabled={isFirst}
+                                onClick={() => handleReorderKaryaItem(globalIdx, 'up')}
+                                className="btn-secondary"
+                                style={{ padding: '0.35rem 0.45rem', fontSize: '0.78rem', opacity: isFirst ? 0.3 : 1, cursor: isFirst ? 'not-allowed' : 'pointer' }}
+                                title="Geser ke Atas"
+                              >
+                                <ChevronUp size={14} />
+                              </button>
+                              <button
+                                type="button"
+                                disabled={isLast}
+                                onClick={() => handleReorderKaryaItem(globalIdx, 'down')}
+                                className="btn-secondary"
+                                style={{ padding: '0.35rem 0.45rem', fontSize: '0.78rem', opacity: isLast ? 0.3 : 1, cursor: isLast ? 'not-allowed' : 'pointer' }}
+                                title="Geser ke Bawah"
+                              >
+                                <ChevronDown size={14} />
+                              </button>
+                              <button
+                                type="button"
+                                disabled={isLast}
+                                onClick={() => handleReorderKaryaItem(globalIdx, 'bottom')}
+                                className="btn-secondary"
+                                style={{ padding: '0.35rem 0.45rem', fontSize: '0.78rem', opacity: isLast ? 0.3 : 1, cursor: isLast ? 'not-allowed' : 'pointer' }}
+                                title="Geser Paling Bawah"
+                              >
+                                <ChevronsDown size={14} />
+                              </button>
+                            </div>
 
-                        <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'flex-end', paddingTop: '0.75rem', borderTop: '1.5px solid #005BAB' }}>
-                          <button onClick={() => handleEditKaryaClick(item)} className="btn-secondary" style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}>
-                            <Edit size={14} />
-                            <span>Edit</span>
-                          </button>
-                          <button onClick={() => setDeletingTarget({ id: item.id, title: item.title, label: 'Karya', targetType: 'karya' })} className="btn-danger" style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}>
-                            <Trash2 size={14} />
-                            <span>Hapus</span>
-                          </button>
+                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                              <button onClick={() => handleEditKaryaClick(item)} className="btn-secondary" style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}>
+                                <Edit size={14} />
+                                <span>Edit</span>
+                              </button>
+                              <button onClick={() => setDeletingTarget({ id: item.id, title: item.title, label: 'Karya', targetType: 'karya' })} className="btn-danger" style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}>
+                                <Trash2 size={14} />
+                                <span>Hapus</span>
+                              </button>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
 
@@ -4179,6 +4333,223 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
 
                   {/* Pagination Controls */}
                   {renderPaginationControls(certPage, filteredCertItems.length, (page) => setCertPage(page))}
+                </div>
+              </div>
+            )}
+
+            {/* TAB: KELOLA KLIEN */}
+            {activeTab === 'klien' && (
+              <div>
+                {/* Form Tambah / Edit Klien */}
+                <div className="herta-card" style={{ padding: '1.5rem', marginBottom: '2rem', background: '#FFFFFF' }}>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#005BAB', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    {editingClientId ? <Edit size={18} /> : <PlusCircle size={18} />}
+                    <span>{editingClientId ? 'Edit Data Klien' : 'Tambah Klien Baru'}</span>
+                  </h3>
+
+                    <form onSubmit={handleSubmitClient}>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem' }}>
+                        {/* Nama Klien */}
+                        <div className="form-group">
+                          <label>Nama Klien / Perusahaan / Brand (Opsional)</label>
+                          <input
+                            type="text"
+                            placeholder="contoh: Aetheria Labs Inc. (opsional, boleh kosong)"
+                            value={clientForm.name || ''}
+                            onChange={(e) => setClientForm({ ...clientForm, name: e.target.value })}
+                            className="form-input"
+                          />
+                        </div>
+
+                        {/* Upload Logo Klien (Rasio 1:1 Square) */}
+                        <div className="form-group">
+                          <label>Logo Klien (Rasio Kotak 1:1) *</label>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleClientLogoChange}
+                            className="form-input"
+                            style={{ padding: '0.45rem' }}
+                          />
+                          <span style={{ fontSize: '0.74rem', color: '#005BAB', opacity: 0.8, display: 'block', marginTop: '0.25rem' }}>
+                            File akan otomatis dikompresi ke format WebP resolusi tinggi (rasio 1:1).
+                          </span>
+                        </div>
+                      </div>
+
+                    {/* Preview Logo Klien (Sesuai Lampiran 1) */}
+                    {clientForm.logo && (
+                      <div style={{ marginTop: '0.2rem' }}>
+                        <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#005BAB', display: 'block', marginBottom: '0.5rem' }}>
+                          Preview Logo Klien:
+                        </span>
+                        <div style={{
+                          position: 'relative',
+                          width: '100px',
+                          height: '100px',
+                          aspectRatio: '1 / 1',
+                          borderRadius: '20px',
+                          border: '2.5px solid #005BAB',
+                          background: '#FFFFFF',
+                          padding: '0.4rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}>
+                          <img src={clientForm.logo} alt="Preview Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: '14px' }} />
+                          <button
+                            type="button"
+                            onClick={() => setClientForm(prev => ({ ...prev, logo: '' }))}
+                            style={{
+                              position: 'absolute',
+                              top: '-10px',
+                              right: '-10px',
+                              width: '28px',
+                              height: '28px',
+                              borderRadius: '50%',
+                              background: '#005BAB',
+                              color: '#FFFFFF',
+                              border: '2px solid #FFFFFF',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              cursor: 'pointer',
+                              boxShadow: '0 2px 8px rgba(0, 91, 171, 0.35)',
+                              zIndex: 10
+                            }}
+                            title="Hapus Logo"
+                          >
+                            <X size={16} />
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.25rem' }}>
+                      <button type="submit" className="btn-primary">
+                        <span>{editingClientId ? 'Simpan Perubahan Klien' : 'Tambah Klien'}</span>
+                      </button>
+                      {editingClientId && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingClientId(null);
+                            setClientForm({ name: '', logo: '' });
+                          }}
+                          className="btn-secondary"
+                        >
+                          Batal Edit
+                        </button>
+                      )}
+                    </div>
+                  </form>
+                </div>
+
+                {/* List Daftar Klien */}
+                <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF' }}>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#005BAB', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Building2 size={18} />
+                    <span>Daftar Klien Hamdani ({clients.length})</span>
+                  </h3>
+
+                  {clients.length === 0 ? (
+                    <EmptyStateCard
+                      icon={Building2}
+                      title="Belum Ada Klien Ditambahkan"
+                      description="Silakan tambahkan logo dan nama klien yang pernah bekerja sama dengan Hamdani."
+                    />
+                  ) : (
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+                      gap: '1.25rem'
+                    }}>
+                      {clients.map((client, index) => (
+                        <div
+                          key={client.id}
+                          style={{
+                            background: '#FFF3DD',
+                            border: '2.5px solid #005BAB',
+                            borderRadius: '30px',
+                            padding: '1.25rem',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: '0.85rem',
+                            position: 'relative'
+                          }}
+                        >
+                          {/* Logo (Rasio Kotak 1:1) */}
+                          <div style={{
+                            width: '100px',
+                            height: '100px',
+                            aspectRatio: '1 / 1',
+                            borderRadius: '16px',
+                            background: '#FFFFFF',
+                            border: '2px solid #005BAB',
+                            padding: '0.5rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            overflow: 'hidden'
+                          }}>
+                            {client.logo ? (
+                              <img src={client.logo} alt={client.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                            ) : (
+                              <Building2 size={36} color="#005BAB" />
+                            )}
+                          </div>
+
+                          <div style={{ textAlign: 'center', width: '100%' }}>
+                            <h4 style={{ fontSize: '0.98rem', fontWeight: 800, color: '#005BAB', margin: 0, wordBreak: 'break-word' }}>
+                              {client.name || 'Tanpa Nama'}
+                            </h4>
+                          </div>
+
+                          {/* Tombol Reorder, Edit, Hapus */}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', width: '100%', justifyContent: 'center', flexWrap: 'wrap' }}>
+                            <button
+                              disabled={index === 0}
+                              onClick={() => handleReorderClient(index, 'up')}
+                              className="btn-secondary"
+                              style={{ padding: '0.35rem 0.55rem', opacity: index === 0 ? 0.4 : 1 }}
+                              title="Geser Naik"
+                            >
+                              <ChevronUp size={14} />
+                            </button>
+                            <button
+                              disabled={index === clients.length - 1}
+                              onClick={() => handleReorderClient(index, 'down')}
+                              className="btn-secondary"
+                              style={{ padding: '0.35rem 0.55rem', opacity: index === clients.length - 1 ? 0.4 : 1 }}
+                              title="Geser Turun"
+                            >
+                              <ChevronDown size={14} />
+                            </button>
+                            <button
+                              onClick={() => {
+                                setEditingClientId(client.id);
+                                setClientForm({ name: client.name || '', logo: client.logo || '' });
+                              }}
+                              className="btn-secondary"
+                              style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}
+                            >
+                              <Edit size={14} />
+                              <span>Edit</span>
+                            </button>
+                            <button
+                              onClick={() => setDeletingTarget({ id: client.id, title: client.name || 'Klien', label: 'Klien', targetType: 'client' })}
+                              className="btn-danger"
+                              style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}
+                            >
+                              <Trash2 size={14} />
+                              <span>Hapus</span>
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             )}

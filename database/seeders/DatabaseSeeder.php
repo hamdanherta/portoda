@@ -9,6 +9,7 @@ use App\Models\Experience;
 use App\Models\Document;
 use App\Models\Contact;
 use App\Models\Certificate;
+use App\Models\Client;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -27,6 +28,7 @@ class DatabaseSeeder extends Seeder
 
         $this->seedPortfolioItems();
         $this->seedInfo();
+        $this->seedClients();
     }
 
     public function seedPortfolioItems(): void
@@ -439,5 +441,45 @@ class DatabaseSeeder extends Seeder
                 'watermark_enabled' => true
             ]
         );
+    }
+
+    public function seedClients(): void
+    {
+        $clients = [
+            [
+                'id' => 'client-1',
+                'name' => 'Aetheria Labs Inc.',
+                'logo' => 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=400&h=400&q=80',
+                'sort_order' => 0,
+            ],
+            [
+                'id' => 'client-2',
+                'name' => 'Soundwave Festival',
+                'logo' => 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=400&h=400&q=80',
+                'sort_order' => 1,
+            ],
+            [
+                'id' => 'client-3',
+                'name' => 'Kopi Nusantara Roastery',
+                'logo' => 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=400&h=400&q=80',
+                'sort_order' => 2,
+            ],
+            [
+                'id' => 'client-4',
+                'name' => 'PulseFit Tech',
+                'logo' => 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=400&h=400&q=80',
+                'sort_order' => 3,
+            ],
+            [
+                'id' => 'client-5',
+                'name' => 'Nusantara Financial',
+                'logo' => 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=400&h=400&q=80',
+                'sort_order' => 4,
+            ],
+        ];
+
+        foreach ($clients as $client) {
+            Client::updateOrCreate(['id' => $client['id']], $client);
+        }
     }
 }

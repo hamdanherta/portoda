@@ -111,6 +111,17 @@ export const portfolioService = {
     }
   },
 
+  async reorderItems(items) {
+    try {
+      const itemsPayload = items.map(item => typeof item === 'object' ? item.id : item);
+      const response = await axios.post('/api/portfolio-items/reorder', { items: itemsPayload });
+      return response.data || [];
+    } catch (err) {
+      console.error('Failed to reorder portfolio items:', err);
+      throw err;
+    }
+  },
+
   async resetToMockData() {
     try {
       const response = await axios.post('/api/portfolio-items/reset');

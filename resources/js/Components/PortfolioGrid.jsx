@@ -141,11 +141,11 @@ export default function PortfolioGrid({
         }}>
           <span style={{ fontSize: '0.9rem', fontWeight: 800, color: '#005BAB' }}>
             {lang === 'en'
-              ? `Showing ${((currentPage - 1) * ITEMS_PER_PAGE) + 1} - ${Math.min(currentPage * ITEMS_PER_PAGE, items.length)} of ${items.length} Works`
-              : `Menampilkan ${((currentPage - 1) * ITEMS_PER_PAGE) + 1} - ${Math.min(currentPage * ITEMS_PER_PAGE, items.length)} dari ${items.length} Karya`}
+              ? `Page ${currentPage} of ${totalPages} (Total ${items.length} Works)`
+              : `Halaman ${currentPage} dari ${totalPages} (Total ${items.length} Karya)`}
           </span>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
             <button
               disabled={currentPage === 1}
               onClick={() => onPageChange && onPageChange(currentPage - 1)}
@@ -163,25 +163,6 @@ export default function PortfolioGrid({
               <ChevronLeft size={16} />
               <span>{lang === 'en' ? 'Previous' : 'Sebelumnya'}</span>
             </button>
-
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
-              <button
-                key={pageNum}
-                onClick={() => onPageChange && onPageChange(pageNum)}
-                style={{
-                  padding: '0.45rem 0.8rem',
-                  borderRadius: '999px',
-                  fontSize: '0.85rem',
-                  fontWeight: 800,
-                  color: currentPage === pageNum ? '#FFFFFF' : '#005BAB',
-                  background: currentPage === pageNum ? '#005BAB' : '#FFF3DD',
-                  border: '1.5px solid #005BAB',
-                  cursor: 'pointer'
-                }}
-              >
-                {pageNum}
-              </button>
-            ))}
 
             <button
               disabled={currentPage === totalPages}

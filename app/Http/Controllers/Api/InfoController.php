@@ -9,6 +9,7 @@ use App\Models\Contact;
 use App\Models\Certificate;
 use App\Models\Profile;
 use App\Models\PortfolioItem;
+use App\Models\Client;
 use Illuminate\Http\Request;
 use Database\Seeders\DatabaseSeeder;
 
@@ -209,6 +210,49 @@ class InfoController extends Controller
         return response()->json($profile);
     }
 
+    // --- CLIENTS ---
+    public function getClients()
+    {
+        return response()->json(Client::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
+    }
+
+    public function saveClient(Request $request)
+    {
+        $data = $request->all();
+        if (!empty($data['id'])) {
+            $client = Client::find($data['id']);
+            if ($client) {
+                $client->update($data);
+                return response()->json(Client::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
+            }
+        }
+
+        $data['id'] = $data['id'] ?? 'client-' . time();
+        Client::create($data);
+        return response()->json(Client::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
+    }
+
+    public function deleteClient($id)
+    {
+        $client = Client::find($id);
+        if ($client) {
+            $client->delete();
+        }
+        return response()->json(Client::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
+    }
+
+    public function reorderClients(Request $request)
+    {
+        $items = $request->input('items', []);
+        foreach ($items as $index => $item) {
+            $id = is_array($item) ? ($item['id'] ?? null) : $item;
+            if ($id) {
+                Client::where('id', $id)->update(['sort_order' => $index]);
+            }
+        }
+        return response()->json(Client::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
+    }
+
     // RESET ALL INFO & DATA
     public function resetAllInfo()
     {
@@ -218,6 +262,7 @@ class InfoController extends Controller
         Certificate::truncate();
         Profile::truncate();
         PortfolioItem::truncate();
+        Client::truncate();
 
         return response()->json(['success' => true]);
     }

@@ -21,7 +21,7 @@ class PortfolioController extends Controller
         $subcategory = $request->query('subcategory', 'all');
         $search = $request->query('searchQuery', '');
 
-        $query = PortfolioItem::query()->orderBy('created_at', 'desc');
+        $query = PortfolioItem::query()->orderBy('sort_order', 'asc')->orderBy('created_at', 'desc');
 
         if ($category !== 'all') {
             $query->where('category', $category);
@@ -92,6 +92,18 @@ class PortfolioController extends Controller
             $item->delete();
         }
         return response()->json(['success' => true]);
+    }
+
+    public function reorder(Request $request)
+    {
+        $items = $request->input('items', []);
+        foreach ($items as $index => $item) {
+            $id = is_array($item) ? ($item['id'] ?? null) : $item;
+            if ($id) {
+                PortfolioItem::where('id', $id)->update(['sort_order' => $index]);
+            }
+        }
+        return response()->json(PortfolioItem::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
     }
 
     public function reset()

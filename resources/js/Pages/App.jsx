@@ -9,6 +9,7 @@ import InfoModal from '../Components/InfoModal';
 import Footer from '../Components/Footer';
 import MaintenanceModal from '../Components/MaintenanceModal';
 import ContentNoticeModal from '../Components/ContentNoticeModal';
+import ClientShowcase from '../Components/ClientShowcase';
 import { portfolioService } from '../services/portfolioService';
 import { infoService } from '../services/infoService';
 import { LanguageProvider } from '../context/LanguageContext';
@@ -22,6 +23,7 @@ export default function App({ karyaId, docId }) {
   const [searchQuery, setSearchQuery] = useState('');
   
   const [allItems, setAllItems] = useState([]);
+  const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   
   const [selectedItem, setSelectedItem] = useState(null);
@@ -207,7 +209,7 @@ export default function App({ karyaId, docId }) {
   }, [allItems, activeCategory, activeSubcategory, searchQuery]);
 
   // Hook scroll reveal saat scroll kebawah & keatas
-  useScrollReveal([filteredItems, activeCategory, activeSubcategory, searchQuery, loading, isFullGallery, currentPage, isExpandedBeranda]);
+  useScrollReveal([filteredItems, activeCategory, activeSubcategory, searchQuery, loading, isFullGallery, currentPage, isExpandedBeranda, clients]);
 
   // URL Hash/Query Listener untuk membuka Dashboard Admin via URL (misal: #admin atau ?admin=true)
   useEffect(() => {
@@ -244,8 +246,24 @@ export default function App({ karyaId, docId }) {
     }
   };
 
+  const loadClientData = async () => {
+    try {
+      const clts = await infoService.getClients();
+      setClients(clts || []);
+    } catch (err) {
+      console.error('Failed to load clients:', err);
+    }
+  };
+
   useEffect(() => {
     loadPortfolioData();
+    loadClientData();
+
+    const handleInfoUpdated = () => {
+      loadClientData();
+    };
+    window.addEventListener('portoda_info_updated', handleInfoUpdated);
+    return () => window.removeEventListener('portoda_info_updated', handleInfoUpdated);
   }, []);
 
   useEffect(() => {
@@ -397,6 +415,9 @@ export default function App({ karyaId, docId }) {
             }}
             onViewMore={handleViewMoreWorks}
           />
+
+          {/* Seksi Klien Hamdani (Di bawah tombol Lihat Selengkapnya / Display Karya) */}
+          <ClientShowcase clients={clients} />
         </main>
 
         {/* Lightbox / Detail Modal (Karya & Sertifikat) */}

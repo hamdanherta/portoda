@@ -18,6 +18,7 @@ Route::get('/portfolio-items', [PortfolioController::class, 'index']);
 Route::post('/portfolio-items', [PortfolioController::class, 'store']);
 Route::put('/portfolio-items/{id}', [PortfolioController::class, 'update']);
 Route::delete('/portfolio-items/{id}', [PortfolioController::class, 'destroy']);
+Route::post('/portfolio-items/reorder', [PortfolioController::class, 'reorder']);
 Route::post('/portfolio-items/reset', [PortfolioController::class, 'reset']);
 
 // Info Routes
@@ -43,5 +44,10 @@ Route::delete('/certificates/{id}', [InfoController::class, 'deleteCertificate']
 
 Route::get('/profile', [InfoController::class, 'getProfile']);
 Route::post('/profile', [InfoController::class, 'saveProfile']);
+
+Route::get('/clients', [InfoController::class, 'getClients']);
+Route::post('/clients', [InfoController::class, 'saveClient']);
+Route::post('/clients/reorder', [InfoController::class, 'reorderClients']);
+Route::delete('/clients/{id}', [InfoController::class, 'deleteClient']);
 
 Route::post('/info/reset', [InfoController::class, 'resetAllInfo']);

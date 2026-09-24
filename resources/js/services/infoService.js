@@ -352,6 +352,72 @@ export const infoService = {
     }
   },
 
+  // --- CLIENTS ---
+  async getClients() {
+    try {
+      const response = await axios.get('/api/clients');
+      return response.data || [];
+    } catch (err) {
+      console.error('Failed to get clients:', err);
+      return [];
+    }
+  },
+
+  async saveClient(clientData, onProgress = null) {
+    if (onProgress) onProgress(10);
+    const payload = { ...clientData };
+    if (payload.logo) {
+      payload.logo = await uploadBase64ToStorage(payload.logo, 'portfolio', 'klien', (p) => {
+        if (onProgress) onProgress(10 + Math.round(p * 0.7));
+      });
+    }
+
+    try {
+      const response = await axios.post('/api/clients', payload, {
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total && onProgress) {
+            const pct = 80 + Math.round((progressEvent.loaded * 20) / progressEvent.total);
+            onProgress(pct);
+          }
+        }
+      });
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('portoda_info_updated'));
+      }
+      if (onProgress) onProgress(100);
+      return response.data;
+    } catch (err) {
+      console.error('Failed to save client:', err);
+      throw err;
+    }
+  },
+
+  async deleteClient(id) {
+    try {
+      const response = await axios.delete(`/api/clients/${id}`);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('portoda_info_updated'));
+      }
+      return response.data;
+    } catch (err) {
+      console.error('Failed to delete client:', err);
+      throw err;
+    }
+  },
+
+  async reorderClients(items) {
+    try {
+      const response = await axios.post('/api/clients/reorder', { items });
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('portoda_info_updated'));
+      }
+      return response.data;
+    } catch (err) {
+      console.error('Failed to reorder clients:', err);
+      throw err;
+    }
+  },
+
   // Reset all info data to initial defaults in MySQL
   async resetAllInfo() {
     try {

@@ -37,6 +37,7 @@ class PortfolioItem extends Model
         'role',
         'tags',
         'featured',
+        'sort_order',
     ];
 
     protected $casts = [

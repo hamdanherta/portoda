@@ -3404,11 +3404,11 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                             )}
                           </div>
 
-                          <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.75rem', borderTop: '1.5px solid #005BAB' }}>
+                          <div style={{ display: 'flex', gap: '0.5rem', rowGap: '0.5rem', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', paddingTop: '0.75rem', borderTop: '1.5px solid #005BAB' }}>
                             {(() => {
                               const realIdx = experiences.findIndex(i => i.id === exp.id);
                               return (
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', flexWrap: 'wrap' }}>
                                   <button
                                     type="button"
                                     disabled={realIdx <= 0}
@@ -3642,11 +3642,11 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                             )}
                           </div>
 
-                          <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.75rem', borderTop: '1.5px solid #005BAB' }}>
+                          <div style={{ display: 'flex', gap: '0.5rem', rowGap: '0.5rem', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', paddingTop: '0.75rem', borderTop: '1.5px solid #005BAB' }}>
                             {(() => {
                               const realIdx = documents.findIndex(i => i.id === doc.id);
                               return (
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', flexWrap: 'wrap' }}>
                                   <button
                                     type="button"
                                     disabled={realIdx <= 0}
@@ -3855,11 +3855,11 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                             )}
                           </div>
 
-                          <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.75rem', marginTop: '1rem', borderTop: '1.5px solid #005BAB' }}>
+                          <div style={{ display: 'flex', gap: '0.5rem', rowGap: '0.5rem', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', paddingTop: '0.75rem', marginTop: '1rem', borderTop: '1.5px solid #005BAB' }}>
                             {(() => {
                               const realIdx = contacts.findIndex(i => i.id === c.id);
                               return (
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', flexWrap: 'wrap' }}>
                                   <button
                                     type="button"
                                     disabled={realIdx <= 0}
@@ -4273,11 +4273,11 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                             </div>
                           </div>
 
-                          <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.75rem', marginTop: '1rem', borderTop: '1.5px solid #005BAB' }}>
+                          <div style={{ display: 'flex', gap: '0.5rem', rowGap: '0.5rem', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', paddingTop: '0.75rem', marginTop: '1rem', borderTop: '1.5px solid #005BAB' }}>
                             {(() => {
                               const realIdx = certificates.findIndex(i => i.id === cert.id);
                               return (
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', flexWrap: 'wrap' }}>
                                   <button
                                     type="button"
                                     disabled={realIdx <= 0}
@@ -4872,8 +4872,8 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                               )}
                             </div>
 
-                            <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.75rem', marginTop: '1rem', borderTop: '1.5px solid #005BAB' }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                            <div style={{ display: 'flex', gap: '0.5rem', rowGap: '0.5rem', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', paddingTop: '0.75rem', marginTop: '1rem', borderTop: '1.5px solid #005BAB' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', flexWrap: 'wrap' }}>
                                 <button
                                   type="button"
                                   disabled={idx <= 0}
@@ -4895,7 +4895,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                                   <ChevronDown size={15} />
                                 </button>
                               </div>
-                              <div style={{ display: 'flex', gap: '0.6rem' }}>
+                              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                                 <button
                                   type="button"
                                   onClick={() => handleEditSkillClick(skill)}

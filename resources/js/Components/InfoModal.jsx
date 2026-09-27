@@ -867,7 +867,6 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                     onClick={() => {
                       if (onSelectCertificate) {
                         onSelectCertificate({ ...cert, isCertificate: true });
-                        onClose();
                       }
                     }}
                     style={{

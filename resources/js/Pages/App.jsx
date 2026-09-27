@@ -318,6 +318,15 @@ export default function App({ karyaId, docId }) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleViewAllWorks = () => {
+    handleCloseDetailModal();
+    setIsFullGallery(true);
+    setIsExpandedBeranda(true);
+    setTimeout(() => {
+      scrollToGallery();
+    }, 100);
+  };
+
   return (
     <LanguageProvider>
       <Head title="Portoda - Aplikasi Portofolio Karya Hamdani" />
@@ -420,17 +429,20 @@ export default function App({ karyaId, docId }) {
           <ClientShowcase clients={clients} />
         </main>
 
-        {/* Lightbox / Detail Modal (Karya & Sertifikat) */}
-        <DetailModal
-          item={selectedItem}
-          onClose={handleCloseDetailModal}
-        />
-
         {/* Modal Informasi Menu Navbar: Profil, Pengalaman Kerja, Dokumen, Sertifikat, Kontak */}
         <InfoModal
           activeType={activeNavModal}
           onClose={() => setActiveNavModal(null)}
           onSelectCertificate={(cert) => setSelectedItem(cert)}
+        />
+
+        {/* Lightbox / Detail Modal (Karya & Sertifikat) */}
+        <DetailModal
+          item={selectedItem}
+          allItems={allItems}
+          onClose={handleCloseDetailModal}
+          onSelectWork={(workItem) => setSelectedItem(workItem)}
+          onViewAllWorks={handleViewAllWorks}
         />
 
         {/* Admin Dashboard (Akses Rahasia via URL #admin) - Selalu menerima seluruh data karya (allItems) */}

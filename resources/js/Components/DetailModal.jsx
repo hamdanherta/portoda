@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { X, ExternalLink, Calendar, User, Tag, Play, ChevronLeft, ChevronRight, Award, Briefcase, Building2, Sparkles, FolderKanban, Wrench, Code, Layers, Smartphone, Share2, Check, Maximize2 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import WatermarkedImage from './WatermarkedImage';
 
-export default function DetailModal({ item, onClose }) {
+export default function DetailModal({ item, allItems = [], onClose, onSelectWork, onViewAllWorks }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -11,6 +11,7 @@ export default function DetailModal({ item, onClose }) {
   const { lang, t, getLocalizedField } = useLanguage();
   const autoSlideRef = useRef(null);
   const resumeTimerRef = useRef(null);
+  const modalRef = useRef(null);
 
   const handleShare = () => {
     if (!item) return;
@@ -61,9 +62,19 @@ export default function DetailModal({ item, onClose }) {
       )
     : [];
 
+  const otherWorks = useMemo(() => {
+    if (!item || item.isCertificate || !Array.isArray(allItems)) return [];
+    return allItems
+      .filter((other) => !other.isCertificate && String(other.id) !== String(item.id))
+      .slice(0, 5);
+  }, [item, allItems]);
+
   useEffect(() => {
     setCurrentImageIndex(0);
     setIsPaused(false);
+    if (modalRef.current) {
+      modalRef.current.scrollTop = 0;
+    }
   }, [item]);
 
   const pauseAndResume = useCallback(() => {
@@ -200,9 +211,10 @@ export default function DetailModal({ item, onClose }) {
   const appOrProjLink = item.prototype_url || item.project_url || item.app_url || item.demo_url || item.link || item.url;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={onClose} style={{ zIndex: 1100 }}>
       <div 
         onClick={(e) => e.stopPropagation()}
+        ref={modalRef}
         className="herta-card animate-fade-in detail-modal-scroll"
         style={{
           width: '100%',
@@ -819,6 +831,242 @@ export default function DetailModal({ item, onClose }) {
               <span>{t('detail_close')}</span>
             </button>
           </div>
+
+          {/* ─── SEKSI KARYA LAINNYA ─── */}
+          {otherWorks.length > 0 && (
+            <div style={{
+              marginTop: '1.75rem',
+              marginBottom: '1.5rem',
+              paddingTop: '1.25rem',
+              borderTop: '2px solid #005BAB',
+              width: '100%',
+              boxSizing: 'border-box'
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '0.75rem',
+                flexWrap: 'wrap',
+                marginBottom: '1rem',
+                width: '100%',
+                boxSizing: 'border-box'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
+                  <div style={{
+                    padding: '0.4rem',
+                    borderRadius: '10px',
+                    background: '#005BAB',
+                    color: '#FFFFFF',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <FolderKanban size={18} />
+                  </div>
+                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#005BAB', margin: 0, lineHeight: 1.3 }}>
+                    {lang === 'en' ? 'Other Works' : 'Karya Lainnya'}
+                  </h3>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onViewAllWorks) {
+                      onViewAllWorks();
+                    } else {
+                      onClose();
+                    }
+                  }}
+                  className="btn-secondary other-works-desktop-btn"
+                  style={{
+                    fontSize: '0.82rem',
+                    fontWeight: 800,
+                    padding: '0.4rem 0.85rem',
+                    gap: '0.4rem',
+                    background: '#FFF3DD',
+                    color: '#005BAB',
+                    border: '2px solid #005BAB'
+                  }}
+                >
+                  <span>{lang === 'en' ? 'View All Works' : 'Lihat Selengkapnya'}</span>
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+
+              {/* Grid 5 Karya Lainnya */}
+              <div className="other-works-grid" style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(5, 1fr)',
+                gap: '0.75rem',
+                width: '100%',
+                boxSizing: 'border-box'
+              }}>
+                {otherWorks.map((otherItem) => {
+                  const otherTitle = getLocalizedField(otherItem, 'title');
+                  const otherSubcat = getLocalizedField(otherItem, 'subcategory');
+                  const coverImg = otherItem.cover || otherItem.cover_image || otherItem.image_url;
+
+                  return (
+                    <div
+                      key={otherItem.id}
+                      className="herta-card other-work-card"
+                      onClick={() => {
+                        if (onSelectWork) {
+                          onSelectWork(otherItem);
+                        }
+                      }}
+                      style={{
+                        padding: '0.6rem',
+                        background: '#FFFFFF',
+                        borderRadius: '16px',
+                        border: '2px solid #005BAB',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        gap: '0.45rem',
+                        width: '100%',
+                        boxSizing: 'border-box',
+                        overflow: 'hidden'
+                      }}
+                    >
+                      <div>
+                        {/* 16:9 Thumbnail Cover */}
+                        <div style={{
+                          position: 'relative',
+                          width: '100%',
+                          paddingTop: '62.5%',
+                          borderRadius: '10px',
+                          overflow: 'hidden',
+                          border: '1.5px solid #005BAB',
+                          backgroundColor: '#111827',
+                          marginBottom: '0.45rem'
+                        }}>
+                          {coverImg ? (
+                            <>
+                              <img
+                                src={coverImg}
+                                alt=""
+                                aria-hidden="true"
+                                style={{
+                                  position: 'absolute',
+                                  top: '-10%',
+                                  left: '-10%',
+                                  width: '120%',
+                                  height: '120%',
+                                  objectFit: 'cover',
+                                  filter: 'blur(12px) brightness(0.6)',
+                                  pointerEvents: 'none',
+                                  zIndex: 1
+                                }}
+                              />
+                              <WatermarkedImage
+                                src={coverImg}
+                                alt={otherTitle}
+                                objectFit="contain"
+                                objectPosition="center center"
+                                style={{
+                                  position: 'absolute',
+                                  top: 0,
+                                  left: 0,
+                                  width: '100%',
+                                  height: '100%',
+                                  zIndex: 2
+                                }}
+                              />
+                            </>
+                          ) : (
+                            <div style={{
+                              position: 'absolute',
+                              inset: 0,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: '#005BAB',
+                              background: '#FFF3DD',
+                              fontSize: '0.72rem',
+                              fontWeight: 800
+                            }}>
+                              No Image
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Category Badge */}
+                        <span style={{
+                          fontSize: '0.68rem',
+                          fontWeight: 800,
+                          background: '#005BAB',
+                          color: '#FFFFFF',
+                          padding: '0.15rem 0.45rem',
+                          borderRadius: '999px',
+                          display: 'inline-block',
+                          maxWidth: '100%',
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis'
+                        }}>
+                          {otherSubcat || otherItem.category || 'Karya'}
+                        </span>
+
+                        {/* Title */}
+                        <h4 style={{
+                          fontSize: '0.8rem',
+                          fontWeight: 800,
+                          color: '#005BAB',
+                          margin: '0.3rem 0 0 0',
+                          lineHeight: 1.25,
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden',
+                          wordBreak: 'break-word',
+                          overflowWrap: 'break-word'
+                        }}>
+                          {otherTitle}
+                        </h4>
+                      </div>
+
+                      {/* Year */}
+                      {otherItem.year && (
+                        <span style={{ fontSize: '0.68rem', fontWeight: 700, color: '#005BAB', opacity: 0.8 }}>
+                          {otherItem.year}
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Mobile View Button Lihat Selengkapnya */}
+              <div className="other-works-mobile-btn-wrap" style={{ display: 'none', marginTop: '1rem', width: '100%' }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onViewAllWorks) {
+                      onViewAllWorks();
+                    } else {
+                      onClose();
+                    }
+                  }}
+                  className="btn-primary"
+                  style={{
+                    width: '100%',
+                    justifyContent: 'center',
+                    padding: '0.65rem 1rem',
+                    fontSize: '0.88rem',
+                    fontWeight: 800,
+                    gap: '0.5rem'
+                  }}
+                >
+                  <span>{lang === 'en' ? 'View All Works' : 'Lihat Selengkapnya Karya'}</span>
+                  <ChevronRight size={18} />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
         {/* ── GDrive Video Fullscreen Overlay ── */}
         {isVideoFullscreen && videoEmbedUrl && (
@@ -982,6 +1230,31 @@ export default function DetailModal({ item, onClose }) {
               margin-top: 0.25rem !important;
               margin-bottom: 0.25rem !important;
               width: 100% !important;
+            }
+          .other-work-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 91, 171, 0.2);
+            border-color: #003d80 !important;
+          }
+          .other-work-card:active {
+            transform: scale(0.98);
+          }
+          .other-works-desktop-btn {
+            display: inline-flex !important;
+          }
+          .other-works-mobile-btn-wrap {
+            display: none !important;
+          }
+          @media (max-width: 640px) {
+            .other-works-grid {
+              grid-template-columns: repeat(2, 1fr) !important;
+              gap: 0.65rem !important;
+            }
+            .other-works-desktop-btn {
+              display: none !important;
+            }
+            .other-works-mobile-btn-wrap {
+              display: block !important;
             }
           }
         `}</style>

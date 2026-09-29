@@ -67,7 +67,7 @@ export const translations = {
     profile_skills_heading: 'Spesialisasi & Keahlian Utama',
     profile_domisili_heading: 'Domisili & Data Diri',
     profile_domisili: 'Domisili',
-    profile_residence: 'Tempat Tinggal Sekarang',
+    profile_residence: 'Alamat',
     profile_ttl: 'Tempat, Tanggal Lahir',
 
     // Info Modal - Experiences

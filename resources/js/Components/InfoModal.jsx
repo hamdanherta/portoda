@@ -569,13 +569,13 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
 
             {/* Bio Card */}
             <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF', marginBottom: '1.5rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.6rem', flexWrap: 'wrap', gap: '0.4rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem', gap: '0.5rem' }}>
                 <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#005BAB', margin: 0 }}>
                   {lang === 'en' ? `About ${profileData.name || 'Hamdani'}` : `Tentang ${profileData.name || 'Hamdani'}`}
                 </h3>
                 <MetadataCopyBtn text={getLocalizedField(profileData, 'bio')} label="Tentang" />
               </div>
-              <p style={{ fontSize: '0.95rem', color: '#005BAB', fontWeight: 600, lineHeight: 1.65, whiteSpace: 'pre-line', margin: 0 }}>
+              <p style={{ fontSize: '0.95rem', color: '#005BAB', fontWeight: 400, lineHeight: 1.65, whiteSpace: 'pre-line', margin: 0 }}>
                 {getLocalizedField(profileData, 'bio')}
               </p>
             </div>
@@ -583,42 +583,42 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
             {/* Domisili & Data Diri Card */}
             <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF', marginBottom: '1.5rem' }}>
               <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#005BAB', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <MapPin size={20} />
+                <MapPin size={20} style={{ flexShrink: 0 }} />
                 <span>{t('profile_domisili_heading')}</span>
               </h3>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
-                <div style={{ background: '#FFF3DD', padding: '1rem', borderRadius: '14px', border: '1.5px solid #005BAB' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.4rem', fontWeight: 800, color: '#005BAB', fontSize: '0.85rem', marginBottom: '0.25rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                      <MapPin size={16} />
-                      <span>{t('profile_domisili')}</span>
+                <div style={{ background: '#FFF3DD', padding: '1.1rem 1rem', borderRadius: '14px', border: '1.5px solid #005BAB', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '0.6rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontWeight: 800, color: '#005BAB', fontSize: '0.85rem' }}>
+                      <MapPin size={16} style={{ flexShrink: 0 }} />
+                      <span style={{ lineHeight: 1.3 }}>{t('profile_domisili')}</span>
                     </div>
                     <MetadataCopyBtn text={getLocalizedField(profileData, 'domisili') || 'Kota Jambi, Indonesia'} label="Domisili" />
                   </div>
-                  <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#005BAB' }}>
+                  <div style={{ fontSize: '0.92rem', fontWeight: 400, color: '#005BAB', lineHeight: 1.5 }}>
                     {getLocalizedField(profileData, 'domisili') || 'Kota Jambi, Indonesia'}
                   </div>
                 </div>
 
-                <div style={{ background: '#FFF3DD', padding: '1rem', borderRadius: '14px', border: '1.5px solid #005BAB' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.4rem', fontWeight: 800, color: '#005BAB', fontSize: '0.85rem', marginBottom: '0.25rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                      <Home size={16} />
-                      <span>{t('profile_residence')}</span>
+                <div style={{ background: '#FFF3DD', padding: '1.1rem 1rem', borderRadius: '14px', border: '1.5px solid #005BAB', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '0.6rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontWeight: 800, color: '#005BAB', fontSize: '0.85rem', flex: 1, minWidth: 0 }}>
+                      <Home size={16} style={{ flexShrink: 0 }} />
+                      <span style={{ lineHeight: 1.3 }}>{t('profile_residence')}</span>
                     </div>
                     <MetadataCopyBtn text={getLocalizedField(profileData, 'tempat_tinggal') || 'Kota Jambi, Indonesia'} label="Tempat Tinggal" />
                   </div>
-                  <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#005BAB' }}>
+                  <div style={{ fontSize: '0.92rem', fontWeight: 400, color: '#005BAB', lineHeight: 1.5 }}>
                     {getLocalizedField(profileData, 'tempat_tinggal') || 'Kota Jambi, Indonesia'}
                   </div>
                 </div>
 
-                <div style={{ background: '#FFF3DD', padding: '1rem', borderRadius: '14px', border: '1.5px solid #005BAB' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 800, color: '#005BAB', fontSize: '0.85rem', marginBottom: '0.25rem' }}>
-                    <Calendar size={16} />
-                    <span>{t('profile_ttl')}</span>
+                <div style={{ background: '#FFF3DD', padding: '1.1rem 1rem', borderRadius: '14px', border: '1.5px solid #005BAB', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '0.6rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontWeight: 800, color: '#005BAB', fontSize: '0.85rem' }}>
+                    <Calendar size={16} style={{ flexShrink: 0 }} />
+                    <span style={{ lineHeight: 1.3 }}>{t('profile_ttl')}</span>
                   </div>
-                  <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#005BAB' }}>
+                  <div style={{ fontSize: '0.92rem', fontWeight: 400, color: '#005BAB', lineHeight: 1.5 }}>
                     {getLocalizedField(profileData, 'ttl') || 'Jambi, 14 Mei 1998'}
                   </div>
                 </div>
@@ -692,10 +692,9 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                   return (
                     <div key={exp.id} className="herta-card" style={{ padding: '1.35rem', background: '#FFFFFF' }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.4rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
-                          <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#005BAB', margin: 0, display: 'inline-flex', alignItems: 'center', flexWrap: 'wrap' }}>
-                            <span>{getLocalizedField(exp, 'title')}</span>
-                            <MetadataCopyBtn text={getLocalizedField(exp, 'title')} label="Judul" />
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap', flex: 1, minWidth: 0 }}>
+                          <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#005BAB', margin: 0 }}>
+                            {getLocalizedField(exp, 'title')}
                           </h3>
 
                           {/* Tipe Pengalaman Badge (Hijau = Kerja, Biru = Magang, Kuning = Organisasi, Ungu = Freelance) */}
@@ -721,16 +720,21 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                           )}
                         </div>
 
-                        <span style={{ fontSize: '0.78rem', fontWeight: 800, background: '#005BAB', color: '#FFFFFF', padding: '0.2rem 0.65rem', borderRadius: '999px' }}>
-                          {getLocalizedField(exp, 'period')}
-                        </span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <span style={{ fontSize: '0.78rem', fontWeight: 800, background: '#005BAB', color: '#FFFFFF', padding: '0.2rem 0.65rem', borderRadius: '999px' }}>
+                            {getLocalizedField(exp, 'period')}
+                          </span>
+                          <MetadataCopyBtn text={getLocalizedField(exp, 'title')} label="Judul" />
+                        </div>
                       </div>
-                      <h4 style={{ fontSize: '0.9rem', fontWeight: 700, color: '#005BAB', opacity: 0.9, marginBottom: '0.6rem', display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
-                        <span>{exp.company}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.6rem' }}>
+                        <h4 style={{ fontSize: '0.9rem', fontWeight: 500, color: '#005BAB', opacity: 0.9, margin: 0 }}>
+                          {exp.company}
+                        </h4>
                         <MetadataCopyBtn text={exp.company} label="Lokasi" />
-                      </h4>
+                      </div>
                       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem' }}>
-                        <p style={{ fontSize: '0.88rem', color: '#005BAB', fontWeight: 600, lineHeight: 1.6, whiteSpace: 'pre-line', margin: 0, flex: 1 }}>
+                        <p style={{ fontSize: '0.88rem', color: '#005BAB', fontWeight: 400, lineHeight: 1.6, whiteSpace: 'pre-line', margin: 0, flex: 1 }}>
                           {getLocalizedField(exp, 'description')}
                         </p>
                         <MetadataCopyBtn text={getLocalizedField(exp, 'description')} label="Deskripsi" />
@@ -959,17 +963,21 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                           </span>
                         )}
                       </div>
-                      <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#005BAB', marginBottom: '0.4rem', lineHeight: 1.35, display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
-                        <span>{cert.title}</span>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.4rem' }}>
+                        <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#005BAB', margin: 0, lineHeight: 1.35, flex: 1 }}>
+                          {cert.title}
+                        </h3>
                         <MetadataCopyBtn text={cert.title} label="Judul" />
-                      </h3>
-                      <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#005BAB', opacity: 0.85, marginBottom: '0.5rem', display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
-                        <span>{cert.institution}</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                        <div style={{ fontSize: '0.82rem', fontWeight: 400, color: '#005BAB', opacity: 0.85, flex: 1 }}>
+                          {cert.institution}
+                        </div>
                         <MetadataCopyBtn text={cert.institution} label="Instansi" />
                       </div>
                       {cert.description && (
                         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.4rem' }}>
-                          <p style={{ fontSize: '0.82rem', color: '#005BAB', opacity: 0.8, lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', margin: 0, flex: 1 }}>
+                          <p style={{ fontSize: '0.82rem', color: '#005BAB', fontWeight: 400, opacity: 0.8, lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', margin: 0, flex: 1 }}>
                             {cert.description}
                           </p>
                           <MetadataCopyBtn text={cert.description} label="Deskripsi" />

@@ -749,7 +749,7 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
             <div style={{
               fontSize: '0.92rem',
               color: '#005BAB',
-              fontWeight: 600,
+              fontWeight: 400,
               lineHeight: 1.6,
               marginBottom: '1.5rem',
               whiteSpace: 'pre-line',

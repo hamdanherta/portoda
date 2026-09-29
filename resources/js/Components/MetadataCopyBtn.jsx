@@ -65,7 +65,7 @@ export default function MetadataCopyBtn({ text, label = "Data", style = {} }) {
       className="desktop-copy-btn"
       title={copied ? "Tersalin ke Clipboard!" : `Salin ${label}`}
       style={{
-        marginLeft: '0.45rem',
+        marginLeft: 'auto',
         padding: '0.2rem 0.5rem',
         fontSize: '0.72rem',
         fontWeight: 700,

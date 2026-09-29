@@ -162,11 +162,11 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
                     fontWeight: 400,
                     border: '2.5px solid #005BAB' 
                   }}>
-                    <MapPin size={17} />
+                    <MapPin size={17} style={{ flexShrink: 0 }} />
                     <span style={{ fontWeight: 400 }}>
                       {(lang === 'en'
-                        ? (profile?.tempat_tinggal_en || profile?.tempat_tinggal || profile?.domisili_en || profile?.domisili)
-                        : (profile?.tempat_tinggal || profile?.domisili)) || t('hero_location')}
+                        ? (profile?.domisili_en || profile?.domisili || profile?.tempat_tinggal_en || profile?.tempat_tinggal)
+                        : (profile?.domisili || profile?.tempat_tinggal)) || t('hero_location')}
                     </span>
                   </span>
                 </div>

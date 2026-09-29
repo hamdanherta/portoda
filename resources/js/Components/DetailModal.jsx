@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { X, ExternalLink, Calendar, User, Tag, Play, ChevronLeft, ChevronRight, Award, Briefcase, Building2, Sparkles, FolderKanban, Wrench, Code, Layers, Smartphone, Share2, Check, Maximize2 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import WatermarkedImage from './WatermarkedImage';
+import MetadataCopyBtn from './MetadataCopyBtn';
 
 export default function DetailModal({ item, allItems = [], onClose, onSelectWork, onViewAllWorks }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -536,16 +537,20 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
 
         {/* Detail Content Body */}
         <div className="detail-modal-body" style={{ padding: '1.5rem' }}>
-          {/* Judul Karya — pindah ke bawah gambar/video */}
+          {/* Judul Karya / Sertifikat */}
           <h2 style={{
             fontSize: '1.35rem',
             fontWeight: 800,
             color: '#005BAB',
             margin: '0 0 1.15rem 0',
             lineHeight: 1.3,
-            wordBreak: 'break-word'
+            wordBreak: 'break-word',
+            display: 'flex',
+            alignItems: 'center',
+            flexWrap: 'wrap'
           }}>
-            {titleText}
+            <span>{titleText}</span>
+            <MetadataCopyBtn text={titleText} label="Judul" />
           </h2>
 
           {/* Metadata badges — aligned nicely left to right with spacious row gap */}
@@ -582,7 +587,8 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
                 border: '1.5px solid #005BAB'
               }}>
                 <Award size={15} />
-                {item.institution}
+                <span>{item.institution}</span>
+                <MetadataCopyBtn text={item.institution} label="Instansi" />
               </span>
             )}
             {item.client && (
@@ -739,20 +745,25 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
           )}
 
           {/* Description */}
-          <div style={{
-            fontSize: '0.92rem',
-            color: '#005BAB',
-            fontWeight: 600,
-            lineHeight: 1.6,
-            marginBottom: '1.5rem',
-            whiteSpace: 'pre-line',
-            background: '#FFFFFF',
-            padding: '1.25rem',
-            borderRadius: '20px',
-            border: '2px solid #005BAB'
-          }}>
-            {descText}
-          </div>
+          {descText && (
+            <div style={{
+              fontSize: '0.92rem',
+              color: '#005BAB',
+              fontWeight: 600,
+              lineHeight: 1.6,
+              marginBottom: '1.5rem',
+              whiteSpace: 'pre-line',
+              background: '#FFFFFF',
+              padding: '1.25rem',
+              borderRadius: '20px',
+              border: '2px solid #005BAB'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem' }}>
+                <div style={{ flex: 1, minWidth: 0 }}>{descText}</div>
+                <MetadataCopyBtn text={descText} label="Deskripsi" />
+              </div>
+            </div>
+          )}
 
           {/* Software / Tech Tags */}
           {Array.isArray(item.tags) && item.tags.length > 0 && (

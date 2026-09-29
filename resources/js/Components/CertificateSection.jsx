@@ -3,6 +3,7 @@ import { Award, ExternalLink, Calendar, Building2 } from 'lucide-react';
 import { infoService } from '../services/infoService';
 import { useLanguage } from '../context/LanguageContext';
 import WatermarkedImage from './WatermarkedImage';
+import MetadataCopyBtn from './MetadataCopyBtn';
 
 export default function CertificateSection({ onSelectCertificate }) {
   const [certificates, setCertificates] = useState([]);
@@ -191,9 +192,13 @@ export default function CertificateSection({ onSelectCertificate }) {
                   fontWeight: 800,
                   color: '#005BAB',
                   lineHeight: 1.35,
-                  marginBottom: '0.4rem'
+                  marginBottom: '0.4rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexWrap: 'wrap'
                 }}>
-                  {cert.title}
+                  <span>{cert.title}</span>
+                  <MetadataCopyBtn text={cert.title} label="Judul" />
                 </h3>
 
                 {/* Institution */}
@@ -205,27 +210,33 @@ export default function CertificateSection({ onSelectCertificate }) {
                   marginBottom: '0.65rem',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '0.35rem'
+                  gap: '0.35rem',
+                  flexWrap: 'wrap'
                 }}>
                   <Building2 size={14} />
                   <span>{cert.institution}</span>
+                  <MetadataCopyBtn text={cert.institution} label="Instansi" />
                 </div>
 
                 {/* Description snippet */}
                 {cert.description && (
-                  <p style={{
-                    fontSize: '0.84rem',
-                    color: '#005BAB',
-                    opacity: 0.8,
-                    lineHeight: 1.5,
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden',
-                    marginBottom: '1rem'
-                  }}>
-                    {cert.description}
-                  </p>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.4rem', marginBottom: '1rem' }}>
+                    <p style={{
+                      fontSize: '0.84rem',
+                      color: '#005BAB',
+                      opacity: 0.8,
+                      lineHeight: 1.5,
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      margin: 0,
+                      flex: 1
+                    }}>
+                      {cert.description}
+                    </p>
+                    <MetadataCopyBtn text={cert.description} label="Deskripsi" />
+                  </div>
                 )}
               </div>
 

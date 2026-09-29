@@ -561,4 +561,16 @@ img, video, iframe, canvas {
   }
 }
 
+/* Desktop-Only Metadata Copy Button (Hanya tampil di desktop view >= 768px) */
+.desktop-copy-btn {
+  display: none !important;
+}
+
+@media (min-width: 768px) {
+  .desktop-copy-btn {
+    display: inline-flex !important;
+  }
+}
+
+
 

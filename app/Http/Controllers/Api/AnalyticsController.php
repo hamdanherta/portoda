@@ -17,19 +17,11 @@ class AnalyticsController extends Controller
      */
     public function track(Request $request)
     {
-        // 1. Exclude if logged in as admin
+        // 1. Exclude if logged in via Laravel Auth
         if (Auth::check()) {
             return response()->json([
                 'status' => 'ignored',
                 'reason' => 'Admin is logged in'
-            ]);
-        }
-
-        // 2. Exclude if local admin cookie/header flag is set (opsional)
-        if ($request->hasHeader('X-Ignore-Analytics') || $request->cookie('portoda_ignore_analytics') === 'true') {
-            return response()->json([
-                'status' => 'ignored',
-                'reason' => 'Browser ignored via setting'
             ]);
         }
 
@@ -50,17 +42,6 @@ class AnalyticsController extends Controller
             }
         }
 
-        // Prevent duplicate spam within same minute & session/IP for exact same path
-        $recentHit = PageView::where('ip_address', $ip)
-            ->where('path', $path)
-            ->where('karya_id', $karyaId)
-            ->where('created_at', '>=', Carbon::now()->subMinutes(2))
-            ->first();
-
-        if ($recentHit) {
-            return response()->json(['status' => 'skipped_throttled']);
-        }
-
         PageView::create([
             'ip_address' => $ip,
             'url' => substr($url, 0, 255),
@@ -68,13 +49,14 @@ class AnalyticsController extends Controller
             'karya_id' => $karyaId,
             'session_id' => $sessionId,
             'device_type' => $deviceType,
-            'country' => 'Indonesia', // Default fallback
+            'country' => 'Indonesia',
             'city' => null,
             'view_date' => Carbon::today()->toDateString(),
         ]);
 
         return response()->json(['status' => 'tracked']);
     }
+
 
     /**
      * Get Analytics Summary & Charts for Admin Dashboard

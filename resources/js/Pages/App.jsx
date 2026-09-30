@@ -101,6 +101,19 @@ export default function App({ karyaId, docId }) {
     return () => window.removeEventListener('portoda_info_updated', handleInfoUpdated);
   }, []);
 
+  // Tracking statistik pengunjung (Page Views)
+  useEffect(() => {
+    // Jalankan tracking hanya jika bukan admin terautentikasi
+    if (!isAdminAuthenticated) {
+      const urlParams = new URLSearchParams(window.location.search);
+      let targetKaryaId = selectedItem?.id || karyaId || urlParams.get('karya');
+      if (!targetKaryaId && window.location.pathname.startsWith('/karya/')) {
+        targetKaryaId = window.location.pathname.split('/karya/')[1];
+      }
+      infoService.trackPageView({ karya_id: targetKaryaId });
+    }
+  }, [selectedItem]);
+
 
   // Auto-open Detail Modal jika mengakses link karya (misal ?karya=xxx atau /karya/xxx)
   useEffect(() => {

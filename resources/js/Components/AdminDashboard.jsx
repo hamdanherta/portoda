@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Plus, Edit, Trash2, ShieldCheck, RefreshCw, Check, Upload, LogOut, AlertTriangle, Loader2, Briefcase, FileText, Mail, User, Grid, Award, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, ChevronsUp, ChevronsDown, Search, SearchX, Palette, Video, Code, BarChart3, PlusCircle, FolderKanban, Globe, Building2, Image, Play, Link, CheckCircle2, Star, Info, Phone, Share2, Bell } from 'lucide-react';
+import { Menu, X, Plus, Edit, Trash2, ShieldCheck, RefreshCw, Check, Upload, LogOut, AlertTriangle, Loader2, Briefcase, FileText, Mail, User, Grid, Award, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, ChevronsUp, ChevronsDown, Search, SearchX, Palette, Video, Code, BarChart3, PlusCircle, FolderKanban, Globe, Building2, Image, Play, Link, CheckCircle2, Star, Info, Phone, Share2, Bell, Users, Eye, Smartphone, Monitor, TrendingUp } from 'lucide-react';
+
 import { compressImageToWebP } from '../utils/imageCompressor';
 import { infoService } from '../services/infoService';
 import { portfolioService } from '../services/portfolioService';
@@ -248,15 +249,20 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
   const [clientPage, setClientPage] = useState(1);
   const [clientFileKey, setClientFileKey] = useState(0);
 
+  // --- ANALYTICS STATE ---
+  const [analyticsData, setAnalyticsData] = useState(null);
+  const [analyticsPeriod, setAnalyticsPeriod] = useState('daily'); // 'daily' | 'monthly'
+
   // Load Info Data when authenticated
   const loadInfoData = async () => {
-    const [exps, docs, cnts, certs, p, clts] = await Promise.all([
+    const [exps, docs, cnts, certs, p, clts, stats] = await Promise.all([
       infoService.getExperiences(),
       infoService.getDocuments(),
       infoService.getContacts(),
       infoService.getCertificates(),
       infoService.getProfile(),
-      infoService.getClients()
+      infoService.getClients(),
+      infoService.getAnalyticsStats()
     ]);
     setExperiences(exps || []);
     setDocuments(docs || []);
@@ -265,7 +271,9 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
     setProfile(p || {});
     setProfileForm(p || {});
     setClients(clts || []);
+    setAnalyticsData(stats || null);
   };
+
 
   useEffect(() => {
     if (isOpen) {
@@ -1979,8 +1987,254 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
             {/* TAB 0: RINGKASAN & STATISTIK EXECUTIVE */}
             {activeTab === 'overview' && (
               <div>
+                {/* --- MONITORING PENGUNJUNG WEBSITE (EXCLUDE ADMIN) --- */}
+                <div style={{ marginBottom: '2rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#005BAB', display: 'flex', alignItems: 'center', gap: '0.55rem', margin: 0 }}>
+                      <Users size={22} />
+                      <span>Monitoring Pengunjung Website (Tidak Termasuk Admin)</span>
+                    </h3>
+                    <span style={{ fontSize: '0.78rem', background: '#DCFCE7', color: '#15803D', border: '1.5px solid #16A34A', padding: '0.2rem 0.65rem', borderRadius: '999px', fontWeight: 800 }}>
+                      ● Status Admin Login: Aktif
+                    </span>
+                  </div>
+
+                  {/* Analytics Metric Cards Grid */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '1.15rem', marginBottom: '1.5rem' }}>
+                    {/* Total Pengunjung Unik */}
+                    <div className="herta-card" style={{ padding: '1.25rem', background: '#FFFFFF', border: '2.5px solid #005BAB' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.65rem' }}>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#005BAB' }}>Total Pengunjung Unik</span>
+                        <div style={{ padding: '0.45rem', borderRadius: '10px', background: '#FFF3DD', color: '#005BAB', border: '1.5px solid #005BAB' }}>
+                          <Users size={18} />
+                        </div>
+                      </div>
+                      <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.1 }}>
+                        {analyticsData?.summary?.total_visitors ?? 0}
+                      </div>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#005BAB', opacity: 0.85, marginTop: '0.25rem' }}>
+                        Berdasarkan Alamat IP Unik
+                      </div>
+                    </div>
+
+                    {/* Total Halaman Dilihat */}
+                    <div className="herta-card" style={{ padding: '1.25rem', background: '#FFFFFF', border: '2.5px solid #005BAB' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.65rem' }}>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#005BAB' }}>Total Halaman Dilihat</span>
+                        <div style={{ padding: '0.45rem', borderRadius: '10px', background: '#005BAB', color: '#FFFFFF' }}>
+                          <Eye size={18} />
+                        </div>
+                      </div>
+                      <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.1 }}>
+                        {analyticsData?.summary?.total_views ?? 0}
+                      </div>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#005BAB', opacity: 0.85, marginTop: '0.25rem' }}>
+                        Total Klik & Tayangan
+                      </div>
+                    </div>
+
+                    {/* Pengunjung Hari Ini */}
+                    <div className="herta-card" style={{ padding: '1.25rem', background: '#FFFFFF', border: '2.5px solid #005BAB' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.65rem' }}>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#005BAB' }}>Pengunjung Hari Ini</span>
+                        <div style={{ padding: '0.45rem', borderRadius: '10px', background: '#005BAB', color: '#FFFFFF' }}>
+                          <TrendingUp size={18} />
+                        </div>
+                      </div>
+                      <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.1 }}>
+                        {analyticsData?.summary?.today_visitors ?? 0} <span style={{ fontSize: '0.9rem', opacity: 0.7 }}>({analyticsData?.summary?.today_views ?? 0} tayangan)</span>
+                      </div>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#005BAB', opacity: 0.85, marginTop: '0.25rem' }}>
+                        Kunjungan 24 Jam Terakhir
+                      </div>
+                    </div>
+
+                    {/* Pengunjung Bulan Ini */}
+                    <div className="herta-card" style={{ padding: '1.25rem', background: '#FFFFFF', border: '2.5px solid #005BAB' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.65rem' }}>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#005BAB' }}>Pengunjung Bulan Ini</span>
+                        <div style={{ padding: '0.45rem', borderRadius: '10px', background: '#FFF3DD', color: '#005BAB', border: '1.5px solid #005BAB' }}>
+                          <BarChart3 size={18} />
+                        </div>
+                      </div>
+                      <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.1 }}>
+                        {analyticsData?.summary?.month_visitors ?? 0} <span style={{ fontSize: '0.9rem', opacity: 0.7 }}>({analyticsData?.summary?.month_views ?? 0} tayangan)</span>
+                      </div>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#005BAB', opacity: 0.85, marginTop: '0.25rem' }}>
+                        Kunjungan Bulan Berjalan
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Analytics Chart & Breakdown Grid */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.25rem', marginBottom: '1.5rem' }}>
+                    {/* Grafik Tren Kunjungan Harian/Bulanan */}
+                    <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF', border: '2.5px solid #005BAB', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                          <h4 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#005BAB', margin: 0, display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                            <TrendingUp size={18} />
+                            <span>Grafik Tren Kunjungan</span>
+                          </h4>
+                          <div style={{ display: 'flex', gap: '0.35rem', background: '#FFF3DD', padding: '0.25rem', borderRadius: '10px', border: '1.5px solid #005BAB' }}>
+                            <button
+                              type="button"
+                              onClick={() => setAnalyticsPeriod('daily')}
+                              style={{
+                                padding: '0.25rem 0.65rem',
+                                borderRadius: '6px',
+                                border: 'none',
+                                fontSize: '0.76rem',
+                                fontWeight: 800,
+                                cursor: 'pointer',
+                                background: analyticsPeriod === 'daily' ? '#005BAB' : 'transparent',
+                                color: analyticsPeriod === 'daily' ? '#FFFFFF' : '#005BAB'
+                              }}
+                            >
+                              Harian (14 Hari)
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setAnalyticsPeriod('monthly')}
+                              style={{
+                                padding: '0.25rem 0.65rem',
+                                borderRadius: '6px',
+                                border: 'none',
+                                fontSize: '0.76rem',
+                                fontWeight: 800,
+                                cursor: 'pointer',
+                                background: analyticsPeriod === 'monthly' ? '#005BAB' : 'transparent',
+                                color: analyticsPeriod === 'monthly' ? '#FFFFFF' : '#005BAB'
+                              }}
+                            >
+                              Bulanan (6 Bulan)
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Bar Chart Visualization */}
+                        {(() => {
+                          const chartList = analyticsPeriod === 'daily'
+                            ? (analyticsData?.daily_trend || [])
+                            : (analyticsData?.monthly_trend || []);
+                          
+                          const maxVal = Math.max(1, ...chartList.map(item => item.views || 0));
+
+                          return (
+                            <div style={{ display: 'flex', alignItems: 'flex-end', gap: '0.4rem', height: '180px', paddingTop: '1.5rem', borderBottom: '2px solid #005BAB', paddingBottom: '0.5rem' }}>
+                              {chartList.length === 0 ? (
+                                <div style={{ width: '100%', textAlign: 'center', color: '#005BAB', fontWeight: 700, fontSize: '0.85rem' }}>Belum ada data statistik kunjungan.</div>
+                              ) : (
+                                chartList.map((item, idx) => {
+                                  const heightPct = Math.max(8, Math.round(((item.views || 0) / maxVal) * 100));
+                                  return (
+                                    <div key={idx} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'flex-end' }}>
+                                      <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#005BAB', marginBottom: '0.2rem' }}>
+                                        {item.views || 0}
+                                      </span>
+                                      <div
+                                        title={`${item.label}: ${item.visitors || 0} pengunjung unik, ${item.views || 0} total tayangan`}
+                                        style={{
+                                          width: '100%',
+                                          maxWidth: '24px',
+                                          height: `${heightPct}%`,
+                                          background: 'linear-gradient(180deg, #005BAB 0%, #0284C7 100%)',
+                                          borderRadius: '6px 6px 0 0',
+                                          border: '1.5px solid #005BAB',
+                                          borderBottom: 'none',
+                                          transition: 'height 0.3s ease'
+                                        }}
+                                      />
+                                      <span style={{ fontSize: '0.65rem', fontWeight: 700, color: '#005BAB', marginTop: '0.35rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '36px' }}>
+                                        {item.label}
+                                      </span>
+                                    </div>
+                                  );
+                                })
+                              )}
+                            </div>
+                          );
+                        })()}
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.85rem', fontSize: '0.78rem', color: '#005BAB', fontWeight: 700 }}>
+                        <span>● Bar biru melambangkan total tayangan / page views</span>
+                        <button type="button" onClick={loadInfoData} style={{ background: 'transparent', border: 'none', color: '#005BAB', cursor: 'pointer', fontWeight: 800, textDecoration: 'underline', display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+                          <RefreshCw size={12} /> Segarkan Data
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Portofolio Mana yang Paling Sering Dilihat */}
+                    <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF', border: '2.5px solid #005BAB' }}>
+                      <h4 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#005BAB', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                        <Star size={18} />
+                        <span>Portofolio Paling Sering Dilihat</span>
+                      </h4>
+
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                        {(!analyticsData?.top_karya || analyticsData.top_karya.length === 0) ? (
+                          <div style={{ fontSize: '0.85rem', color: '#005BAB', fontWeight: 600, padding: '1rem 0', textAlign: 'center' }}>
+                            Belum ada statistik tampilan karya individual.
+                          </div>
+                        ) : (
+                          analyticsData.top_karya.slice(0, 5).map((karya, idx) => (
+                            <div key={karya.id || idx} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', paddingBottom: '0.55rem', borderBottom: '1px solid rgba(0,91,171,0.15)' }}>
+                              <span style={{ fontSize: '0.85rem', fontWeight: 900, color: '#005BAB', width: '20px' }}>#{idx + 1}</span>
+                              {karya.cover_image && (
+                                <img src={karya.cover_image} alt="" style={{ width: '38px', height: '38px', borderRadius: '8px', objectFit: 'cover', border: '1.5px solid #005BAB' }} />
+                              )}
+                              <div style={{ flex: 1, minWidth: 0 }}>
+                                <h5 style={{ fontSize: '0.86rem', fontWeight: 800, color: '#005BAB', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                  {karya.title}
+                                </h5>
+                                <span style={{ fontSize: '0.72rem', color: '#005BAB', opacity: 0.8, fontWeight: 700 }}>
+                                  {karya.subcategory || karya.category}
+                                </span>
+                              </div>
+                              <span style={{ fontSize: '0.82rem', fontWeight: 900, background: '#FFF3DD', color: '#005BAB', border: '1.5px solid #005BAB', padding: '0.2rem 0.55rem', borderRadius: '8px' }}>
+                                {karya.views} Dilihat
+                              </span>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Device & Location Info Card */}
+                  <div className="herta-card" style={{ padding: '1.25rem 1.5rem', background: '#FFFFFF', border: '2.5px solid #005BAB', marginBottom: '1.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
+                        <span style={{ fontSize: '0.9rem', fontWeight: 800, color: '#005BAB', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <Smartphone size={18} />
+                          <span>Perangkat Pengunjung:</span>
+                        </span>
+                        <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                          <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#005BAB', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                            <Monitor size={16} /> Desktop: <strong>{analyticsData?.device_breakdown?.desktop ?? 0} ({analyticsData?.device_breakdown?.desktop_pct ?? 0}%)</strong>
+                          </span>
+                          <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#005BAB', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                            <Smartphone size={16} /> HP / Mobile: <strong>{analyticsData?.device_breakdown?.mobile ?? 0} ({analyticsData?.device_breakdown?.mobile_pct ?? 0}%)</strong>
+                          </span>
+                          <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#005BAB', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                            <Globe size={16} /> Tablet: <strong>{analyticsData?.device_breakdown?.tablet ?? 0} ({analyticsData?.device_breakdown?.tablet_pct ?? 0}%)</strong>
+                          </span>
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* --- RINGKASAN DATA KARYA PORTOFOLIO --- */}
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#005BAB', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
+                  <FolderKanban size={22} />
+                  <span>Ringkasan Karya & Konten Portofolio</span>
+                </h3>
+
                 {/* Metric Cards Grid */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.15rem', marginBottom: '1.75rem' }}>
+
                   {/* Total Karya */}
                   <div className="herta-card" style={{ padding: '1.25rem', background: '#FFFFFF', border: '2.5px solid #005BAB' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>

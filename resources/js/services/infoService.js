@@ -430,5 +430,37 @@ export const infoService = {
       console.error('Failed to reset all info:', err);
       throw err;
     }
+  },
+
+  // --- ANALYTICS ---
+  async trackPageView(data = {}) {
+    try {
+      // Check local ignore flag
+      if (typeof window !== 'undefined' && localStorage.getItem('portoda_ignore_analytics') === 'true') {
+        return;
+      }
+      await axios.post('/api/analytics/track', {
+        url: window.location.href,
+        path: window.location.pathname + window.location.search,
+        karya_id: data.karya_id || null,
+      }, {
+        headers: {
+          'X-Ignore-Analytics': typeof window !== 'undefined' && localStorage.getItem('portoda_ignore_analytics') === 'true' ? 'true' : 'false'
+        }
+      });
+    } catch (err) {
+      // Silent catch for analytics
+    }
+  },
+
+  async getAnalyticsStats() {
+    try {
+      const response = await axios.get('/api/analytics/stats');
+      return response.data || null;
+    } catch (err) {
+      console.error('Failed to get analytics stats:', err);
+      return null;
+    }
   }
 };
+

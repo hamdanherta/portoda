@@ -224,19 +224,25 @@ export default function App({ karyaId, docId }) {
   // Hook scroll reveal saat scroll kebawah & keatas
   useScrollReveal([filteredItems, activeCategory, activeSubcategory, searchQuery, loading, isFullGallery, currentPage, isExpandedBeranda, clients]);
 
-  // URL Hash/Query Listener untuk membuka Dashboard Admin via URL (misal: #admin atau ?admin=true)
+  // URL Hash/Query & Admin Auth Listener (Jika sedang login / #admin / ?admin=true, buka Dashboard)
   useEffect(() => {
     const checkAdminUrl = () => {
       const hash = window.location.hash;
       const search = window.location.search;
-      if (hash === '#admin' || search.includes('admin=true') || search.includes('admin=1')) {
+      const isAuthed = localStorage.getItem('portoda_admin_authenticated') === 'true';
+
+      if (isAuthed || hash === '#admin' || search.includes('admin=true') || search.includes('admin=1')) {
         setIsAdminOpen(true);
       }
     };
 
     checkAdminUrl();
     window.addEventListener('hashchange', checkAdminUrl);
-    return () => window.removeEventListener('hashchange', checkAdminUrl);
+    window.addEventListener('portoda_auth_changed', checkAdminUrl);
+    return () => {
+      window.removeEventListener('hashchange', checkAdminUrl);
+      window.removeEventListener('portoda_auth_changed', checkAdminUrl);
+    };
   }, []);
 
   const handleCloseAdmin = () => {
@@ -245,6 +251,7 @@ export default function App({ karyaId, docId }) {
       history.pushState("", document.title, window.location.pathname + window.location.search);
     }
   };
+
 
   // Fetch portfolio items dari backend
   const loadPortfolioData = async () => {

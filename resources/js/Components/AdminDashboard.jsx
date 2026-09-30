@@ -1994,10 +1994,32 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                       <Users size={22} />
                       <span>Monitoring Pengunjung Website (Tidak Termasuk Admin)</span>
                     </h3>
-                    <span style={{ fontSize: '0.78rem', background: '#DCFCE7', color: '#15803D', border: '1.5px solid #16A34A', padding: '0.2rem 0.65rem', borderRadius: '999px', fontWeight: 800 }}>
-                      ● Status Admin Login: Aktif
-                    </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
+                      <button
+                        type="button"
+                        onClick={loadInfoData}
+                        className="btn-secondary"
+                        style={{
+                          padding: '0.35rem 0.85rem',
+                          fontSize: '0.8rem',
+                          fontWeight: 800,
+                          borderRadius: '999px',
+                          gap: '0.35rem',
+                          background: '#FFFFFF',
+                          borderColor: '#005BAB',
+                          color: '#005BAB'
+                        }}
+                        title="Segarkan Data Statistik Kunjungan"
+                      >
+                        <RefreshCw size={14} />
+                        <span>Segarkan Statistik</span>
+                      </button>
+                      <span style={{ fontSize: '0.78rem', background: '#DCFCE7', color: '#15803D', border: '1.5px solid #16A34A', padding: '0.2rem 0.65rem', borderRadius: '999px', fontWeight: 800 }}>
+                        ● Status Admin Login: Aktif
+                      </span>
+                    </div>
                   </div>
+
 
                   {/* Analytics Metric Cards Grid */}
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '1.15rem', marginBottom: '1.5rem' }}>

@@ -244,8 +244,8 @@ export default function Navbar({ onOpenNavModal }) {
             opacity: 0.95
           }}>
             {lang === 'en'
-              ? 'Hamdani Specializes in 2 Career Paths. Select A Category Below To Explore The Relevant Works:'
-              : 'Hamdani Memiliki 2 Spesialisasi Karir. Silakan Pilih Kategori Di Bawah Ini Untuk Melihat Karya:'}
+              ? 'Hamdani Specializes in 2 Career Paths. Select A Category Below To Explore The Relevant Works'
+              : 'Hamdani Memiliki 2 Spesialisasi Karir. Silakan Pilih Kategori Di Bawah Ini Untuk Melihat Karya'}
           </p>
 
           <div style={{

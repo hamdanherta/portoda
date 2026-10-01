@@ -236,13 +236,13 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
               <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#005BAB', marginTop: '0.25rem', lineHeight: 1.3 }}>
                 {t('hero_stat_hours')}
               </div>
-              <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#005BAB', opacity: 0.85, marginTop: '0.1rem' }}>
+              {/* <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#005BAB', opacity: 0.85, marginTop: '0.1rem' }}>
                 {lang === 'en' ? (
                   <>as <br className="hero-subtext-br" />Graphic Designer</>
                 ) : (
                   <>Sebagai <br className="hero-subtext-br" />Desainer Grafis</>
                 )}
-              </div>
+              </div> */}
             </div>
 
             {/* Divider Vertical */}
@@ -267,9 +267,9 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
               <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#005BAB', marginTop: '0.25rem', lineHeight: 1.3 }}>
                 {t('hero_stat_completed')}
               </div>
-              <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#005BAB', opacity: 0.85, marginTop: '0.1rem' }}>
+              {/* <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#005BAB', opacity: 0.85, marginTop: '0.1rem' }}>
                 {t('hero_stat_completed_sub')}
-              </div>
+              </div> */}
             </div>
 
             {/* Divider Vertical */}
@@ -296,13 +296,13 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
               <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#005BAB', marginTop: '0.25rem', lineHeight: 1.3 }}>
                 {t('hero_stat_exp')}
               </div>
-              <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#005BAB', opacity: 0.85, marginTop: '0.1rem' }}>
+              {/* <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#005BAB', opacity: 0.85, marginTop: '0.1rem' }}>
                 {lang === 'en' ? (
                   <>as <br className="hero-subtext-br" />Graphic Designer</>
                 ) : (
                   <>Sebagai <br className="hero-subtext-br" />Desainer Grafis</>
                 )}
-              </div>
+              </div> */}
             </div>
           </div>
 

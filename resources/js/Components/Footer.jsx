@@ -1,9 +1,12 @@
 import React from 'react';
 import { ArrowUp } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { usePersona } from '../context/PersonaContext';
 
 export default function Footer({ onCategoryClick, onOpenAdmin, isLoggedIn }) {
   const { lang, t } = useLanguage();
+  const { persona } = usePersona();
+  const isMgd = persona === 'mgd';
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -17,7 +20,7 @@ export default function Footer({ onCategoryClick, onOpenAdmin, isLoggedIn }) {
           background: '#005BAB',
           color: '#FFFFFF',
           borderRadius: '28px',
-          border: '2.5px solid #005BAB',
+          border: isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #005BAB',
           padding: '2.5rem 2rem 1.75rem',
           boxShadow: '0 12px 32px rgba(0, 91, 171, 0.18)'
         }}>

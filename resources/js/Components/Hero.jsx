@@ -1,10 +1,12 @@
 import React from 'react';
 import { Sparkles, Palette, Video, Code, ArrowRight, MapPin, Mail, MessageSquare, Clock, Briefcase, Award } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { usePersona } from '../context/PersonaContext';
 import { infoService } from '../services/infoService';
 
 export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) {
   const { lang, t } = useLanguage();
+  const { persona } = usePersona();
   const [profile, setProfile] = React.useState({});
   const [experiences, setExperiences] = React.useState([]);
 
@@ -19,6 +21,16 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
     window.addEventListener('portoda_info_updated', loadInfo);
     return () => window.removeEventListener('portoda_info_updated', loadInfo);
   }, []);
+
+  const isMgd = persona === 'mgd';
+
+  const currentTagline = isMgd
+    ? (lang === 'en' ? (profile?.tagline_mgd_en || profile?.tagline_mgd || profile?.tagline_en || 'Multimedia Graphic Designer') : (profile?.tagline_mgd || profile?.tagline || 'Multimedia Graphic Designer'))
+    : (lang === 'en' ? (profile?.tagline_dpd_en || profile?.tagline_dpd || profile?.tagline_en || 'Digital Product Designer') : (profile?.tagline_dpd || profile?.tagline || 'Digital Product Designer'));
+
+  const currentBio = isMgd
+    ? (lang === 'en' ? (profile?.bio_mgd_en || profile?.bio_mgd || profile?.bio_en || t('hero_bio')) : (profile?.bio_mgd || profile?.bio || t('hero_bio')))
+    : (lang === 'en' ? (profile?.bio_dpd_en || profile?.bio_dpd || profile?.bio_en || t('hero_bio')) : (profile?.bio_dpd || profile?.bio || t('hero_bio')));
 
   const getExperienceStats = () => {
     try {
@@ -130,7 +142,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
                 <span className="hero-title-sep"> — </span>
                 <br className="hero-title-br" />
                 <span className="hero-title-tagline" style={{ fontWeight: 400 }}>
-                  {lang === 'en' ? (profile?.tagline_en || profile?.tagline || t('hero_title')) : (profile?.tagline || t('hero_title'))}
+                  {currentTagline}
                 </span>
               </h1>
 
@@ -143,7 +155,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
                 marginBottom: '1.25rem',
                 opacity: 0.95
               }}>
-                {lang === 'en' ? (profile?.bio_en || profile?.bio || t('hero_bio')) : (profile?.bio || t('hero_bio'))}
+                {currentBio}
               </p>
 
               {/* Badge Lokasi & CTA Action Buttons Container */}

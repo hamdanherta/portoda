@@ -196,6 +196,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
+    persona: 'mgd',
     category: 'desain-grafis',
     subcategory: 'Desain Logo',
     description: '',
@@ -324,6 +325,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
     setEditingId(null);
     setFormData({
       title: '',
+      persona: 'mgd',
       category: 'desain-grafis',
       subcategory: 'Desain Logo',
       description: '',
@@ -440,9 +442,11 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
       : (existingImages.length > 1 ? existingImages.slice(1) : []);
 
     setEditingId(item.id);
+    const itemPersona = item.persona || (item.category === 'aplikasi' ? 'dpd' : 'mgd');
     setFormData({
       title: item.title || '',
-      category: item.category || 'desain-grafis',
+      persona: itemPersona,
+      category: item.category || (itemPersona === 'mgd' ? 'desain-grafis' : 'aplikasi'),
       subcategory: item.subcategory || 'Desain Logo',
       description: item.description || '',
       cover_image: cover,
@@ -2528,6 +2532,49 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                         />
                       </div>
 
+                      <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+                        <label>Persona / Jenis Karya *</label>
+                        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginTop: '0.35rem' }}>
+                          {[
+                            { value: 'mgd', label: 'MGD — Multimedia Graphic Designer', color: '#005BAB', bg: '#005BAB', textColor: '#FFFFFF' },
+                            { value: 'dpd', label: 'DPD — Digital Product Designer', color: '#005BAB', bg: '#FFF3DD', textColor: '#005BAB' }
+                          ].map(opt => (
+                            <button
+                              key={opt.value}
+                              type="button"
+                              onClick={() => {
+                                const defaultCat = opt.value === 'mgd' ? 'desain-grafis' : 'aplikasi';
+                                const defaultSub = opt.value === 'mgd' ? 'Desain Logo' : 'UI/UX';
+                                setFormData({
+                                  ...formData,
+                                  persona: opt.value,
+                                  category: defaultCat,
+                                  subcategory: defaultSub
+                                });
+                              }}
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                padding: '0.55rem 1.2rem',
+                                borderRadius: '999px',
+                                fontWeight: 800,
+                                fontSize: '0.88rem',
+                                border: '2.5px solid #005BAB',
+                                cursor: 'pointer',
+                                background: formData.persona === opt.value ? opt.bg : '#FFFFFF',
+                                color: formData.persona === opt.value ? opt.textColor : '#005BAB',
+                                transition: 'all 0.2s ease',
+                                boxShadow: formData.persona === opt.value ? '0 4px 12px rgba(0,91,171,0.2)' : 'none'
+                              }}
+                            >
+                              {formData.persona === opt.value && <Check size={14} />}
+                              {opt.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
                       <div className="form-group">
                         <label>Kategori Utama *</label>
                         <select
@@ -2543,9 +2590,14 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                           }}
                           className="form-select"
                         >
-                          <option value="desain-grafis">Desain Grafis</option>
-                          <option value="multimedia">Multimedia</option>
-                          <option value="aplikasi">Aplikasi</option>
+                          {formData.persona === 'mgd' ? (
+                            <>
+                              <option value="desain-grafis">Desain Grafis</option>
+                              <option value="multimedia">Multimedia</option>
+                            </>
+                          ) : (
+                            <option value="aplikasi">Aplikasi</option>
+                          )}
                         </select>
                       </div>
 
@@ -4750,7 +4802,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
 
                   <form onSubmit={handleSubmitProfile}>
                     {/* Nama */}
-                    <div className="form-group">
+                    <div className="form-group" style={{ marginBottom: '1.5rem' }}>
                       <label>Nama Lengkap *</label>
                       <input
                         type="text"
@@ -4761,58 +4813,111 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                       />
                     </div>
 
-                    {/* Tagline - Bahasa Indonesia & Inggris */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
-                      <div className="form-group">
-                        <label>Tagline (Bahasa Indonesia) *</label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="contoh: Desainer Grafis, Kreator Multimedia & Developer Web"
-                          value={profileForm.tagline || ''}
-                          onChange={(e) => setProfileForm({ ...profileForm, tagline: e.target.value })}
-                          className="form-input"
-                        />
+                    {/* MGD — Multimedia Graphic Designer Persona */}
+                    <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1.5px dashed #005BAB' }}>
+                      <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#005BAB', marginBottom: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ background: '#005BAB', color: '#FFFFFF', padding: '0.25rem 0.75rem', borderRadius: '999px', fontSize: '0.82rem' }}>MGD</span>
+                        Multimedia Graphic Designer — Tagline &amp; Bio Khusus
+                      </h4>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
+                        <div className="form-group">
+                          <label>Tagline MGD (Bahasa Indonesia)</label>
+                          <input
+                            type="text"
+                            placeholder="contoh: Desainer Grafis &amp; Kreator Multimedia Profesional"
+                            value={profileForm.tagline_mgd || ''}
+                            onChange={(e) => setProfileForm({ ...profileForm, tagline_mgd: e.target.value })}
+                            className="form-input"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Tagline MGD (English Version)</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Professional Graphic Designer &amp; Multimedia Creator"
+                            value={profileForm.tagline_mgd_en || ''}
+                            onChange={(e) => setProfileForm({ ...profileForm, tagline_mgd_en: e.target.value })}
+                            className="form-input"
+                          />
+                        </div>
                       </div>
-
-                      <div className="form-group">
-                        <label>Tagline (English Version)</label>
-                        <input
-                          type="text"
-                          placeholder="e.g. Graphic Designer, Multimedia Creator & Web Developer"
-                          value={profileForm.tagline_en || ''}
-                          onChange={(e) => setProfileForm({ ...profileForm, tagline_en: e.target.value })}
-                          className="form-input"
-                        />
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem', marginTop: '0.75rem' }}>
+                        <div className="form-group">
+                          <label>Bio MGD (Bahasa Indonesia)</label>
+                          <textarea
+                            rows={4}
+                            placeholder="Bio singkat sebagai Multimedia Graphic Designer dalam bahasa Indonesia..."
+                            value={profileForm.bio_mgd || ''}
+                            onChange={(e) => setProfileForm({ ...profileForm, bio_mgd: e.target.value })}
+                            className="form-textarea"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Bio MGD (English Version)</label>
+                          <textarea
+                            rows={4}
+                            placeholder="Short bio as Multimedia Graphic Designer in English..."
+                            value={profileForm.bio_mgd_en || ''}
+                            onChange={(e) => setProfileForm({ ...profileForm, bio_mgd_en: e.target.value })}
+                            className="form-textarea"
+                          />
+                        </div>
                       </div>
                     </div>
 
-                    {/* Bio - Bahasa Indonesia & Inggris */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
-                      <div className="form-group">
-                        <label>Bio / Deskripsi (Bahasa Indonesia)</label>
-                        <textarea
-                          rows={4}
-                          placeholder="Tuliskan bio singkat dalam bahasa Indonesia..."
-                          value={profileForm.bio || ''}
-                          onChange={(e) => setProfileForm({ ...profileForm, bio: e.target.value })}
-                          className="form-textarea"
-                        />
+                    {/* DPD — Digital Product Designer Persona */}
+                    <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1.5px dashed #005BAB' }}>
+                      <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#005BAB', marginBottom: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ background: '#FFF3DD', color: '#005BAB', padding: '0.25rem 0.75rem', borderRadius: '999px', fontSize: '0.82rem', border: '1.5px solid #005BAB' }}>DPD</span>
+                        Digital Product Designer — Tagline &amp; Bio Khusus
+                      </h4>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
+                        <div className="form-group">
+                          <label>Tagline DPD (Bahasa Indonesia)</label>
+                          <input
+                            type="text"
+                            placeholder="contoh: Digital Product Designer &amp; UI/UX Specialist"
+                            value={profileForm.tagline_dpd || ''}
+                            onChange={(e) => setProfileForm({ ...profileForm, tagline_dpd: e.target.value })}
+                            className="form-input"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Tagline DPD (English Version)</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Digital Product Designer &amp; UI/UX Specialist"
+                            value={profileForm.tagline_dpd_en || ''}
+                            onChange={(e) => setProfileForm({ ...profileForm, tagline_dpd_en: e.target.value })}
+                            className="form-input"
+                          />
+                        </div>
                       </div>
-
-                      <div className="form-group">
-                        <label>Bio / Description (English Version)</label>
-                        <textarea
-                          rows={4}
-                          placeholder="Write a short bio in English..."
-                          value={profileForm.bio_en || ''}
-                          onChange={(e) => setProfileForm({ ...profileForm, bio_en: e.target.value })}
-                          className="form-textarea"
-                        />
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem', marginTop: '0.75rem' }}>
+                        <div className="form-group">
+                          <label>Bio DPD (Bahasa Indonesia)</label>
+                          <textarea
+                            rows={4}
+                            placeholder="Bio singkat sebagai Digital Product Designer dalam bahasa Indonesia..."
+                            value={profileForm.bio_dpd || ''}
+                            onChange={(e) => setProfileForm({ ...profileForm, bio_dpd: e.target.value })}
+                            className="form-textarea"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Bio DPD (English Version)</label>
+                          <textarea
+                            rows={4}
+                            placeholder="Short bio as Digital Product Designer in English..."
+                            value={profileForm.bio_dpd_en || ''}
+                            onChange={(e) => setProfileForm({ ...profileForm, bio_dpd_en: e.target.value })}
+                            className="form-textarea"
+                          />
+                        </div>
                       </div>
                     </div>
 
-                    {/* Domisili & Data Diri (Bahasa Indonesia & English) */}
+
                     <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1.5px solid #005BAB' }}>
                       <h4 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#005BAB', marginBottom: '1rem' }}>
                         Informasi Domisili & Data Diri

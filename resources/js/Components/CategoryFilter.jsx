@@ -1,16 +1,34 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Grid, Image, Video, Smartphone, Check, Search, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { usePersona } from '../context/PersonaContext';
 
 export default function CategoryFilter({ activeCategory, setActiveCategory, activeSubcategory, setActiveSubcategory, searchQuery = '', setSearchQuery, itemCount }) {
   const { lang, t } = useLanguage();
+  const { persona } = usePersona();
 
-  const categories = [
+  const isMgd = persona === 'mgd';
+
+  const allCategories = [
     { id: 'all', label: t('cat_all'), icon: Grid },
     { id: 'desain-grafis', label: t('cat_grafis'), icon: Image },
     { id: 'multimedia', label: t('cat_multimedia'), icon: Video },
     { id: 'aplikasi', label: t('cat_aplikasi'), icon: Smartphone }
   ];
+
+  const categories = isMgd
+    ? allCategories.filter(c => c.id === 'all' || c.id === 'desain-grafis' || c.id === 'multimedia')
+    : allCategories.filter(c => c.id === 'aplikasi');
+
+  useEffect(() => {
+    if (isMgd && activeCategory === 'aplikasi') {
+      setActiveCategory('all');
+      setActiveSubcategory('all');
+    } else if (!isMgd && activeCategory !== 'aplikasi') {
+      setActiveCategory('aplikasi');
+      setActiveSubcategory('all');
+    }
+  }, [persona, activeCategory, isMgd]);
 
   const subcategoryMap = {
     'all': lang === 'en' ? ['All Subcategories'] : ['Semua'],
@@ -37,7 +55,7 @@ export default function CategoryFilter({ activeCategory, setActiveCategory, acti
     <div className="container reveal-on-scroll" id="gallery-section" style={{ paddingBottom: '1.5rem', paddingTop: '1rem', position: 'relative', zIndex: 10 }}>
       {/* Search Input Bar */}
       <div style={{ position: 'relative', marginBottom: '1.5rem' }}>
-        <Search size={20} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#005BAB' }} />
+        <Search size={20} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: isMgd ? '#005BAB' : '#005BAB' }} />
         <input
           type="text"
           placeholder={t('filter_search_placeholder')}
@@ -50,8 +68,8 @@ export default function CategoryFilter({ activeCategory, setActiveCategory, acti
             height: '52px',
             fontSize: '1rem',
             borderRadius: 'var(--radius-pill)',
-            background: '#FFFFFF',
-            border: '2.5px solid #005BAB',
+            background: isMgd ? '#FFF3DD' : '#FFFFFF',
+            border: isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #005BAB',
             color: '#005BAB',
             fontWeight: 700
           }}
@@ -94,7 +112,7 @@ export default function CategoryFilter({ activeCategory, setActiveCategory, acti
       }}>
         {/* Baris 1: Judul Galeri */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
-          <h2 style={{ fontSize: '1.7rem', fontWeight: 800, color: '#005BAB', textAlign: 'center', letterSpacing: '-0.02em' }}>
+          <h2 style={{ fontSize: '1.7rem', fontWeight: 800, color: isMgd ? '#FFF3DD' : '#005BAB', textAlign: 'center', letterSpacing: '-0.02em' }}>
             {t('filter_heading')}
           </h2>
         </div>
@@ -114,7 +132,22 @@ export default function CategoryFilter({ activeCategory, setActiveCategory, acti
               <button
                 key={cat.id}
                 onClick={() => handleMainCategoryChange(cat.id)}
-                className={`filter-pill ${isActive ? 'filter-pill-active' : 'filter-pill-inactive'}`}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  padding: '0.5rem 1.1rem',
+                  borderRadius: '999px',
+                  fontSize: '0.9rem',
+                  fontWeight: 800,
+                  whiteSpace: 'nowrap',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  background: isActive ? '#005BAB' : (isMgd ? '#FFF3DD' : '#FFFFFF'),
+                  color: isActive ? '#FFFFFF' : '#005BAB',
+                  border: isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #005BAB',
+                  boxShadow: isActive ? '0 4px 14px rgba(0, 91, 171, 0.25)' : 'none'
+                }}
               >
                 <Icon size={16} />
                 <span>{cat.label}</span>
@@ -151,8 +184,8 @@ export default function CategoryFilter({ activeCategory, setActiveCategory, acti
                   fontWeight: 800,
                   whiteSpace: 'nowrap',
                   color: isSubActive ? '#FFFFFF' : '#005BAB',
-                  background: isSubActive ? '#005BAB' : '#FFFFFF',
-                  border: '2.5px solid #005BAB',
+                  background: isSubActive ? '#005BAB' : (isMgd ? '#FFF3DD' : '#FFFFFF'),
+                  border: isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #005BAB',
                   transition: 'all 0.2s ease'
                 }}
               >

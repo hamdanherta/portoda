@@ -13,11 +13,13 @@ import ClientShowcase from '../Components/ClientShowcase';
 import { portfolioService } from '../services/portfolioService';
 import { infoService } from '../services/infoService';
 import { LanguageProvider } from '../context/LanguageContext';
+import { PersonaProvider, usePersona } from '../context/PersonaContext';
 import { ArrowLeft } from 'lucide-react';
 import { Head } from '@inertiajs/react';
 import { useScrollReveal } from '../utils/useScrollReveal';
 
-export default function App({ karyaId, docId }) {
+function AppContent({ karyaId, docId }) {
+  const { persona } = usePersona();
   const [activeCategory, setActiveCategory] = useState('all');
   const [activeSubcategory, setActiveSubcategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -103,7 +105,6 @@ export default function App({ karyaId, docId }) {
 
   // Tracking statistik pengunjung (Page Views)
   useEffect(() => {
-    // Jalankan tracking hanya jika bukan admin terautentikasi
     if (!isAdminAuthenticated) {
       const urlParams = new URLSearchParams(window.location.search);
       let targetKaryaId = selectedItem?.id || karyaId || urlParams.get('karya');
@@ -113,7 +114,6 @@ export default function App({ karyaId, docId }) {
       infoService.trackPageView({ karya_id: targetKaryaId });
     }
   }, [selectedItem]);
-
 
   // Auto-open Detail Modal jika mengakses link karya (misal ?karya=xxx atau /karya/xxx)
   useEffect(() => {
@@ -153,9 +153,16 @@ export default function App({ karyaId, docId }) {
     }
   }, [docId]);
 
-  // In-memory instant filtering (responsif, tanpa lag / network latency)
+  // In-memory instant filtering with Persona support
   const filteredItems = useMemo(() => {
     let result = [...allItems];
+
+    // Filter by Active Persona (MGD vs DPD)
+    if (persona === 'mgd') {
+      result = result.filter(i => i.persona === 'mgd' || (!i.persona && (i.category === 'desain-grafis' || i.category === 'multimedia')));
+    } else if (persona === 'dpd') {
+      result = result.filter(i => i.persona === 'dpd' || (!i.persona && i.category === 'aplikasi'));
+    }
 
     if (activeCategory !== 'all') {
       result = result.filter(i => i.category === activeCategory);
@@ -171,7 +178,6 @@ export default function App({ karyaId, docId }) {
           return true;
         }
 
-        // Subcategory cross-language mapping (Indonesian <-> English)
         if ((reqSub.includes('logo')) && (itemSub.includes('logo') || itemSubEn.includes('logo'))) return true;
         if ((reqSub.includes('poster')) && (itemSub.includes('poster') || itemSubEn.includes('poster'))) return true;
         if ((reqSub.includes('banner')) && (itemSub.includes('banner') || itemSubEn.includes('banner'))) return true;
@@ -219,19 +225,16 @@ export default function App({ karyaId, docId }) {
     }
 
     return result;
-  }, [allItems, activeCategory, activeSubcategory, searchQuery]);
+  }, [allItems, persona, activeCategory, activeSubcategory, searchQuery]);
 
-  // Hook scroll reveal saat scroll kebawah & keatas
-  useScrollReveal([filteredItems, activeCategory, activeSubcategory, searchQuery, loading, isFullGallery, currentPage, isExpandedBeranda, clients]);
+  useScrollReveal([filteredItems, activeCategory, activeSubcategory, searchQuery, loading, isFullGallery, currentPage, isExpandedBeranda, clients, persona]);
 
-  // URL Hash/Query & Admin Auth Listener (Jika sedang login / #admin / ?admin=true, buka Dashboard)
   useEffect(() => {
     const checkAdminUrl = () => {
       const hash = window.location.hash;
       const search = window.location.search;
-      const isAuthed = localStorage.getItem('portoda_admin_authenticated') === 'true';
 
-      if (isAuthed || hash === '#admin' || search.includes('admin=true') || search.includes('admin=1')) {
+      if (hash === '#admin' || search.includes('admin=true') || search.includes('admin=1')) {
         setIsAdminOpen(true);
       }
     };
@@ -245,6 +248,13 @@ export default function App({ karyaId, docId }) {
     };
   }, []);
 
+  const handleOpenAdminModal = () => {
+    setIsAdminOpen(true);
+    if (window.location.hash !== '#admin') {
+      window.location.hash = 'admin';
+    }
+  };
+
   const handleCloseAdmin = () => {
     setIsAdminOpen(false);
     if (window.location.hash === '#admin') {
@@ -252,8 +262,6 @@ export default function App({ karyaId, docId }) {
     }
   };
 
-
-  // Fetch portfolio items dari backend
   const loadPortfolioData = async () => {
     setLoading(true);
     try {
@@ -289,9 +297,8 @@ export default function App({ karyaId, docId }) {
   useEffect(() => {
     setCurrentPage(1);
     setIsExpandedBeranda(false);
-  }, [activeCategory, activeSubcategory, searchQuery]);
+  }, [activeCategory, activeSubcategory, searchQuery, persona]);
 
-  // CRUD Actions for Admin
   const handleCreateItem = async (newItemData, onProgress = null) => {
     await portfolioService.createItem(newItemData, onProgress);
     await loadPortfolioData();
@@ -347,160 +354,142 @@ export default function App({ karyaId, docId }) {
     }, 100);
   };
 
+  const isMgd = persona === 'mgd';
+
+  return (
+    <div className="app-container" style={{
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      position: 'relative',
+      overflowX: 'hidden',
+      backgroundColor: isMgd ? '#005BAB' : '#FFF3DD',
+      transition: 'background-color 0.4s ease'
+    }}>
+
+      <div style={{ position: 'relative', zIndex: 5 }}>
+        <Navbar
+          onOpenNavModal={(navType) => setActiveNavModal(navType)}
+        />
+      </div>
+
+      {!isFullGallery && (
+        <div style={{ position: 'relative', zIndex: 5 }}>
+          <Hero
+            onExploreClick={scrollToGallery}
+            totalItems={filteredItems.length}
+            onOpenContact={() => setActiveNavModal('kontak')}
+          />
+        </div>
+      )}
+
+      {isFullGallery && (
+        <div style={{ position: 'relative', zIndex: 6, paddingTop: '1.5rem' }}>
+          <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '1rem', flexWrap: 'wrap' }}>
+            <button
+              onClick={handleBackToHome}
+              className="btn-secondary"
+              style={{ padding: '0.6rem 1.25rem', fontSize: '0.9rem', fontWeight: 800, gap: '0.5rem' }}
+            >
+              <ArrowLeft size={18} />
+              <span>Kembali ke Beranda</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div id="gallery-section" style={{ position: 'relative', zIndex: 5 }}>
+        <CategoryFilter
+          activeCategory={activeCategory}
+          setActiveCategory={setActiveCategory}
+          activeSubcategory={activeSubcategory}
+          setActiveSubcategory={setActiveSubcategory}
+          searchQuery={searchQuery}
+          setSearchQuery={(q) => {
+            setSearchQuery(q);
+            if (q.trim()) {
+              setIsFullGallery(true);
+            }
+          }}
+          itemCount={filteredItems.length}
+        />
+      </div>
+
+      <main style={{ flex: 1, position: 'relative', zIndex: 5 }}>
+        <PortfolioGrid
+          items={filteredItems}
+          loading={loading}
+          onItemClick={(item) => setSelectedItem(item)}
+          onResetFilter={handleResetFilter}
+          isFullGallery={isFullGallery}
+          isExpanded={isExpandedBeranda}
+          currentPage={currentPage}
+          onPageChange={(page) => {
+            setCurrentPage(page);
+            scrollToGallery();
+          }}
+          onViewMore={handleViewMoreWorks}
+        />
+
+        <ClientShowcase clients={clients} />
+      </main>
+
+      <InfoModal
+        activeType={activeNavModal}
+        onClose={() => setActiveNavModal(null)}
+        onSelectCertificate={(cert) => setSelectedItem(cert)}
+      />
+
+      <DetailModal
+        item={selectedItem}
+        allItems={allItems}
+        onClose={handleCloseDetailModal}
+        onSelectWork={(workItem) => setSelectedItem(workItem)}
+        onViewAllWorks={handleViewAllWorks}
+      />
+
+      <AdminDashboard
+        isOpen={isAdminOpen}
+        onClose={handleCloseAdmin}
+        items={allItems}
+        onCreateItem={handleCreateItem}
+        onUpdateItem={handleUpdateItem}
+        onDeleteItem={handleDeleteItem}
+        onResetMock={handleResetMock}
+      />
+
+      <MaintenanceModal
+        isOpen={isMaintenanceMode && !isAdminAuthenticated && !isAdminOpen}
+      />
+
+      <ContentNoticeModal
+        isOpen={isContentNoticeOpen && !isMaintenanceMode && !isAdminAuthenticated && !isAdminOpen}
+        onClose={() => setIsContentNoticeOpen(false)}
+      />
+
+      <div style={{ position: 'relative', zIndex: 5 }}>
+        <Footer
+          onCategoryClick={(catId) => {
+            setActiveCategory(catId);
+            setActiveSubcategory('all');
+            setIsFullGallery(true);
+            scrollToGallery();
+          }}
+          onOpenAdmin={handleOpenAdminModal}
+          isLoggedIn={isAdminAuthenticated}
+        />
+      </div>
+    </div>
+  );
+}
+
+export default function App(props) {
   return (
     <LanguageProvider>
-      <Head title="Portoda - Aplikasi Portofolio Karya Hamdani" />
-      <div className="app-container" style={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'relative',
-        overflowX: 'hidden'
-      }}>
-        {/* Background Page Element (#FFF3DD Page Background - Soft Blurred Backdrop) */}
-        <img
-          src="/brandingelement.png"
-          alt=""
-          aria-hidden="true"
-          style={{
-            position: 'fixed',
-            right: '-660px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            width: '1400px',
-            height: 'auto',
-            filter: 'blur(30px)',
-            imageRendering: 'high-quality',
-            pointerEvents: 'none',
-            zIndex: 1
-          }}
-        />
-
-        {/* Header Navigation dengan Menu: Pengalaman, Dokumen, Sertifikat, Kontak, Profil */}
-        <div style={{ position: 'relative', zIndex: 5 }}>
-          <Navbar
-            onOpenNavModal={(navType) => setActiveNavModal(navType)}
-          />
-        </div>
-
-        {/* Hero Section (Hanya tampil di mode Beranda) */}
-        {!isFullGallery && (
-          <div style={{ position: 'relative', zIndex: 5 }}>
-            <Hero
-              onExploreClick={scrollToGallery}
-              totalItems={allItems.length}
-              onOpenContact={() => setActiveNavModal('kontak')}
-            />
-          </div>
-        )}
-
-        {/* Bar Tombol Kembali jika sedang di Mode Halaman Semua Karya */}
-        {isFullGallery && (
-          <div style={{ position: 'relative', zIndex: 6, paddingTop: '1.5rem' }}>
-            <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '1rem', flexWrap: 'wrap' }}>
-              <button
-                onClick={handleBackToHome}
-                className="btn-secondary"
-                style={{ padding: '0.6rem 1.25rem', fontSize: '0.9rem', fontWeight: 800, gap: '0.5rem' }}
-              >
-                <ArrowLeft size={18} />
-                <span>Kembali ke Beranda</span>
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Category & Subcategory Filter Tabs dengan Search Form */}
-        <div id="gallery-section" style={{ position: 'relative', zIndex: 5 }}>
-          <CategoryFilter
-            activeCategory={activeCategory}
-            setActiveCategory={setActiveCategory}
-            activeSubcategory={activeSubcategory}
-            setActiveSubcategory={setActiveSubcategory}
-            searchQuery={searchQuery}
-            setSearchQuery={(q) => {
-              setSearchQuery(q);
-              if (q.trim()) {
-                setIsFullGallery(true);
-              }
-            }}
-            itemCount={filteredItems.length}
-          />
-        </div>
-
-        {/* Portfolio Card Grid */}
-        <main style={{ flex: 1, position: 'relative', zIndex: 5 }}>
-          <PortfolioGrid
-            items={filteredItems}
-            loading={loading}
-            onItemClick={(item) => setSelectedItem(item)}
-            onResetFilter={handleResetFilter}
-            isFullGallery={isFullGallery}
-            isExpanded={isExpandedBeranda}
-            currentPage={currentPage}
-            onPageChange={(page) => {
-              setCurrentPage(page);
-              scrollToGallery();
-            }}
-            onViewMore={handleViewMoreWorks}
-          />
-
-          {/* Seksi Klien Hamdani (Di bawah tombol Lihat Selengkapnya / Display Karya) */}
-          <ClientShowcase clients={clients} />
-        </main>
-
-        {/* Modal Informasi Menu Navbar: Profil, Pengalaman Kerja, Dokumen, Sertifikat, Kontak */}
-        <InfoModal
-          activeType={activeNavModal}
-          onClose={() => setActiveNavModal(null)}
-          onSelectCertificate={(cert) => setSelectedItem(cert)}
-        />
-
-        {/* Lightbox / Detail Modal (Karya & Sertifikat) */}
-        <DetailModal
-          item={selectedItem}
-          allItems={allItems}
-          onClose={handleCloseDetailModal}
-          onSelectWork={(workItem) => setSelectedItem(workItem)}
-          onViewAllWorks={handleViewAllWorks}
-        />
-
-        {/* Admin Dashboard (Akses Rahasia via URL #admin) - Selalu menerima seluruh data karya (allItems) */}
-        <AdminDashboard
-          isOpen={isAdminOpen}
-          onClose={handleCloseAdmin}
-          items={allItems}
-          onCreateItem={handleCreateItem}
-          onUpdateItem={handleUpdateItem}
-          onDeleteItem={handleDeleteItem}
-          onResetMock={handleResetMock}
-        />
-
-        {/* Modal Maintenance (Modal Peringatan Pemeliharaan Sistem - Tidak muncul jika admin sedang login) */}
-        <MaintenanceModal
-          isOpen={isMaintenanceMode && !isAdminAuthenticated && !isAdminOpen}
-        />
-
-        {/* Modal Pemberitahuan Pengisian Konten - muncul setiap buka/refresh jika diaktifkan */}
-        <ContentNoticeModal
-          isOpen={isContentNoticeOpen && !isMaintenanceMode && !isAdminAuthenticated && !isAdminOpen}
-          onClose={() => setIsContentNoticeOpen(false)}
-        />
-
-        {/* Footer */}
-        <div style={{ position: 'relative', zIndex: 5 }}>
-          <Footer
-            onCategoryClick={(catId) => {
-              setActiveCategory(catId);
-              setActiveSubcategory('all');
-              setIsFullGallery(true);
-              scrollToGallery();
-            }}
-            onOpenAdmin={() => setIsAdminOpen(true)}
-            isLoggedIn={isAdminAuthenticated}
-          />
-        </div>
-      </div>
+      <PersonaProvider>
+        <Head title="Portoda - Aplikasi Portofolio Karya Hamdani" />
+        <AppContent {...props} />
+      </PersonaProvider>
     </LanguageProvider>
   );
 }

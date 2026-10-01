@@ -16,6 +16,7 @@ class PortfolioItem extends Model
         'id',
         'title',
         'title_en',
+        'persona',
         'category',
         'subcategory',
         'subcategory_en',

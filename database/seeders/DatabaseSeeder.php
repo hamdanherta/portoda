@@ -58,6 +58,7 @@ class DatabaseSeeder extends Seeder
                 'tools_used' => 'Adobe Illustrator, Photoshop, Figma',
                 'tags' => ['Brand Identity', 'Logo Design', 'Vector', 'Adobe Illustrator'],
                 'featured' => true,
+                'persona' => 'mgd',
             ],
             [
                 'id' => 'grafis-2',
@@ -80,6 +81,7 @@ class DatabaseSeeder extends Seeder
                 'tools_used' => 'Adobe Photoshop, Lightroom, CorelDRAW',
                 'tags' => ['Poster Art', 'Typography', 'Photoshop', 'Digital Collage'],
                 'featured' => true,
+                'persona' => 'mgd',
             ],
             [
                 'id' => 'grafis-3',
@@ -102,6 +104,7 @@ class DatabaseSeeder extends Seeder
                 'tools_used' => 'Adobe Illustrator, Cinema 4D 3D Packaging',
                 'tags' => ['Packaging', 'Dieline', 'Print Design'],
                 'featured' => false,
+                'persona' => 'mgd',
             ],
             [
                 'id' => 'multimedia-1',
@@ -124,6 +127,7 @@ class DatabaseSeeder extends Seeder
                 'tools_used' => 'Adobe Premiere Pro, After Effects, DaVinci Resolve',
                 'tags' => ['Color Grading', 'Drone 4K', 'Premiere Pro', 'Cinematography'],
                 'featured' => true,
+                'persona' => 'mgd',
             ],
             [
                 'id' => 'multimedia-2',
@@ -149,6 +153,7 @@ class DatabaseSeeder extends Seeder
                 'tools_used' => 'Adobe Lightroom Classic, Canon EOS R5',
                 'tags' => ['Photography', 'Lightroom', 'Architecture', 'Monochrome'],
                 'featured' => true,
+                'persona' => 'mgd',
             ],
             [
                 'id' => 'aplikasi-1',
@@ -175,6 +180,7 @@ class DatabaseSeeder extends Seeder
                 'framework' => 'React / Inertia.js',
                 'tags' => ['Web Design', 'UI/UX', 'Showcase System'],
                 'featured' => true,
+                'persona' => 'dpd',
             ],
             [
                 'id' => 'aplikasi-2',
@@ -198,6 +204,7 @@ class DatabaseSeeder extends Seeder
                 'framework' => 'Flutter / Dart',
                 'tags' => ['Flutter', 'Mobile Design', 'Dark UI', 'iOS/Android'],
                 'featured' => true,
+                'persona' => 'dpd',
             ],
             [
                 'id' => 'aplikasi-3',
@@ -221,6 +228,7 @@ class DatabaseSeeder extends Seeder
                 'platform' => 'Mobile & Website',
                 'tags' => ['UI/UX', 'Figma Prototype', 'Fintech', 'Design System'],
                 'featured' => true,
+                'persona' => 'dpd',
             ]
         ];
 
@@ -423,10 +431,18 @@ class DatabaseSeeder extends Seeder
             ['id' => 1],
             [
                 'name' => 'Hamdani',
-                'tagline' => 'Graphic Designer',
-                'tagline_en' => 'Graphic Designer',
-                'bio' => 'Seorang desainer kreatif dan pengembang aplikasi berpengalaman yang berdedikasi menciptakan karya berkualitas tinggi. Berfokus pada perancangan identitas visual brand, sinematografi, animasi motion graphic, serta pengembangan aplikasi web dan seluler modern.',
-                'bio_en' => 'A creative designer and experienced application developer dedicated to crafting high-quality works. Focused on visual brand identity, cinematography, 3D motion graphics, and modern web & mobile applications.',
+                'tagline' => 'Multimedia Graphic Designer & Digital Product Designer',
+                'tagline_en' => 'Multimedia Graphic Designer & Digital Product Designer',
+                'tagline_mgd' => 'Multimedia Graphic Designer',
+                'tagline_mgd_en' => 'Multimedia Graphic Designer',
+                'tagline_dpd' => 'Digital Product Designer',
+                'tagline_dpd_en' => 'Digital Product Designer',
+                'bio' => 'Seorang desainer kreatif dan pengembang aplikasi berpengalaman yang berdedikasi menciptakan karya berkualitas tinggi.',
+                'bio_en' => 'A creative designer and experienced application developer dedicated to crafting high-quality works.',
+                'bio_mgd' => 'Desainer grafis & multimedia kreatif berfokus pada identitas visual brand, desain logo, kemasan produk, sinematografi 4K, serta animasi motion graphic interaktif.',
+                'bio_mgd_en' => 'Creative graphic & multimedia designer focused on brand identity, logo design, packaging, 4K cinematography, and interactive motion graphics.',
+                'bio_dpd' => 'Digital product designer berpengalaman dalam meriset antarmuka pengguna (UI/UX), merancang sistem desain modern, serta membangun aplikasi web dan seluler performa tinggi.',
+                'bio_dpd_en' => 'Digital product designer experienced in UI/UX research, modern design systems, and high-performance web & mobile applications.',
                 'domisili' => 'Kota Jambi, Indonesia',
                 'domisili_en' => 'Jambi City, Indonesia',
                 'tempat_tinggal' => 'Kota Jambi, Indonesia',

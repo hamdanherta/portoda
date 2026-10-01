@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, User, Briefcase, Mail, MapPin, Palette, Video, Code, FileText, Download, MessageSquare, Award, ExternalLink, ChevronLeft, ChevronRight, Image as ImageIcon, Home, Calendar, Share2, Globe, Send, SearchX, Check, Loader2 } from 'lucide-react';
 import { infoService } from '../services/infoService';
 import { useLanguage } from '../context/LanguageContext';
+import { usePersona } from '../context/PersonaContext';
 import WatermarkedImage from './WatermarkedImage';
 import MetadataCopyBtn from './MetadataCopyBtn';
 
@@ -253,6 +254,17 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
   const [certificatesList, setCertificatesList] = useState([]);
   const [loading, setLoading] = useState(true);
   const { lang, t, getLocalizedField } = useLanguage();
+  const { persona } = usePersona();
+
+  const isMgd = persona === 'mgd';
+
+  const currentTagline = isMgd
+    ? (lang === 'en' ? (profileData?.tagline_mgd_en || profileData?.tagline_mgd || profileData?.tagline_en || 'Multimedia Graphic Designer') : (profileData?.tagline_mgd || profileData?.tagline || 'Multimedia Graphic Designer'))
+    : (lang === 'en' ? (profileData?.tagline_dpd_en || profileData?.tagline_dpd || profileData?.tagline_en || 'Digital Product Designer') : (profileData?.tagline_dpd || profileData?.tagline || 'Digital Product Designer'));
+
+  const currentBio = isMgd
+    ? (lang === 'en' ? (profileData?.bio_mgd_en || profileData?.bio_mgd || profileData?.bio_en || t('hero_bio')) : (profileData?.bio_mgd || profileData?.bio || t('hero_bio')))
+    : (lang === 'en' ? (profileData?.bio_dpd_en || profileData?.bio_dpd || profileData?.bio_en || t('hero_bio')) : (profileData?.bio_dpd || profileData?.bio || t('hero_bio')));
 
   useEffect(() => {
     let isMounted = true;
@@ -562,7 +574,7 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
               <div style={{ flex: 1, minWidth: 0 }}>
                 <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>{t('profile_title')} — {profileData.name || 'Hamdani'}</h2>
                 <p style={{ fontSize: '0.88rem', color: '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
-                  {getLocalizedField(profileData, 'tagline') || 'Graphic Designer, Multimedia Creator & Web Developer'}
+                  {currentTagline}
                 </p>
               </div>
             </div>
@@ -573,10 +585,10 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                 <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#005BAB', margin: 0 }}>
                   {lang === 'en' ? `About ${profileData.name || 'Hamdani'}` : `Tentang ${profileData.name || 'Hamdani'}`}
                 </h3>
-                <MetadataCopyBtn text={getLocalizedField(profileData, 'bio')} label="Tentang" />
+                <MetadataCopyBtn text={currentBio} label="Tentang" />
               </div>
               <p style={{ fontSize: '0.95rem', color: '#005BAB', fontWeight: 400, lineHeight: 1.65, whiteSpace: 'pre-line', margin: 0 }}>
-                {getLocalizedField(profileData, 'bio')}
+                {currentBio}
               </p>
             </div>
 

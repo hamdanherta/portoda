@@ -2,6 +2,7 @@ import React from 'react';
 import PortfolioCard from './PortfolioCard';
 import { SearchX, RefreshCw, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { usePersona } from '../context/PersonaContext';
 
 export default function PortfolioGrid({
   items,
@@ -15,6 +16,8 @@ export default function PortfolioGrid({
   onViewMore
 }) {
   const { t, lang } = useLanguage();
+  const { persona } = usePersona();
+  const isMGD = persona === 'mgd';
   const ITEMS_PER_PAGE = 20;
 
   if (loading) {
@@ -117,8 +120,11 @@ export default function PortfolioGrid({
               fontSize: '1.05rem',
               fontWeight: 800,
               borderRadius: '999px',
-              boxShadow: '0 8px 24px rgba(0, 91, 171, 0.25)',
-              gap: '0.65rem'
+              boxShadow: isMGD ? '0 8px 24px rgba(255, 243, 221, 0.35)' : '0 8px 24px rgba(0, 91, 171, 0.25)',
+              gap: '0.65rem',
+              background: isMGD ? '#FFF3DD' : undefined,
+              color: isMGD ? '#005BAB' : undefined,
+              border: isMGD ? '2px solid #FFF3DD' : undefined
             }}
           >
             <span>{lang === 'en' ? 'View More' : 'Lihat Selengkapnya'}</span> 

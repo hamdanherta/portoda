@@ -132,6 +132,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
   // Active Tab state: 'overview' | 'tambah-karya' | 'kelola-karya' | 'pengalaman' | 'dokumen' | 'kontak' | 'profil'
   const [activeTab, setActiveTab] = useState('overview');
   const [mobileAdminNavOpen, setMobileAdminNavOpen] = useState(false);
+  const [topKaryaPage, setTopKaryaPage] = useState(1);
 
   // Loading Modal state, status & upload progress
   const [isProcessing, setIsProcessing] = useState(false);
@@ -2108,27 +2109,73 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                           <div style={{ fontSize: '0.85rem', color: '#005BAB', fontWeight: 600, padding: '1rem 0', textAlign: 'center' }}>
                             Belum ada statistik tampilan karya individual.
                           </div>
-                        ) : (
-                          analyticsData.top_karya.slice(0, 5).map((karya, idx) => (
-                            <div key={karya.id || idx} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', paddingBottom: '0.55rem', borderBottom: '1px solid rgba(0,91,171,0.15)' }}>
-                              <span style={{ fontSize: '0.85rem', fontWeight: 900, color: '#005BAB', width: '20px' }}>#{idx + 1}</span>
-                              {karya.cover_image && (
-                                <img src={karya.cover_image} alt="" style={{ width: '38px', height: '38px', borderRadius: '8px', objectFit: 'cover', border: '1.5px solid #005BAB' }} />
+                        ) : (() => {
+                          const TOP_PER_PAGE = 3;
+                          const totalTopPages = Math.ceil(analyticsData.top_karya.length / TOP_PER_PAGE);
+                          const safePage = Math.min(topKaryaPage, totalTopPages);
+                          const pagedKarya = analyticsData.top_karya.slice((safePage - 1) * TOP_PER_PAGE, safePage * TOP_PER_PAGE);
+                          // Generate max 3 page numbers centered around current page
+                          const getPageNums = () => {
+                            if (totalTopPages <= 3) return Array.from({ length: totalTopPages }, (_, i) => i + 1);
+                            if (safePage === 1) return [1, 2, 3];
+                            if (safePage === totalTopPages) return [totalTopPages - 2, totalTopPages - 1, totalTopPages];
+                            return [safePage - 1, safePage, safePage + 1];
+                          };
+                          const pageNums = getPageNums();
+                          return (
+                            <>
+                              {pagedKarya.map((karya, idx) => (
+                                <div key={karya.id || idx} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', paddingBottom: '0.55rem', borderBottom: '1px solid rgba(0,91,171,0.15)' }}>
+                                  <span style={{ fontSize: '0.85rem', fontWeight: 900, color: '#005BAB', width: '20px' }}>#{(safePage - 1) * TOP_PER_PAGE + idx + 1}</span>
+                                  {karya.cover_image && (
+                                    <img src={karya.cover_image} alt="" style={{ width: '38px', height: '38px', borderRadius: '8px', objectFit: 'cover', border: '1.5px solid #005BAB' }} />
+                                  )}
+                                  <div style={{ flex: 1, minWidth: 0 }}>
+                                    <h5 style={{ fontSize: '0.86rem', fontWeight: 800, color: '#005BAB', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                      {karya.title}
+                                    </h5>
+                                    <span style={{ fontSize: '0.72rem', color: '#005BAB', opacity: 0.8, fontWeight: 700 }}>
+                                      {karya.subcategory || karya.category}
+                                    </span>
+                                  </div>
+                                  <span style={{ fontSize: '0.82rem', fontWeight: 900, background: '#FFF3DD', color: '#005BAB', border: '1.5px solid #005BAB', padding: '0.2rem 0.55rem', borderRadius: '8px', whiteSpace: 'nowrap' }}>
+                                    {karya.views} Dilihat
+                                  </span>
+                                </div>
+                              ))}
+                              {totalTopPages > 1 && (
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', marginTop: '0.75rem', flexWrap: 'wrap' }}>
+                                  {/* Sebelumnya */}
+                                  <button
+                                    onClick={() => setTopKaryaPage(p => Math.max(1, p - 1))}
+                                    disabled={safePage === 1}
+                                    style={{ padding: '0.3rem 0.7rem', fontSize: '0.78rem', fontWeight: 800, borderRadius: '8px', border: '1.5px solid #005BAB', background: safePage === 1 ? '#f0f4fa' : '#005BAB', color: safePage === 1 ? '#aab8cc' : '#FFFFFF', cursor: safePage === 1 ? 'not-allowed' : 'pointer' }}
+                                  >
+                                    ‹ Sblm
+                                  </button>
+                                  {/* Nomor Halaman (max 3) */}
+                                  {pageNums.map(num => (
+                                    <button
+                                      key={num}
+                                      onClick={() => setTopKaryaPage(num)}
+                                      style={{ padding: '0.3rem 0.65rem', fontSize: '0.78rem', fontWeight: 800, borderRadius: '8px', border: '1.5px solid #005BAB', background: num === safePage ? '#005BAB' : '#FFF3DD', color: num === safePage ? '#FFFFFF' : '#005BAB', cursor: 'pointer', minWidth: '32px' }}
+                                    >
+                                      {num}
+                                    </button>
+                                  ))}
+                                  {/* Selanjutnya */}
+                                  <button
+                                    onClick={() => setTopKaryaPage(p => Math.min(totalTopPages, p + 1))}
+                                    disabled={safePage === totalTopPages}
+                                    style={{ padding: '0.3rem 0.7rem', fontSize: '0.78rem', fontWeight: 800, borderRadius: '8px', border: '1.5px solid #005BAB', background: safePage === totalTopPages ? '#f0f4fa' : '#005BAB', color: safePage === totalTopPages ? '#aab8cc' : '#FFFFFF', cursor: safePage === totalTopPages ? 'not-allowed' : 'pointer' }}
+                                  >
+                                    Slnjt ›
+                                  </button>
+                                </div>
                               )}
-                              <div style={{ flex: 1, minWidth: 0 }}>
-                                <h5 style={{ fontSize: '0.86rem', fontWeight: 800, color: '#005BAB', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                  {karya.title}
-                                </h5>
-                                <span style={{ fontSize: '0.72rem', color: '#005BAB', opacity: 0.8, fontWeight: 700 }}>
-                                  {karya.subcategory || karya.category}
-                                </span>
-                              </div>
-                              <span style={{ fontSize: '0.82rem', fontWeight: 900, background: '#FFF3DD', color: '#005BAB', border: '1.5px solid #005BAB', padding: '0.2rem 0.55rem', borderRadius: '8px' }}>
-                                {karya.views} Dilihat
-                              </span>
-                            </div>
-                          ))
-                        )}
+                            </>
+                          );
+                        })()}
                       </div>
                     </div>
                   </div>

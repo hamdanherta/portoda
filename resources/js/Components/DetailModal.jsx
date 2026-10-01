@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { X, ExternalLink, Calendar, User, Tag, Play, ChevronLeft, ChevronRight, Award, Briefcase, Building2, Sparkles, FolderKanban, Wrench, Code, Layers, Smartphone, Share2, Check, Maximize2 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { usePersona } from '../context/PersonaContext';
 import WatermarkedImage from './WatermarkedImage';
 import MetadataCopyBtn from './MetadataCopyBtn';
 
@@ -10,6 +11,8 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
   const [copied, setCopied] = useState(false);
   const [isVideoFullscreen, setIsVideoFullscreen] = useState(false);
   const { lang, t, getLocalizedField } = useLanguage();
+  const { persona } = usePersona();
+  const isMGD = persona === 'mgd';
   const autoSlideRef = useRef(null);
   const resumeTimerRef = useRef(null);
   const modalRef = useRef(null);
@@ -897,7 +900,7 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
                     gap: '0.4rem',
                     background: '#FFF3DD',
                     color: '#005BAB',
-                    border: '2px solid #005BAB'
+                    border: isMGD ? '2px solid #FFF3DD' : '2px solid #005BAB'
                   }}
                 >
                   <span>{lang === 'en' ? 'View All Works' : 'Lihat Selengkapnya'}</span>
@@ -1069,7 +1072,10 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
                     padding: '0.65rem 1rem',
                     fontSize: '0.88rem',
                     fontWeight: 800,
-                    gap: '0.5rem'
+                    gap: '0.5rem',
+                    background: '#FFF3DD',
+                    color: '#005BAB',
+                    border: isMGD ? '2px solid #FFF3DD' : '2px solid #005BAB'
                   }}
                 >
                   <span>{lang === 'en' ? 'View All Works' : 'Lihat Selengkapnya Karya'}</span>

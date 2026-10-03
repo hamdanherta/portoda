@@ -25,7 +25,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
   const isMgd = persona === 'mgd';
 
   const currentTagline = isMgd
-    ? (lang === 'en' ? (profile?.tagline_mgd_en || profile?.tagline_mgd || profile?.tagline_en || 'Multimedia Graphic Designer') : (profile?.tagline_mgd || profile?.tagline || 'Multimedia Graphic Designer'))
+    ? (lang === 'en' ? (profile?.tagline_mgd_en || profile?.tagline_mgd || profile?.tagline_en || 'Graphic Designer') : (profile?.tagline_mgd || profile?.tagline || 'Graphic Designer'))
     : (lang === 'en' ? (profile?.tagline_dpd_en || profile?.tagline_dpd || profile?.tagline_en || 'Digital Product Designer') : (profile?.tagline_dpd || profile?.tagline || 'Digital Product Designer'));
 
   const currentBio = isMgd
@@ -74,7 +74,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
           {/* TOP WELCOME SECTION: Foto Muka & Bio Info */}
           <div style={{
             display: 'flex',
-            alignItems: 'center',
+            alignItems: 'flex-start',
             gap: '2rem',
             flexWrap: 'wrap',
             marginBottom: '2.5rem',

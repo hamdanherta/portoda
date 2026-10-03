@@ -258,8 +258,15 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
 
   const isMgd = persona === 'mgd';
 
+  // Filter dokumen berdasarkan persona aktif
+  // 'mgd' = hanya Graphic Designer, 'dpd' = hanya DPD, 'both'/null = tampil semua
+  const filteredDocuments = documentsList.filter(doc => {
+    const docPersona = doc.persona || 'both';
+    if (docPersona === 'both') return true;
+    return docPersona === persona;
+  });
   const currentTagline = isMgd
-    ? (lang === 'en' ? (profileData?.tagline_mgd_en || profileData?.tagline_mgd || profileData?.tagline_en || 'Multimedia Graphic Designer') : (profileData?.tagline_mgd || profileData?.tagline || 'Multimedia Graphic Designer'))
+    ? (lang === 'en' ? (profileData?.tagline_mgd_en || profileData?.tagline_mgd || profileData?.tagline_en || 'Graphic Designer') : (profileData?.tagline_mgd || profileData?.tagline || 'Graphic Designer'))
     : (lang === 'en' ? (profileData?.tagline_dpd_en || profileData?.tagline_dpd || profileData?.tagline_en || 'Digital Product Designer') : (profileData?.tagline_dpd || profileData?.tagline || 'Digital Product Designer'));
 
   const currentBio = isMgd
@@ -480,13 +487,16 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
               <div style={{ flex: 1, minWidth: 0 }}>
                 <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>{t('doc_title')}</h2>
                 <p style={{ fontSize: '0.88rem', color: '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
-                  {lang === 'en' ? 'Download Resumes, CVs, Portfolio PDF & Transcripts' : 'Unduh Berkas Lamaran, CV, Portofolio & Transkrip Resmi'}
+                  {isMgd
+                    ? (lang === 'en' ? 'Resumes, CVs & Portfolio PDF for Graphic Designer Role' : 'Berkas CV, Portofolio & Dokumen untuk Lamaran Desainer Grafis')
+                    : (lang === 'en' ? 'Resumes, CVs & Portfolio PDF for Digital Product Designer Role' : 'Berkas CV, Portofolio & Dokumen untuk Lamaran Digital Product Designer')
+                  }
                 </p>
               </div>
             </div>
 
-            {/* Grid Dokumen Dynamic */}
-            {documentsList.length === 0 ? (
+            {/* Grid Dokumen Dynamic — filtered by persona */}
+            {filteredDocuments.length === 0 ? (
               <VisitorEmptyState
                 icon={SearchX}
                 title={lang === 'en' ? 'No Documents Available' : 'Belum Ada Dokumen Tersedia'}
@@ -494,7 +504,7 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
               />
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.2rem' }}>
-                {documentsList.map((doc) => {
+                {filteredDocuments.map((doc) => {
                   const docTitle = getLocalizedField(doc, 'title');
                   const docType = getLocalizedField(doc, 'type');
                   const docDesc = getLocalizedField(doc, 'description');

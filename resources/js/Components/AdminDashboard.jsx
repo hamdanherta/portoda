@@ -225,7 +225,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
   // --- DOKUMEN FORM STATE ---
   const [documents, setDocuments] = useState([]);
   const [editingDocId, setEditingDocId] = useState(null);
-  const [docForm, setDocForm] = useState({ title: '', type: '', category: 'CV ATS', description: '', fileUrl: '', fileName: '' });
+  const [docForm, setDocForm] = useState({ title: '', type: '', category: 'CV ATS', persona: 'both', description: '', fileUrl: '', fileName: '' });
 
   // --- KONTAK FORM STATE ---
   const [contacts, setContacts] = useState([]);
@@ -634,12 +634,14 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
     setTimeout(() => setFormSuccess(''), 4000);
   };
 
-  const handleSubmitDocument = async (e) => {
-    e.preventDefault();
+  const handleSubmitDocument = async (e, overridePersona = null) => {
+    if (e && e.preventDefault) e.preventDefault();
     if (!docForm.title || !docForm.type) {
       finishProcessingError('Nama Dokumen dan Tipe Dokumen wajib diisi!');
       return;
     }
+
+    const finalPersona = overridePersona || docForm.persona || 'both';
 
     startProcessing(editingDocId ? 'Menyimpan perubahan dokumen...' : 'Mengunggah & menyimpan dokumen ke server...', 10);
 
@@ -647,12 +649,13 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
       const updatedList = await infoService.saveDocument({
         id: editingDocId,
         ...docForm,
+        persona: finalPersona,
         category: docForm.category || 'CV ATS'
       }, (pct) => setProcessingProgress(pct));
       setDocuments(updatedList);
       const successMsg = editingDocId ? 'Dokumen berhasil diperbarui!' : 'Dokumen baru berhasil ditambahkan!';
       setEditingDocId(null);
-      setDocForm({ title: '', type: '', category: 'CV ATS', description: '', fileUrl: '', fileName: '', rawFile: null });
+      setDocForm({ title: '', type: '', category: 'CV ATS', persona: 'both', description: '', fileUrl: '', fileName: '', rawFile: null });
       finishProcessingSuccess(successMsg);
     } catch (err) {
       console.error('Error saving document:', err);
@@ -2583,7 +2586,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                         <label>Persona / Jenis Karya *</label>
                         <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginTop: '0.35rem' }}>
                           {[
-                            { value: 'mgd', label: 'MGD — Multimedia Graphic Designer', color: '#005BAB', bg: '#005BAB', textColor: '#FFFFFF' },
+                            { value: 'mgd', label: 'MGD — Graphic Designer', color: '#005BAB', bg: '#005BAB', textColor: '#FFFFFF' },
                             { value: 'dpd', label: 'DPD — Digital Product Designer', color: '#005BAB', bg: '#FFF3DD', textColor: '#005BAB' }
                           ].map(opt => (
                             <button
@@ -3749,228 +3752,464 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
 
             {/* TAB 3: KELOLA DOKUMEN HAMDANI */}
             {activeTab === 'dokumen' && (
-              <div>
-                <div className="herta-card" style={{ padding: '1.5rem', marginBottom: '2rem', background: '#FFFFFF' }}>
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#005BAB', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    {editingDocId ? <Edit size={18} /> : <Plus size={18} />}
-                    <span>{editingDocId ? 'Edit Dokumen Hamdani' : 'Tambah Dokumen Baru'}</span>
-                  </h3>
-
-                  <form onSubmit={handleSubmitDocument}>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
-                      <div className="form-group">
-                        <label>Judul Dokumen *</label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="contoh: CV ATS Hamdani"
-                          value={docForm.title}
-                          onChange={(e) => setDocForm({ ...docForm, title: e.target.value })}
-                          className="form-input"
-                        />
-                      </div>
-
-                      <div className="form-group">
-                        <label>Tipe / Sub-Judul Dokumen *</label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="contoh: Curriculum Vitae (ATS Friendly)"
-                          value={docForm.type}
-                          onChange={(e) => setDocForm({ ...docForm, type: e.target.value })}
-                          className="form-input"
-                        />
-                      </div>
-
-                      <div className="form-group">
-                        <label>Kategori Dokumen *</label>
-                        <select
-                          value={docForm.category || 'CV ATS'}
-                          onChange={(e) => setDocForm({ ...docForm, category: e.target.value })}
-                          className="form-select"
-                          style={{ fontWeight: 800 }}
-                        >
-                          <option value="CV ATS">CV ATS</option>
-                          <option value="CV Kreatif">CV Kreatif</option>
-                          <option value="Portofolio">Portofolio</option>
-                        </select>
-                      </div>
-
-                      <div className="form-group">
-                        <label>Nama File *</label>
-                        <input
-                          type="text"
-                          placeholder="CV_ATS_Hamdani.pdf"
-                          value={docForm.fileName}
-                          onChange={(e) => setDocForm({ ...docForm, fileName: e.target.value })}
-                          className="form-input"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="form-group">
-                      <label>Unggah Berkas File Dokumen (PDF / Gambar / Doc)</label>
-                      <input
-                        type="file"
-                        onChange={handleDocFileUpload}
-                        className="form-input"
-                        style={{ padding: '0.5rem' }}
-                      />
-                      {docForm.fileUrl && (
-                        <p style={{ fontSize: '0.78rem', color: '#005BAB', marginTop: '0.3rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                          <CheckCircle2 size={14} />
-                          <span>File siap diunduh ({docForm.fileName || 'File Terlampir'})</span>
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="form-group">
-                      <label>Deskripsi Singkat Dokumen</label>
-                      <textarea
-                        placeholder="Tuliskan keterangan berkas resmi..."
-                        value={docForm.description}
-                        onChange={(e) => setDocForm({ ...docForm, description: e.target.value })}
-                        className="form-textarea"
-                      />
-                    </div>
-
-                    <div style={{ display: 'flex', gap: '1rem' }}>
-                      <button type="submit" className="btn-primary">
-                        <span>{editingDocId ? 'Simpan Perubahan' : 'Tambah Dokumen'}</span>
-                      </button>
-                      {editingDocId && (
-                        <button type="button" onClick={() => { setEditingDocId(null); setDocForm({ title: '', type: '', description: '', fileUrl: '', fileName: '' }); }} className="btn-secondary">
-                          Batal
-                        </button>
-                      )}
-                    </div>
-                  </form>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                {/* HEADER CARD */}
+                <div className="herta-card" style={{ padding: '1.25rem 1.5rem', background: '#FFFFFF', borderRadius: '20px', border: '2.5px solid #005BAB', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+                  <div>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#005BAB', display: 'flex', alignItems: 'center', gap: '0.6rem', margin: 0 }}>
+                      <FileText size={22} />
+                      <span>Pengelolaan Dokumen PDF &amp; Berkas Hamdani</span>
+                    </h3>
+                    <p style={{ fontSize: '0.85rem', color: '#005BAB', margin: '0.25rem 0 0 0', fontWeight: 600, opacity: 0.85 }}>
+                      Kelola dan unggah dokumen terpisah untuk persona <strong>Graphic Designer</strong> dan <strong>Digital Product Designer</strong>.
+                    </p>
+                  </div>
                 </div>
 
-                {/* LIST CARD DOKUMEN (TANPA TABEL + PAGINATION 20 ITEM) */}
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                    <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#005BAB' }}>
-                      Daftar Dokumen ({filteredDocItems.length} Dokumen{adminSearchQuery ? ` Ditemukan` : ''})
+                {/* BAGIAN 1: GRAPHIC DESIGNER */}
+                <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF', borderRadius: '24px', border: '2.5px solid #005BAB' }}>
+                  <div style={{ paddingBottom: '1rem', marginBottom: '1.25rem', borderBottom: '2px dashed #005BAB', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
+                    <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#005BAB', display: 'flex', alignItems: 'center', gap: '0.6rem', margin: 0 }}>
+                      <Palette size={20} />
+                      <span>Bagian Dokumen Graphic Designer</span>
                     </h3>
-                    {/* <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#005BAB', background: '#FFF3DD', padding: '0.2rem 0.6rem', borderRadius: '999px', border: '1.5px solid #005BAB' }}>
-                      Maksimal 20 Card / Halaman
-                    </span> */}
+                    <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#0369A1', background: '#F0F9FF', padding: '0.25rem 0.75rem', borderRadius: '999px', border: '1.5px solid #0369A1' }}>
+                      {documents.filter(d => (d.persona || 'mgd') === 'mgd' || d.persona === 'both').length} Dokumen
+                    </span>
                   </div>
 
-                  {filteredDocItems.length === 0 ? (
-                    <EmptyStateCard
-                      icon={SearchX}
-                      title="Tidak Ada Dokumen Ditemukan"
-                      description="Coba ubah kata kunci pencarian atau unggah dokumen baru."
-                      actionLabel={adminSearchQuery ? "Reset Pencarian" : null}
-                      onAction={() => setAdminSearchQuery('')}
-                    />
-                  ) : (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.2rem' }}>
-                      {currentDocItems.map((doc) => (
-                        <div
-                          key={doc.id}
-                          className="herta-card"
-                          style={{
-                            padding: '1.25rem',
-                            background: '#FFFFFF',
-                            borderRadius: '20px',
-                            border: '2.5px solid #005BAB',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'space-between',
-                            position: 'relative'
-                          }}
-                        >
-                          <span style={{
-                            position: 'absolute',
-                            top: '1rem',
-                            right: '1rem',
-                            fontSize: '0.72rem',
-                            fontWeight: 800,
-                            background: (doc.category || 'CV ATS') === 'CV Kreatif' ? '#FEF3C7' : (doc.category || 'CV ATS') === 'Portofolio' ? '#D1FAE5' : '#EEF2FF',
-                            color: (doc.category || 'CV ATS') === 'CV Kreatif' ? '#D97706' : (doc.category || 'CV ATS') === 'Portofolio' ? '#059669' : '#4F46E5',
-                            border: `1.5px solid ${(doc.category || 'CV ATS') === 'CV Kreatif' ? '#D97706' : (doc.category || 'CV ATS') === 'Portofolio' ? '#059669' : '#4F46E5'}`,
-                            padding: '0.15rem 0.6rem',
-                            borderRadius: '999px',
-                            zIndex: 2
-                          }}>
-                            {doc.category || 'CV ATS'}
-                          </span>
-                          <div>
-                            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '0.75rem', paddingRight: '5.5rem' }}>
-                              <div style={{ padding: '0.6rem', borderRadius: '12px', background: '#FFF3DD', color: '#005BAB', border: '1.5px solid #005BAB', flexShrink: 0 }}>
-                                <FileText size={24} />
-                              </div>
-                              <div style={{ flex: 1, minWidth: 0 }}>
-                                <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.35, margin: 0, wordBreak: 'break-word' }}>{doc.title}</h4>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap', marginTop: '0.2rem' }}>
-                                  <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#005BAB', opacity: 0.85 }}>{doc.type}</span>
-                                </div>
-                              </div>
-                            </div>
-                            {doc.fileName && (
-                              <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#005BAB', background: '#FFF3DD', padding: '0.35rem 0.75rem', borderRadius: '8px', border: '1px solid #005BAB', marginBottom: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
-                                <FileText size={13} />
-                                <span>File: {doc.fileName}</span>
-                              </div>
-                            )}
-                            {doc.description && (
-                              <p style={{ fontSize: '0.85rem', color: '#005BAB', fontWeight: 600, lineHeight: 1.5, marginBottom: '1rem' }}>
-                                {doc.description}
-                              </p>
-                            )}
-                          </div>
+                  {/* FORM UPLOAD MGD */}
+                  <div style={{ background: '#F8FAFC', padding: '1.25rem', borderRadius: '16px', border: '2px solid #E2E8F0', marginBottom: '1.5rem' }}>
+                    <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#005BAB', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      {editingDocId && docForm.persona === 'mgd' ? <Edit size={16} /> : <Plus size={16} />}
+                      <span>{editingDocId && docForm.persona === 'mgd' ? `Edit Dokumen Graphic Designer: "${docForm.title}"` : 'Form Unggah Dokumen Graphic Designer'}</span>
+                    </h4>
 
-                          <div style={{ display: 'flex', gap: '0.5rem', rowGap: '0.5rem', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', paddingTop: '0.75rem', borderTop: '1.5px solid #005BAB' }}>
-                            {(() => {
-                              const realIdx = documents.findIndex(i => i.id === doc.id);
-                              return (
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', flexWrap: 'wrap' }}>
-                                  <button
-                                    type="button"
-                                    disabled={realIdx <= 0}
-                                    onClick={() => handleReorderEntity('documents', documents, realIdx, 'up')}
-                                    className="btn-secondary"
-                                    style={{ padding: '0.35rem 0.5rem', fontSize: '0.78rem', opacity: realIdx <= 0 ? 0.3 : 1, cursor: realIdx <= 0 ? 'not-allowed' : 'pointer' }}
-                                    title="Atur Urutan Posisi (Geser ke Atas)"
-                                  >
-                                    <ChevronUp size={15} />
-                                  </button>
-                                  <button
-                                    type="button"
-                                    disabled={realIdx >= documents.length - 1}
-                                    onClick={() => handleReorderEntity('documents', documents, realIdx, 'down')}
-                                    className="btn-secondary"
-                                    style={{ padding: '0.35rem 0.5rem', fontSize: '0.78rem', opacity: realIdx >= documents.length - 1 ? 0.3 : 1, cursor: realIdx >= documents.length - 1 ? 'not-allowed' : 'pointer' }}
-                                    title="Atur Urutan Posisi (Geser ke Bawah)"
-                                  >
-                                    <ChevronDown size={15} />
-                                  </button>
-                                </div>
-                              );
-                            })()}
-
-                            <div style={{ display: 'flex', gap: '0.6rem' }}>
-                              <button onClick={() => { setEditingDocId(doc.id); setDocForm({ ...doc, category: doc.category || 'CV ATS' }); }} className="btn-secondary" style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}>
-                                <Edit size={14} />
-                                <span>Edit</span>
-                              </button>
-                              <button onClick={() => setDeletingTarget({ id: doc.id, title: doc.title, label: 'Dokumen', targetType: 'doc' })} className="btn-danger" style={{ padding: '0.4rem 0.85rem', fontSize: '0.82rem' }}>
-                                <Trash2 size={14} />
-                                <span>Hapus</span>
-                              </button>
-                            </div>
-                          </div>
+                    <form onSubmit={(e) => {
+                      handleSubmitDocument(e, 'mgd');
+                    }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+                        <div className="form-group">
+                          <label>Judul Dokumen *</label>
+                          <input
+                            type="text"
+                            required
+                            placeholder="contoh: CV ATS Graphic Designer"
+                            value={(docForm.persona === 'mgd' || !editingDocId) ? docForm.title : ''}
+                            onChange={(e) => setDocForm({ ...docForm, persona: 'mgd', title: e.target.value })}
+                            className="form-input"
+                          />
                         </div>
-                      ))}
-                    </div>
-                  )}
 
-                  {/* Pagination Bar Dokumen */}
-                  {renderPaginationControls(docPage, filteredDocItems.length, (page) => setDocPage(page))}
+                        <div className="form-group">
+                          <label>Tipe / Sub-Judul Dokumen *</label>
+                          <input
+                            type="text"
+                            required
+                            placeholder="contoh: Curriculum Vitae (ATS Friendly)"
+                            value={(docForm.persona === 'mgd' || !editingDocId) ? docForm.type : ''}
+                            onChange={(e) => setDocForm({ ...docForm, persona: 'mgd', type: e.target.value })}
+                            className="form-input"
+                          />
+                        </div>
+
+                        <div className="form-group">
+                          <label>Kategori Dokumen *</label>
+                          <select
+                            value={(docForm.persona === 'mgd' || !editingDocId) ? (docForm.category || 'CV ATS') : 'CV ATS'}
+                            onChange={(e) => setDocForm({ ...docForm, persona: 'mgd', category: e.target.value })}
+                            className="form-select"
+                            style={{ fontWeight: 800 }}
+                          >
+                            <option value="CV ATS">CV ATS</option>
+                            <option value="CV Kreatif">CV Kreatif</option>
+                            <option value="Portofolio">Portofolio</option>
+                          </select>
+                        </div>
+
+                        <div className="form-group">
+                          <label>Nama Berkas File *</label>
+                          <input
+                            type="text"
+                            placeholder="CV_ATS_Graphic_Designer.pdf"
+                            value={(docForm.persona === 'mgd' || !editingDocId) ? docForm.fileName : ''}
+                            onChange={(e) => setDocForm({ ...docForm, persona: 'mgd', fileName: e.target.value })}
+                            className="form-input"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="form-group" style={{ marginTop: '0.75rem' }}>
+                        <label>Unggah Berkas PDF / Document Baru</label>
+                        <input
+                          type="file"
+                          onChange={handleDocFileUpload}
+                          className="form-input"
+                          style={{ padding: '0.4rem' }}
+                        />
+                        {docForm.fileUrl && (docForm.persona === 'mgd' || !editingDocId) && (
+                          <p style={{ fontSize: '0.78rem', color: '#005BAB', marginTop: '0.3rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                            <CheckCircle2 size={14} />
+                            <span>File Siap: {docForm.fileName || 'File Terlampir'}</span>
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="form-group">
+                        <label>Deskripsi Singkat Dokumen</label>
+                        <textarea
+                          placeholder="Deskripsi singkat dokumen untuk persona Graphic Designer..."
+                          value={(docForm.persona === 'mgd' || !editingDocId) ? docForm.description : ''}
+                          onChange={(e) => setDocForm({ ...docForm, persona: 'mgd', description: e.target.value })}
+                          className="form-textarea"
+                          rows={2}
+                        />
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
+                        <button type="submit" className="btn-primary" style={{ padding: '0.55rem 1.25rem', fontSize: '0.88rem' }}>
+                          <Plus size={16} />
+                          <span>{editingDocId && docForm.persona === 'mgd' ? 'Simpan Perubahan Dokumen' : 'Unggah Dokumen Graphic Designer'}</span>
+                        </button>
+                        {editingDocId && docForm.persona === 'mgd' && (
+                          <button type="button" onClick={() => { setEditingDocId(null); setDocForm({ title: '', type: '', category: 'CV ATS', persona: 'mgd', description: '', fileUrl: '', fileName: '' }); }} className="btn-secondary" style={{ padding: '0.55rem 1.25rem', fontSize: '0.88rem' }}>
+                            Batal
+                          </button>
+                        )}
+                      </div>
+                    </form>
+                  </div>
+
+                  {/* LIST CARD DOKUMEN MGD */}
+                  <div>
+                    <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#005BAB', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <FileText size={16} />
+                      <span>Daftar Dokumen Graphic Designer ({documents.filter(d => (d.persona || 'mgd') === 'mgd' || d.persona === 'both').length} Dokumen)</span>
+                    </h4>
+                    {documents.filter(d => (d.persona || 'mgd') === 'mgd' || d.persona === 'both').length === 0 ? (
+                      <EmptyStateCard
+                        icon={FileText}
+                        title="Belum Ada Dokumen Graphic Designer"
+                        description="Silakan unggah dokumen PDF untuk Graphic Designer pada form di atas."
+                      />
+                    ) : (
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+                        {documents
+                          .filter(d => (d.persona || 'mgd') === 'mgd' || d.persona === 'both')
+                          .filter(d => {
+                            if (!adminSearchQuery.trim()) return true;
+                            const q = adminSearchQuery.toLowerCase().trim();
+                            return (d.title && d.title.toLowerCase().includes(q)) || (d.type && d.type.toLowerCase().includes(q));
+                          })
+                          .map(doc => (
+                            <div
+                              key={doc.id}
+                              className="herta-card"
+                              style={{
+                                padding: '1.15rem',
+                                background: '#FFFFFF',
+                                borderRadius: '18px',
+                                border: '2px solid #005BAB',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'space-between',
+                                position: 'relative'
+                              }}
+                            >
+                              <span style={{
+                                position: 'absolute',
+                                top: '0.85rem',
+                                right: '0.85rem',
+                                fontSize: '0.7rem',
+                                fontWeight: 800,
+                                background: (doc.category || 'CV ATS') === 'CV Kreatif' ? '#FEF3C7' : (doc.category || 'CV ATS') === 'Portofolio' ? '#D1FAE5' : '#EEF2FF',
+                                color: (doc.category || 'CV ATS') === 'CV Kreatif' ? '#D97706' : (doc.category || 'CV ATS') === 'Portofolio' ? '#059669' : '#4F46E5',
+                                border: `1.5px solid ${(doc.category || 'CV ATS') === 'CV Kreatif' ? '#D97706' : (doc.category || 'CV ATS') === 'Portofolio' ? '#059669' : '#4F46E5'}`,
+                                padding: '0.12rem 0.55rem',
+                                borderRadius: '999px',
+                                zIndex: 2
+                              }}>
+                                {doc.category || 'CV ATS'}
+                              </span>
+
+                              <div>
+                                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.65rem', marginBottom: '0.65rem', paddingRight: '5.5rem' }}>
+                                  <div style={{ padding: '0.5rem', borderRadius: '10px', background: '#F0F9FF', color: '#005BAB', border: '1.5px solid #005BAB', flexShrink: 0 }}>
+                                    <FileText size={22} />
+                                  </div>
+                                  <div style={{ flex: 1, minWidth: 0 }}>
+                                    <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.3, margin: 0 }}>{doc.title}</h4>
+                                    <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#005BAB', opacity: 0.85, display: 'block', marginTop: '0.15rem' }}>{doc.type}</span>
+                                  </div>
+                                </div>
+
+                                {doc.fileName && (
+                                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#005BAB', background: '#F8FAFC', padding: '0.3rem 0.65rem', borderRadius: '6px', border: '1px solid #CBD5E1', marginBottom: '0.65rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                                    <FileText size={12} />
+                                    <span>{doc.fileName}</span>
+                                  </div>
+                                )}
+                                {doc.description && (
+                                  <p style={{ fontSize: '0.82rem', color: '#005BAB', fontWeight: 600, lineHeight: 1.4, marginBottom: '0.85rem' }}>
+                                    {doc.description}
+                                  </p>
+                                )}
+                              </div>
+
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.65rem', borderTop: '1.5px solid #E2E8F0' }}>
+                                {(() => {
+                                  const realIdx = documents.findIndex(i => i.id === doc.id);
+                                  return (
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                                      <button type="button" disabled={realIdx <= 0} onClick={() => handleReorderEntity('documents', documents, realIdx, 'up')} className="btn-secondary" style={{ padding: '0.3rem 0.45rem', fontSize: '0.75rem', opacity: realIdx <= 0 ? 0.3 : 1 }}>
+                                        <ChevronUp size={14} />
+                                      </button>
+                                      <button type="button" disabled={realIdx >= documents.length - 1} onClick={() => handleReorderEntity('documents', documents, realIdx, 'down')} className="btn-secondary" style={{ padding: '0.3rem 0.45rem', fontSize: '0.75rem', opacity: realIdx >= documents.length - 1 ? 0.3 : 1 }}>
+                                        <ChevronDown size={14} />
+                                      </button>
+                                    </div>
+                                  );
+                                })()}
+                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                  <button onClick={() => { setEditingDocId(doc.id); setDocForm({ ...doc, category: doc.category || 'CV ATS', persona: 'mgd' }); }} className="btn-secondary" style={{ padding: '0.35rem 0.75rem', fontSize: '0.78rem' }}>
+                                    <Edit size={13} />
+                                    <span>Edit</span>
+                                  </button>
+                                  <button onClick={() => setDeletingTarget({ id: doc.id, title: doc.title, label: 'Dokumen Graphic Designer', targetType: 'doc' })} className="btn-danger" style={{ padding: '0.35rem 0.75rem', fontSize: '0.78rem' }}>
+                                    <Trash2 size={13} />
+                                    <span>Hapus</span>
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
+
+                {/* BAGIAN 2: DIGITAL PRODUCT DESIGNER */}
+                <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF', borderRadius: '24px', border: '2.5px solid #005BAB' }}>
+                  <div style={{ paddingBottom: '1rem', marginBottom: '1.25rem', borderBottom: '2px dashed #005BAB', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
+                    <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#005BAB', display: 'flex', alignItems: 'center', gap: '0.6rem', margin: 0 }}>
+                      <Monitor size={20} />
+                      <span>Bagian Dokumen Digital Product Designer</span>
+                    </h3>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#005BAB', background: '#FFF3DD', padding: '0.25rem 0.75rem', borderRadius: '999px', border: '1.5px solid #005BAB' }}>
+                      {documents.filter(d => d.persona === 'dpd').length} Dokumen
+                    </span>
+                  </div>
+
+                  {/* FORM UPLOAD DPD */}
+                  <div style={{ background: '#FFFBF0', padding: '1.25rem', borderRadius: '16px', border: '2px solid #FDE68A', marginBottom: '1.5rem' }}>
+                    <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#005BAB', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      {editingDocId && docForm.persona === 'dpd' ? <Edit size={16} /> : <Plus size={16} />}
+                      <span>{editingDocId && docForm.persona === 'dpd' ? `Edit Dokumen Digital Product Designer: "${docForm.title}"` : 'Form Unggah Dokumen Digital Product Designer'}</span>
+                    </h4>
+
+                    <form onSubmit={(e) => {
+                      handleSubmitDocument(e, 'dpd');
+                    }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+                        <div className="form-group">
+                          <label>Judul Dokumen *</label>
+                          <input
+                            type="text"
+                            required
+                            placeholder="contoh: CV ATS Digital Product Designer"
+                            value={docForm.persona === 'dpd' ? docForm.title : ''}
+                            onChange={(e) => setDocForm({ ...docForm, persona: 'dpd', title: e.target.value })}
+                            className="form-input"
+                          />
+                        </div>
+
+                        <div className="form-group">
+                          <label>Tipe / Sub-Judul Dokumen *</label>
+                          <input
+                            type="text"
+                            required
+                            placeholder="contoh: Curriculum Vitae UI/UX &amp; Product Design"
+                            value={docForm.persona === 'dpd' ? docForm.type : ''}
+                            onChange={(e) => setDocForm({ ...docForm, persona: 'dpd', type: e.target.value })}
+                            className="form-input"
+                          />
+                        </div>
+
+                        <div className="form-group">
+                          <label>Kategori Dokumen *</label>
+                          <select
+                            value={docForm.persona === 'dpd' ? (docForm.category || 'CV ATS') : 'CV ATS'}
+                            onChange={(e) => setDocForm({ ...docForm, persona: 'dpd', category: e.target.value })}
+                            className="form-select"
+                            style={{ fontWeight: 800 }}
+                          >
+                            <option value="CV ATS">CV ATS</option>
+                            <option value="CV Kreatif">CV Kreatif</option>
+                            <option value="Portofolio">Portofolio</option>
+                          </select>
+                        </div>
+
+                        <div className="form-group">
+                          <label>Nama Berkas File *</label>
+                          <input
+                            type="text"
+                            placeholder="CV_ATS_Product_Designer.pdf"
+                            value={docForm.persona === 'dpd' ? docForm.fileName : ''}
+                            onChange={(e) => setDocForm({ ...docForm, persona: 'dpd', fileName: e.target.value })}
+                            className="form-input"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="form-group" style={{ marginTop: '0.75rem' }}>
+                        <label>Unggah Berkas PDF / Document Baru</label>
+                        <input
+                          type="file"
+                          onChange={handleDocFileUpload}
+                          className="form-input"
+                          style={{ padding: '0.4rem' }}
+                        />
+                        {docForm.fileUrl && docForm.persona === 'dpd' && (
+                          <p style={{ fontSize: '0.78rem', color: '#005BAB', marginTop: '0.3rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                            <CheckCircle2 size={14} />
+                            <span>File Siap: {docForm.fileName || 'File Terlampir'}</span>
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="form-group">
+                        <label>Deskripsi Singkat Dokumen</label>
+                        <textarea
+                          placeholder="Deskripsi singkat dokumen untuk persona Digital Product Designer..."
+                          value={docForm.persona === 'dpd' ? docForm.description : ''}
+                          onChange={(e) => setDocForm({ ...docForm, persona: 'dpd', description: e.target.value })}
+                          className="form-textarea"
+                          rows={2}
+                        />
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
+                        <button type="submit" className="btn-primary" style={{ padding: '0.55rem 1.25rem', fontSize: '0.88rem', background: '#005BAB' }}>
+                          <Plus size={16} />
+                          <span>{editingDocId && docForm.persona === 'dpd' ? 'Simpan Perubahan Dokumen' : 'Unggah Dokumen Digital Product Designer'}</span>
+                        </button>
+                        {editingDocId && docForm.persona === 'dpd' && (
+                          <button type="button" onClick={() => { setEditingDocId(null); setDocForm({ title: '', type: '', category: 'CV ATS', persona: 'dpd', description: '', fileUrl: '', fileName: '' }); }} className="btn-secondary" style={{ padding: '0.55rem 1.25rem', fontSize: '0.88rem' }}>
+                            Batal
+                          </button>
+                        )}
+                      </div>
+                    </form>
+                  </div>
+
+                  {/* LIST CARD DOKUMEN DPD */}
+                  <div>
+                    <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#005BAB', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <FileText size={16} />
+                      <span>Daftar Dokumen Digital Product Designer ({documents.filter(d => d.persona === 'dpd').length} Dokumen)</span>
+                    </h4>
+                    {documents.filter(d => d.persona === 'dpd').length === 0 ? (
+                      <EmptyStateCard
+                        icon={FileText}
+                        title="Belum Ada Dokumen Digital Product Designer"
+                        description="Silakan unggah dokumen PDF untuk Digital Product Designer pada form di atas."
+                      />
+                    ) : (
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+                        {documents
+                          .filter(d => d.persona === 'dpd')
+                          .filter(d => {
+                            if (!adminSearchQuery.trim()) return true;
+                            const q = adminSearchQuery.toLowerCase().trim();
+                            return (d.title && d.title.toLowerCase().includes(q)) || (d.type && d.type.toLowerCase().includes(q));
+                          })
+                          .map(doc => (
+                            <div
+                              key={doc.id}
+                              className="herta-card"
+                              style={{
+                                padding: '1.15rem',
+                                background: '#FFFFFF',
+                                borderRadius: '18px',
+                                border: '2px solid #005BAB',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'space-between',
+                                position: 'relative'
+                              }}
+                            >
+                              <span style={{
+                                position: 'absolute',
+                                top: '0.85rem',
+                                right: '0.85rem',
+                                fontSize: '0.7rem',
+                                fontWeight: 800,
+                                background: (doc.category || 'CV ATS') === 'CV Kreatif' ? '#FEF3C7' : (doc.category || 'CV ATS') === 'Portofolio' ? '#D1FAE5' : '#EEF2FF',
+                                color: (doc.category || 'CV ATS') === 'CV Kreatif' ? '#D97706' : (doc.category || 'CV ATS') === 'Portofolio' ? '#059669' : '#4F46E5',
+                                border: `1.5px solid ${(doc.category || 'CV ATS') === 'CV Kreatif' ? '#D97706' : (doc.category || 'CV ATS') === 'Portofolio' ? '#059669' : '#4F46E5'}`,
+                                padding: '0.12rem 0.55rem',
+                                borderRadius: '999px',
+                                zIndex: 2
+                              }}>
+                                {doc.category || 'CV ATS'}
+                              </span>
+
+                              <div>
+                                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.65rem', marginBottom: '0.65rem', paddingRight: '5.5rem' }}>
+                                  <div style={{ padding: '0.5rem', borderRadius: '10px', background: '#FFF3DD', color: '#005BAB', border: '1.5px solid #005BAB', flexShrink: 0 }}>
+                                    <FileText size={22} />
+                                  </div>
+                                  <div style={{ flex: 1, minWidth: 0 }}>
+                                    <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.3, margin: 0 }}>{doc.title}</h4>
+                                    <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#005BAB', opacity: 0.85, display: 'block', marginTop: '0.15rem' }}>{doc.type}</span>
+                                  </div>
+                                </div>
+
+                                {doc.fileName && (
+                                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#005BAB', background: '#FFFBF0', padding: '0.3rem 0.65rem', borderRadius: '6px', border: '1px solid #FDE68A', marginBottom: '0.65rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                                    <FileText size={12} />
+                                    <span>{doc.fileName}</span>
+                                  </div>
+                                )}
+                                {doc.description && (
+                                  <p style={{ fontSize: '0.82rem', color: '#005BAB', fontWeight: 600, lineHeight: 1.4, marginBottom: '0.85rem' }}>
+                                    {doc.description}
+                                  </p>
+                                )}
+                              </div>
+
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.65rem', borderTop: '1.5px solid #E2E8F0' }}>
+                                {(() => {
+                                  const realIdx = documents.findIndex(i => i.id === doc.id);
+                                  return (
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                                      <button type="button" disabled={realIdx <= 0} onClick={() => handleReorderEntity('documents', documents, realIdx, 'up')} className="btn-secondary" style={{ padding: '0.3rem 0.45rem', fontSize: '0.75rem', opacity: realIdx <= 0 ? 0.3 : 1 }}>
+                                        <ChevronUp size={14} />
+                                      </button>
+                                      <button type="button" disabled={realIdx >= documents.length - 1} onClick={() => handleReorderEntity('documents', documents, realIdx, 'down')} className="btn-secondary" style={{ padding: '0.3rem 0.45rem', fontSize: '0.75rem', opacity: realIdx >= documents.length - 1 ? 0.3 : 1 }}>
+                                        <ChevronDown size={14} />
+                                      </button>
+                                    </div>
+                                  );
+                                })()}
+                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                  <button onClick={() => { setEditingDocId(doc.id); setDocForm({ ...doc, category: doc.category || 'CV ATS', persona: 'dpd' }); }} className="btn-secondary" style={{ padding: '0.35rem 0.75rem', fontSize: '0.78rem' }}>
+                                    <Edit size={13} />
+                                    <span>Edit</span>
+                                  </button>
+                                  <button onClick={() => setDeletingTarget({ id: doc.id, title: doc.title, label: 'Dokumen Digital Product Designer', targetType: 'doc' })} className="btn-danger" style={{ padding: '0.35rem 0.75rem', fontSize: '0.78rem' }}>
+                                    <Trash2 size={13} />
+                                    <span>Hapus</span>
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
               </div>
             )}
 
@@ -4860,11 +5099,11 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                       />
                     </div>
 
-                    {/* MGD — Multimedia Graphic Designer Persona */}
+                    {/* MGD — Graphic Designer Persona */}
                     <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1.5px dashed #005BAB' }}>
                       <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#005BAB', marginBottom: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                         <span style={{ background: '#005BAB', color: '#FFFFFF', padding: '0.25rem 0.75rem', borderRadius: '999px', fontSize: '0.82rem' }}>MGD</span>
-                        Multimedia Graphic Designer — Tagline &amp; Bio Khusus
+                        Graphic Designer — Tagline &amp; Bio Khusus
                       </h4>
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
                         <div className="form-group">
@@ -4893,7 +5132,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                           <label>Bio MGD (Bahasa Indonesia)</label>
                           <textarea
                             rows={4}
-                            placeholder="Bio singkat sebagai Multimedia Graphic Designer dalam bahasa Indonesia..."
+                            placeholder="Bio singkat sebagai Graphic Designer dalam bahasa Indonesia..."
                             value={profileForm.bio_mgd || ''}
                             onChange={(e) => setProfileForm({ ...profileForm, bio_mgd: e.target.value })}
                             className="form-textarea"
@@ -4903,7 +5142,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                           <label>Bio MGD (English Version)</label>
                           <textarea
                             rows={4}
-                            placeholder="Short bio as Multimedia Graphic Designer in English..."
+                            placeholder="Short bio as Graphic Designer in English..."
                             value={profileForm.bio_mgd_en || ''}
                             onChange={(e) => setProfileForm({ ...profileForm, bio_mgd_en: e.target.value })}
                             className="form-textarea"

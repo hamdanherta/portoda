@@ -302,7 +302,8 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Format standar resmi berstandar Sistem ATS yang mudah dibaca oleh HRD perusahaan.',
                 'description_en' => 'Official ATS-standard resume format optimized for corporate HR scanners.',
                 'file_url' => '/documents/CV_ATS_Hamdani.pdf',
-                'file_name' => 'CV_ATS_Hamdani.pdf'
+                'file_name' => 'CV_ATS_Hamdani.pdf',
+                'persona' => 'both'
             ],
             [
                 'id' => 'doc-2',
@@ -313,7 +314,8 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Desain kurikulum vitae visual modern yang menonjolkan estetika dan keahlian desain.',
                 'description_en' => 'Modern visual creative CV highlighting design aesthetics and portfolio skills.',
                 'file_url' => '/documents/CV_Kreatif_Hamdani.pdf',
-                'file_name' => 'CV_Kreatif_Hamdani.pdf'
+                'file_name' => 'CV_Kreatif_Hamdani.pdf',
+                'persona' => 'both'
             ],
             [
                 'id' => 'doc-3',
@@ -324,7 +326,8 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Kumpulan dokumentasi karya pilihan Desain Grafis, Multimedia, dan Aplikasi dalam format PDF.',
                 'description_en' => 'Selected portfolio documentation covering Graphic Design, Multimedia, and Apps in PDF.',
                 'file_url' => '/documents/Portofolio_Hamdani.pdf',
-                'file_name' => 'Portofolio_Hamdani.pdf'
+                'file_name' => 'Portofolio_Hamdani.pdf',
+                'persona' => 'both'
             ],
             [
                 'id' => 'doc-4',
@@ -335,7 +338,8 @@ class DatabaseSeeder extends Seeder
                 'description' => 'Salinan resmi transkrip nilai akademik beserta sertifikat kompetensi keahlian.',
                 'description_en' => 'Official copy of academic transcripts and professional skill competency certificates.',
                 'file_url' => '/documents/Transkrip_Nilai_Hamdani.pdf',
-                'file_name' => 'Transkrip_Nilai_Hamdani.pdf'
+                'file_name' => 'Transkrip_Nilai_Hamdani.pdf',
+                'persona' => 'both'
             ]
         ];
 
@@ -431,10 +435,10 @@ class DatabaseSeeder extends Seeder
             ['id' => 1],
             [
                 'name' => 'Hamdani',
-                'tagline' => 'Multimedia Graphic Designer & Digital Product Designer',
-                'tagline_en' => 'Multimedia Graphic Designer & Digital Product Designer',
-                'tagline_mgd' => 'Multimedia Graphic Designer',
-                'tagline_mgd_en' => 'Multimedia Graphic Designer',
+                'tagline' => 'Graphic Designer & Digital Product Designer',
+                'tagline_en' => 'Graphic Designer & Digital Product Designer',
+                'tagline_mgd' => 'Graphic Designer',
+                'tagline_mgd_en' => 'Graphic Designer',
                 'tagline_dpd' => 'Digital Product Designer',
                 'tagline_dpd_en' => 'Digital Product Designer',
                 'bio' => 'Seorang desainer kreatif dan pengembang aplikasi berpengalaman yang berdedikasi menciptakan karya berkualitas tinggi.',

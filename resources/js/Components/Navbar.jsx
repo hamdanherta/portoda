@@ -305,7 +305,7 @@ export default function Navbar({ onOpenNavModal }) {
               }}
             >
               <Paintbrush size={16} style={{ flexShrink: 0 }} />
-              <span className="persona-label-desktop">Multimedia Graphic Designer</span>
+              <span className="persona-label-desktop">Graphic Designer</span>
               <span className="persona-label-mobile">Graphic Design</span>
             </button>
 

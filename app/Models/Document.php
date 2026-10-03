@@ -19,6 +19,7 @@ class Document extends Model
         'type',
         'type_en',
         'category',
+        'persona',
         'description',
         'description_en',
         'file_url',

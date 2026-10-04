@@ -33,6 +33,8 @@ class Profile extends Model
         'watermark_enabled',
         'maintenance_mode',
         'content_notice_enabled',
+        'content_notice_title',
+        'content_notice_message',
     ];
 
     protected $casts = [

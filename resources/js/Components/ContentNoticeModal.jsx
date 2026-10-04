@@ -1,8 +1,14 @@
 import React from 'react';
 import { Bell, RefreshCw, X } from 'lucide-react';
 
-export default function ContentNoticeModal({ isOpen, onClose }) {
+const DEFAULT_TITLE = 'Tahap Pengisian Konten';
+const DEFAULT_MESSAGE = 'Website ini sedang dalam Tahap Pengisian Konten oleh Hamdani, Maka dari itu Mungkin Kamu akan Melihat Beberapa Kategori Masih Kosong.';
+
+export default function ContentNoticeModal({ isOpen, onClose, noticeTitle, noticeMessage }) {
   if (!isOpen) return null;
+
+  const displayTitle = (noticeTitle && noticeTitle.trim()) ? noticeTitle.trim() : DEFAULT_TITLE;
+  const displayMessage = (noticeMessage && noticeMessage.trim()) ? noticeMessage.trim() : DEFAULT_MESSAGE;
 
   return (
     <div
@@ -91,7 +97,6 @@ export default function ContentNoticeModal({ isOpen, onClose }) {
           }}
         >
           <Bell size={32} strokeWidth={2.5} />
-
         </div>
 
         {/* Status Badge */}
@@ -126,7 +131,7 @@ export default function ContentNoticeModal({ isOpen, onClose }) {
             letterSpacing: '-0.02em'
           }}
         >
-          Tahap Pengisian Konten
+          {displayTitle}
         </h2>
 
         {/* Subtitle / Main Message */}
@@ -146,10 +151,11 @@ export default function ContentNoticeModal({ isOpen, onClose }) {
               fontWeight: 700,
               color: '#005BAB',
               lineHeight: 1.6,
-              margin: 0
+              margin: 0,
+              whiteSpace: 'pre-line'
             }}
           >
-            Website ini sedang dalam Tahap Pengisian Konten oleh <strong>Hamdani</strong>, Maka dari itu Mungkin Kamu akan Melihat Beberapa Kategori Masih Kosong.
+            {displayMessage}
           </p>
         </div>
 

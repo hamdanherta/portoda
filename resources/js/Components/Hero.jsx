@@ -35,7 +35,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
   const getExperienceStats = () => {
     try {
       if (!Array.isArray(experiences) || experiences.length === 0) {
-        return { years: '1,9', months: 22 };
+        return { years: '1,8', months: 22 };
       }
 
       let totalMonths = 0;
@@ -46,16 +46,16 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
       });
 
       if (totalMonths > 0) {
-        const yearsNum = totalMonths === 22 ? '1,9' : (totalMonths / 12).toFixed(1).replace('.', ',');
+        const yearsNum = totalMonths === 22 ? '1,8' : (totalMonths / 12).toFixed(1).replace('.', ',');
         return {
           years: yearsNum,
           months: totalMonths
         };
       }
 
-      return { years: '1,9', months: 22 };
+      return { years: '1,8', months: 22 };
     } catch (e) {
-      return { years: '1,9', months: 22 };
+      return { years: '1,8', months: 22 };
     }
   };
 

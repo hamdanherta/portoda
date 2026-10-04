@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Plus, Edit, Trash2, ShieldCheck, RefreshCw, Check, Upload, LogOut, AlertTriangle, Loader2, Briefcase, FileText, Mail, User, Grid, Award, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, ChevronsUp, ChevronsDown, Search, SearchX, Palette, Video, Code, BarChart3, PlusCircle, FolderKanban, Globe, Building2, Image, Play, Link, CheckCircle2, Star, Info, Phone, Share2, Bell, Users, Eye, Smartphone, Monitor, TrendingUp } from 'lucide-react';
+import { Menu, X, Plus, Edit, Trash2, ShieldCheck, RefreshCw, Check, Upload, LogOut, AlertTriangle, Loader2, Briefcase, FileText, Mail, User, Grid, Award, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, ChevronsUp, ChevronsDown, Search, SearchX, Palette, Video, Code, BarChart3, PlusCircle, FolderKanban, Globe, Building2, Image, Play, Link, CheckCircle2, Star, Info, Phone, Share2, Bell, Users, Eye, Smartphone, Monitor, TrendingUp, Save } from 'lucide-react';
 
 import { compressImageToWebP } from '../utils/imageCompressor';
 import { infoService } from '../services/infoService';
@@ -757,6 +757,19 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
       console.error('Failed to toggle content notice modal:', err);
       finishProcessingError('Gagal memperbarui status modal pengisian konten.');
       setProfileForm(profileForm);
+    }
+  };
+
+  const handleSaveContentNoticeText = async () => {
+    try {
+      startProcessing('Menyimpan Pesan Modal Pemberitahuan...');
+      const updated = await infoService.saveProfile(profileForm);
+      setProfile(updated || profileForm);
+      setProfileForm(updated || profileForm);
+      finishProcessingSuccess('Pesan Modal Pemberitahuan Berhasil Disimpan!');
+    } catch (err) {
+      console.error('Failed to save content notice text:', err);
+      finishProcessingError('Gagal menyimpan pesan modal pemberitahuan.');
     }
   };
 
@@ -2494,9 +2507,66 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                           {(profileForm.content_notice_enabled !== false && profileForm.content_notice_enabled !== 0 && profileForm.content_notice_enabled !== '0') ? '(ON)' : '(OFF)'}
                         </span>
                       </div>
-                      <p style={{ fontSize: '0.85rem', color: '#005BAB', fontWeight: 600, marginBottom: '1.25rem', lineHeight: 1.5 }}>
+                      <p style={{ fontSize: '0.85rem', color: '#005BAB', fontWeight: 600, marginBottom: '1rem', lineHeight: 1.5 }}>
                         Jika diaktifkan, setiap pengunjung yang membuka atau me-refresh website akan melihat modal pemberitahuan bahwa website sedang dalam tahap pengisian konten oleh Hamdani.
                       </p>
+
+                      {/* Form Kustom Judul & Pesan Modal */}
+                      <div style={{ background: '#F8FAFC', borderRadius: '12px', border: '1.5px solid #CBD5E1', padding: '1rem', marginBottom: '1rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                        <div className="form-group" style={{ margin: 0 }}>
+                          <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#005BAB', marginBottom: '0.3rem', display: 'block' }}>
+                            Judul Modal Pemberitahuan
+                          </label>
+                          <input
+                            type="text"
+                            className="form-input"
+                            placeholder="Tahap Pengisian Konten"
+                            value={profileForm.content_notice_title || ''}
+                            onChange={(e) => setProfileForm({ ...profileForm, content_notice_title: e.target.value })}
+                            style={{ fontSize: '0.88rem' }}
+                          />
+                          <p style={{ fontSize: '0.75rem', color: '#64748B', margin: '0.25rem 0 0 0', fontWeight: 600 }}>Biarkan kosong untuk menggunakan judul default.</p>
+                        </div>
+                        <div className="form-group" style={{ margin: 0 }}>
+                          <label style={{ fontSize: '0.8rem', fontWeight: 800, color: '#005BAB', marginBottom: '0.3rem', display: 'block' }}>
+                            Pesan / Isi Modal Pemberitahuan
+                          </label>
+                          <textarea
+                            className="form-textarea"
+                            rows={3}
+                            placeholder="Website ini sedang dalam Tahap Pengisian Konten oleh Hamdani, Maka dari itu Mungkin Kamu akan Melihat Beberapa Kategori Masih Kosong."
+                            value={profileForm.content_notice_message || ''}
+                            onChange={(e) => setProfileForm({ ...profileForm, content_notice_message: e.target.value })}
+                            style={{ fontSize: '0.88rem', resize: 'vertical' }}
+                          />
+                          <p style={{ fontSize: '0.75rem', color: '#64748B', margin: '0.25rem 0 0 0', fontWeight: 600 }}>Biarkan kosong untuk menggunakan pesan default.</p>
+                        </div>
+
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.25rem' }}>
+                          <button
+                            type="button"
+                            onClick={handleSaveContentNoticeText}
+                            style={{
+                              padding: '0.5rem 1.1rem',
+                              fontSize: '0.82rem',
+                              fontWeight: 800,
+                              borderRadius: '8px',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '0.4rem',
+                              background: '#005BAB',
+                              color: '#FFFFFF',
+                              border: '2px solid #005BAB',
+                              cursor: 'pointer',
+                              boxShadow: '0 2px 6px rgba(0, 91, 171, 0.2)',
+                              transition: 'all 0.2s ease'
+                            }}
+                          >
+                            <Save size={15} />
+                            <span>Simpan Pesan Pemberitahuan</span>
+                          </button>
+                        </div>
+                      </div>
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '0.75rem', borderTop: '1.5px solid rgba(0,91,171,0.15)' }}>

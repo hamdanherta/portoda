@@ -55,6 +55,8 @@ function AppContent({ karyaId, docId }) {
   // Content notice: muncul setiap buka/refresh jika diaktifkan
   const [isContentNoticeEnabled, setIsContentNoticeEnabled] = useState(false);
   const [isContentNoticeOpen, setIsContentNoticeOpen] = useState(false);
+  const [contentNoticeTitle, setContentNoticeTitle] = useState('');
+  const [contentNoticeMessage, setContentNoticeMessage] = useState('');
 
   useEffect(() => {
     const handleAuthChange = () => {
@@ -80,6 +82,8 @@ function AppContent({ karyaId, docId }) {
         // Content notice: jika diaktifkan, tampilkan setiap buka/refresh
         const activeNotice = p?.content_notice_enabled !== false && p?.content_notice_enabled !== 0 && p?.content_notice_enabled !== '0';
         setIsContentNoticeEnabled(activeNotice);
+        setContentNoticeTitle(p?.content_notice_title || '');
+        setContentNoticeMessage(p?.content_notice_message || '');
         if (activeNotice) {
           setIsContentNoticeOpen(true);
         }
@@ -465,6 +469,8 @@ function AppContent({ karyaId, docId }) {
       <ContentNoticeModal
         isOpen={isContentNoticeOpen && !isMaintenanceMode && !isAdminAuthenticated && !isAdminOpen}
         onClose={() => setIsContentNoticeOpen(false)}
+        noticeTitle={contentNoticeTitle}
+        noticeMessage={contentNoticeMessage}
       />
 
       <div style={{ position: 'relative', zIndex: 5 }}>

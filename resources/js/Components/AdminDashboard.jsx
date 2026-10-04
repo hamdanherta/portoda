@@ -641,7 +641,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
       return;
     }
 
-    const finalPersona = overridePersona || docForm.persona || 'both';
+    const finalPersona = overridePersona || docForm.persona || 'mgd';
 
     startProcessing(editingDocId ? 'Menyimpan perubahan dokumen...' : 'Mengunggah & menyimpan dokumen ke server...', 10);
 
@@ -655,7 +655,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
       setDocuments(updatedList);
       const successMsg = editingDocId ? 'Dokumen berhasil diperbarui!' : 'Dokumen baru berhasil ditambahkan!';
       setEditingDocId(null);
-      setDocForm({ title: '', type: '', category: 'CV ATS', persona: 'both', description: '', fileUrl: '', fileName: '', rawFile: null });
+      setDocForm({ title: '', type: '', category: 'CV ATS', persona: 'mgd', description: '', fileUrl: '', fileName: '', rawFile: null });
       finishProcessingSuccess(successMsg);
     } catch (err) {
       console.error('Error saving document:', err);
@@ -3774,7 +3774,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                       <span>Bagian Dokumen Graphic Designer</span>
                     </h3>
                     <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#0369A1', background: '#F0F9FF', padding: '0.25rem 0.75rem', borderRadius: '999px', border: '1.5px solid #0369A1' }}>
-                      {documents.filter(d => (d.persona || 'mgd') === 'mgd' || d.persona === 'both').length} Dokumen
+                      {documents.filter(d => (d.persona || 'mgd') === 'mgd').length} Dokumen
                     </span>
                   </div>
 
@@ -3884,9 +3884,9 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                   <div>
                     <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#005BAB', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                       <FileText size={16} />
-                      <span>Daftar Dokumen Graphic Designer ({documents.filter(d => (d.persona || 'mgd') === 'mgd' || d.persona === 'both').length} Dokumen)</span>
+                      <span>Daftar Dokumen Graphic Designer ({documents.filter(d => (d.persona || 'mgd') === 'mgd').length} Dokumen)</span>
                     </h4>
-                    {documents.filter(d => (d.persona || 'mgd') === 'mgd' || d.persona === 'both').length === 0 ? (
+                    {documents.filter(d => (d.persona || 'mgd') === 'mgd').length === 0 ? (
                       <EmptyStateCard
                         icon={FileText}
                         title="Belum Ada Dokumen Graphic Designer"
@@ -3895,7 +3895,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                     ) : (
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
                         {documents
-                          .filter(d => (d.persona || 'mgd') === 'mgd' || d.persona === 'both')
+                          .filter(d => (d.persona || 'mgd') === 'mgd')
                           .filter(d => {
                             if (!adminSearchQuery.trim()) return true;
                             const q = adminSearchQuery.toLowerCase().trim();

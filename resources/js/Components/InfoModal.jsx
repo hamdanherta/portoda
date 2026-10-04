@@ -259,10 +259,9 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
   const isMgd = persona === 'mgd';
 
   // Filter dokumen berdasarkan persona aktif
-  // 'mgd' = hanya Graphic Designer, 'dpd' = hanya DPD, 'both'/null = tampil semua
+  // 'mgd' = Graphic Designer, 'dpd' = Digital Product Designer
   const filteredDocuments = documentsList.filter(doc => {
-    const docPersona = doc.persona || 'both';
-    if (docPersona === 'both') return true;
+    const docPersona = doc.persona || 'mgd';
     return docPersona === persona;
   });
   const currentTagline = isMgd
@@ -488,7 +487,7 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                 <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>{t('doc_title')}</h2>
                 <p style={{ fontSize: '0.88rem', color: '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
                   {isMgd
-                    ? (lang === 'en' ? 'Resumes, CVs & Portfolio PDF for Graphic Designer Role' : 'Berkas CV, Portofolio & Dokumen untuk Lamaran Desainer Grafis')
+                    ? (lang === 'en' ? 'Resumes, CVs & Portfolio PDF for Graphic Designer Role' : 'Berkas CV, Portofolio & Dokumen untuk Lamaran Graphic Designer')
                     : (lang === 'en' ? 'Resumes, CVs & Portfolio PDF for Digital Product Designer Role' : 'Berkas CV, Portofolio & Dokumen untuk Lamaran Digital Product Designer')
                   }
                 </p>

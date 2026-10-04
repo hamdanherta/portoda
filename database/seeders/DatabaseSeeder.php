@@ -295,51 +295,51 @@ class DatabaseSeeder extends Seeder
         $documents = [
             [
                 'id' => 'doc-1',
-                'title' => 'CV ATS Hamdani',
-                'title_en' => 'Hamdani ATS Resume',
+                'title' => 'CV ATS Graphic Designer',
+                'title_en' => 'Hamdani Graphic Designer ATS Resume',
                 'type' => 'Curriculum Vitae (ATS Friendly)',
                 'type_en' => 'Curriculum Vitae (ATS Friendly)',
-                'description' => 'Format standar resmi berstandar Sistem ATS yang mudah dibaca oleh HRD perusahaan.',
-                'description_en' => 'Official ATS-standard resume format optimized for corporate HR scanners.',
+                'description' => 'Format standar resmi berstandar Sistem ATS khusus persona Graphic Designer.',
+                'description_en' => 'Official ATS-standard resume format optimized for Graphic Designer role.',
                 'file_url' => '/documents/CV_ATS_Hamdani.pdf',
-                'file_name' => 'CV_ATS_Hamdani.pdf',
-                'persona' => 'both'
+                'file_name' => 'CV_ATS_Graphic_Designer.pdf',
+                'persona' => 'mgd'
             ],
             [
                 'id' => 'doc-2',
-                'title' => 'CV Kreatif Hamdani',
-                'title_en' => 'Hamdani Creative CV',
+                'title' => 'CV Visual Graphic Designer',
+                'title_en' => 'Hamdani Graphic Designer Visual CV',
                 'type' => 'Visual Creative CV',
                 'type_en' => 'Visual Creative CV',
-                'description' => 'Desain kurikulum vitae visual modern yang menonjolkan estetika dan keahlian desain.',
-                'description_en' => 'Modern visual creative CV highlighting design aesthetics and portfolio skills.',
+                'description' => 'Desain kurikulum vitae visual modern yang menonjolkan estetika identitas brand desainer grafis.',
+                'description_en' => 'Modern visual creative CV highlighting graphic design aesthetics and brand identity skills.',
                 'file_url' => '/documents/CV_Kreatif_Hamdani.pdf',
-                'file_name' => 'CV_Kreatif_Hamdani.pdf',
-                'persona' => 'both'
+                'file_name' => 'CV_Visual_Graphic_Designer.pdf',
+                'persona' => 'mgd'
             ],
             [
                 'id' => 'doc-3',
-                'title' => 'Portofolio PDF Hamdani',
-                'title_en' => 'Hamdani PDF Portfolio',
-                'type' => 'Dokumen Showcase Karya PDF',
-                'type_en' => 'PDF Work Showcase Document',
-                'description' => 'Kumpulan dokumentasi karya pilihan Desain Grafis, Multimedia, dan Aplikasi dalam format PDF.',
-                'description_en' => 'Selected portfolio documentation covering Graphic Design, Multimedia, and Apps in PDF.',
+                'title' => 'CV ATS Digital Product Designer',
+                'title_en' => 'Hamdani Product Designer ATS Resume',
+                'type' => 'Curriculum Vitae UI/UX & Product',
+                'type_en' => 'Curriculum Vitae UI/UX & Product Design',
+                'description' => 'Format standar resmi ATS khusus persona Digital Product Designer & UI/UX Specialist.',
+                'description_en' => 'Official ATS-standard resume optimized for Digital Product Designer & UI/UX Specialist.',
                 'file_url' => '/documents/Portofolio_Hamdani.pdf',
-                'file_name' => 'Portofolio_Hamdani.pdf',
-                'persona' => 'both'
+                'file_name' => 'CV_ATS_Product_Designer.pdf',
+                'persona' => 'dpd'
             ],
             [
                 'id' => 'doc-4',
-                'title' => 'Transkrip Nilai & Sertifikasi',
-                'title_en' => 'Academic Transcripts & Certificates',
-                'type' => 'Berkas Akademik & Sertifikat',
-                'type_en' => 'Academic Records & Credentials',
-                'description' => 'Salinan resmi transkrip nilai akademik beserta sertifikat kompetensi keahlian.',
-                'description_en' => 'Official copy of academic transcripts and professional skill competency certificates.',
+                'title' => 'Portofolio PDF UI/UX & App Design',
+                'title_en' => 'Hamdani UI/UX & Product PDF Portfolio',
+                'type' => 'Dokumen Showcase Karya UI/UX',
+                'type_en' => 'UI/UX Work Showcase Document',
+                'description' => 'Kumpulan dokumentasi karya pilihan Digital Product Design, UI/UX Research, dan Aplikasi.',
+                'description_en' => 'Selected portfolio documentation covering Digital Product Design, UI/UX Research, and Apps.',
                 'file_url' => '/documents/Transkrip_Nilai_Hamdani.pdf',
-                'file_name' => 'Transkrip_Nilai_Hamdani.pdf',
-                'persona' => 'both'
+                'file_name' => 'Portofolio_Product_Designer.pdf',
+                'persona' => 'dpd'
             ]
         ];
 

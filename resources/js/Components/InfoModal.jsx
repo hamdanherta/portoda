@@ -492,13 +492,13 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
         {/* --- DOKUMEN HAMDANI --- */}
         {activeType === 'dokumen' && (
           <div>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', borderBottom: '2.5px solid #005BAB', paddingBottom: '1rem', paddingRight: '3.6rem' }}>
-              <div style={{ padding: '0.6rem', borderRadius: '14px', background: '#005BAB', color: '#FFFFFF', border: '2px solid #005BAB', flexShrink: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', borderBottom: isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #005BAB', paddingBottom: '1rem', paddingRight: '3.6rem' }}>
+              <div style={{ padding: '0.6rem', borderRadius: '14px', background: isMgd ? '#FFF3DD' : '#005BAB', color: isMgd ? '#005BAB' : '#FFFFFF', border: isMgd ? '2px solid #FFF3DD' : '2px solid #005BAB', flexShrink: 0 }}>
                 <FileText size={28} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>{t('doc_title')}</h2>
-                <p style={{ fontSize: '0.88rem', color: '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: modalColor, lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>{t('doc_title')}</h2>
+                <p style={{ fontSize: '0.88rem', color: isMgd ? '#FFF3DD' : '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
                   {isMgd
                     ? (lang === 'en' ? 'Resumes, CVs & Portfolio PDF for Graphic Designer Role' : 'Berkas CV, Portofolio & Dokumen untuk Lamaran Graphic Designer')
                     : isMs
@@ -599,13 +599,13 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
         {/* --- PROFIL HAMDANI --- */}
         {activeType === 'profil' && (
           <div>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', borderBottom: '2.5px solid #005BAB', paddingBottom: '1rem', paddingRight: '3.6rem' }}>
-              <div style={{ padding: '0.6rem', borderRadius: '14px', background: '#005BAB', color: '#FFFFFF', border: '2px solid #005BAB', flexShrink: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', borderBottom: isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #005BAB', paddingBottom: '1rem', paddingRight: '3.6rem' }}>
+              <div style={{ padding: '0.6rem', borderRadius: '14px', background: isMgd ? '#FFF3DD' : '#005BAB', color: isMgd ? '#005BAB' : '#FFFFFF', border: isMgd ? '2px solid #FFF3DD' : '2px solid #005BAB', flexShrink: 0 }}>
                 <User size={28} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>{t('profile_title')} — {profileData.name || 'Hamdani'}</h2>
-                <p style={{ fontSize: '0.88rem', color: '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: modalColor, lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>{t('profile_title')} — {profileData.name || 'Hamdani'}</h2>
+                <p style={{ fontSize: '0.88rem', color: isMgd ? '#FFF3DD' : '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
                   {currentTagline}
                 </p>
               </div>
@@ -752,13 +752,13 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
         {/* --- PENGALAMAN KERJA --- */}
         {activeType === 'pengalaman' && (
           <div>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', borderBottom: '2.5px solid #005BAB', paddingBottom: '1rem', paddingRight: '3.6rem' }}>
-              <div style={{ padding: '0.6rem', borderRadius: '14px', background: '#005BAB', color: '#FFFFFF', border: '2px solid #005BAB', flexShrink: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', borderBottom: isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #005BAB', paddingBottom: '1rem', paddingRight: '3.6rem' }}>
+              <div style={{ padding: '0.6rem', borderRadius: '14px', background: isMgd ? '#FFF3DD' : '#005BAB', color: isMgd ? '#005BAB' : '#FFFFFF', border: isMgd ? '2px solid #FFF3DD' : '2px solid #005BAB', flexShrink: 0 }}>
                 <Briefcase size={28} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>{t('exp_title')}</h2>
-                <p style={{ fontSize: '0.88rem', color: '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: modalColor, lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>{t('exp_title')}</h2>
+                <p style={{ fontSize: '0.88rem', color: isMgd ? '#FFF3DD' : '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
                   {lang === 'en' ? 'Professional Track Record & Creative Career' : 'Rekam Jejak Profesional & Karir Kreatif'}
                 </p>
               </div>
@@ -844,13 +844,13 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
         {/* --- KONTAK --- */}
         {activeType === 'kontak' && (
           <div>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', borderBottom: '2.5px solid #005BAB', paddingBottom: '1rem', paddingRight: '3.6rem' }}>
-              <div style={{ padding: '0.6rem', borderRadius: '14px', background: '#005BAB', color: '#FFFFFF', border: '2px solid #005BAB', flexShrink: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', borderBottom: isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #005BAB', paddingBottom: '1rem', paddingRight: '3.6rem' }}>
+              <div style={{ padding: '0.6rem', borderRadius: '14px', background: isMgd ? '#FFF3DD' : '#005BAB', color: isMgd ? '#005BAB' : '#FFFFFF', border: isMgd ? '2px solid #FFF3DD' : '2px solid #005BAB', flexShrink: 0 }}>
                 <Mail size={28} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>{t('contact_title')}</h2>
-                <p style={{ fontSize: '0.88rem', color: '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: modalColor, lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>{t('contact_title')}</h2>
+                <p style={{ fontSize: '0.88rem', color: isMgd ? '#FFF3DD' : '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
                   {t('contact_sub')}
                 </p>
               </div>
@@ -947,13 +947,13 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
         {/* --- SERTIFIKAT --- */}
         {activeType === 'sertifikat' && (
           <div>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', borderBottom: '2.5px solid #005BAB', paddingBottom: '1rem', paddingRight: '3.6rem' }}>
-              <div style={{ padding: '0.6rem', borderRadius: '14px', background: '#005BAB', color: '#FFFFFF', border: '2px solid #005BAB', flexShrink: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', borderBottom: isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #005BAB', paddingBottom: '1rem', paddingRight: '3.6rem' }}>
+              <div style={{ padding: '0.6rem', borderRadius: '14px', background: isMgd ? '#FFF3DD' : '#005BAB', color: isMgd ? '#005BAB' : '#FFFFFF', border: isMgd ? '2px solid #FFF3DD' : '2px solid #005BAB', flexShrink: 0 }}>
                 <Award size={28} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>Sertifikat & Penghargaan</h2>
-                <p style={{ fontSize: '0.88rem', color: '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: modalColor, lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>Sertifikat & Penghargaan</h2>
+                <p style={{ fontSize: '0.88rem', color: isMgd ? '#FFF3DD' : '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
                   Daftar sertifikat keahlian, penghargaan visual, dan lisensi pelatihan resmi Hamdani.
                 </p>
               </div>
@@ -1099,7 +1099,11 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
 
         {/* Modal Footer Button */}
         <div style={{ marginTop: '1.75rem', paddingTop: '1rem', borderTop: isMgd ? '2px solid #FFF3DD' : '2px solid #005BAB', display: 'flex', justifyContent: 'flex-end' }}>
-          <button onClick={onClose} className="btn-primary">
+          <button
+            onClick={onClose}
+            className="btn-primary"
+            style={isMgd ? { background: '#FFF3DD', color: '#005BAB', border: '2px solid #FFF3DD' } : {}}
+          >
             <span>{t('detail_close')}</span>
           </button>
         </div>

@@ -10,6 +10,7 @@ use App\Models\Certificate;
 use App\Models\Profile;
 use App\Models\PortfolioItem;
 use App\Models\Client;
+use App\Models\SoftwareSkill;
 use Illuminate\Http\Request;
 use Database\Seeders\DatabaseSeeder;
 
@@ -253,6 +254,49 @@ class InfoController extends Controller
         return response()->json(Client::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
     }
 
+    // --- SOFTWARE SKILLS ---
+    public function getSoftwareSkills()
+    {
+        return response()->json(SoftwareSkill::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
+    }
+
+    public function saveSoftwareSkill(Request $request)
+    {
+        $data = $request->all();
+        if (!empty($data['id'])) {
+            $skill = SoftwareSkill::find($data['id']);
+            if ($skill) {
+                $skill->update($data);
+                return response()->json(SoftwareSkill::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
+            }
+        }
+
+        $data['id'] = $data['id'] ?? 'sskill-' . time();
+        SoftwareSkill::create($data);
+        return response()->json(SoftwareSkill::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
+    }
+
+    public function deleteSoftwareSkill($id)
+    {
+        $skill = SoftwareSkill::find($id);
+        if ($skill) {
+            $skill->delete();
+        }
+        return response()->json(SoftwareSkill::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
+    }
+
+    public function reorderSoftwareSkills(Request $request)
+    {
+        $items = $request->input('items', []);
+        foreach ($items as $index => $item) {
+            $id = is_array($item) ? ($item['id'] ?? null) : $item;
+            if ($id) {
+                SoftwareSkill::where('id', $id)->update(['sort_order' => $index]);
+            }
+        }
+        return response()->json(SoftwareSkill::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get());
+    }
+
     // RESET ALL INFO & DATA
     public function resetAllInfo()
     {
@@ -263,6 +307,7 @@ class InfoController extends Controller
         Profile::truncate();
         PortfolioItem::truncate();
         Client::truncate();
+        SoftwareSkill::truncate();
 
         return response()->json(['success' => true]);
     }

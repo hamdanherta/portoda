@@ -251,20 +251,26 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
   const [clientPage, setClientPage] = useState(1);
   const [clientFileKey, setClientFileKey] = useState(0);
 
+  // --- KEAHLIAN PERANGKAT LUNAK (SOFTWARE SKILLS) STATE ---
+  const [softwareSkills, setSoftwareSkills] = useState([]);
+  const [softwareSkillImage, setSoftwareSkillImage] = useState('');
+  const [softwareSkillFileKey, setSoftwareSkillFileKey] = useState(0);
+
   // --- ANALYTICS STATE ---
   const [analyticsData, setAnalyticsData] = useState(null);
   const [analyticsPeriod, setAnalyticsPeriod] = useState('daily'); // 'daily' | 'monthly'
 
   // Load Info Data when authenticated
   const loadInfoData = async () => {
-    const [exps, docs, cnts, certs, p, clts, stats] = await Promise.all([
+    const [exps, docs, cnts, certs, p, clts, stats, sskills] = await Promise.all([
       infoService.getExperiences(),
       infoService.getDocuments(),
       infoService.getContacts(),
       infoService.getCertificates(),
       infoService.getProfile(),
       infoService.getClients(),
-      infoService.getAnalyticsStats()
+      infoService.getAnalyticsStats(),
+      infoService.getSoftwareSkills()
     ]);
     setExperiences(exps || []);
     setDocuments(docs || []);
@@ -274,6 +280,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
     setProfileForm(p || {});
     setClients(clts || []);
     setAnalyticsData(stats || null);
+    setSoftwareSkills(sskills || []);
   };
 
 
@@ -1027,13 +1034,73 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
       setClients(updatedList || []);
       setEditingClientId(null);
       setClientForm({ name: '', logo: '' });
-      setClientFileKey(prev => prev + 1);
       finishProcessingSuccess(editingClientId ? 'Data Klien berhasil diperbarui!' : 'Klien Baru berhasil ditambahkan!');
     } catch (err) {
       finishProcessingError('Gagal menyimpan data klien. Silakan coba lagi.');
       console.error(err);
     }
   };
+
+  const handleSoftwareSkillImageChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    startProcessing('Mengompresi Gambar Perangkat Lunak (Rasio 1:1)...');
+
+    try {
+      const webpDataUrl = await compressImageToWebP(file, 0.88, 600);
+      setSoftwareSkillImage(webpDataUrl);
+      finishProcessingSuccess('Gambar perangkat lunak berhasil dikompresi!');
+    } catch (err) {
+      finishProcessingError('Gagal mengompres gambar. Pastikan berkas berupa file foto/gambar valid.');
+      console.error(err);
+    }
+  };
+
+  const handleSubmitSoftwareSkill = async (e) => {
+    e.preventDefault();
+    if (!softwareSkillImage) {
+      finishProcessingError('Mohon pilih berkas gambar keahlian perangkat lunak!');
+      return;
+    }
+
+    startProcessing('Menambahkan Keahlian Perangkat Lunak...');
+
+    try {
+      const updatedList = await infoService.saveSoftwareSkill({ image: softwareSkillImage }, (pct) => {
+        setProcessingProgress(pct);
+      });
+
+      setSoftwareSkills(updatedList || []);
+      setSoftwareSkillImage('');
+      setSoftwareSkillFileKey(prev => prev + 1);
+      finishProcessingSuccess('Keahlian perangkat lunak baru berhasil ditambahkan!');
+    } catch (err) {
+      finishProcessingError('Gagal menyimpan keahlian perangkat lunak. Silakan coba lagi.');
+      console.error(err);
+    }
+  };
+
+  const handleReorderSoftwareSkill = async (index, direction) => {
+    if (direction === 'up' && index === 0) return;
+    if (direction === 'down' && index === softwareSkills.length - 1) return;
+
+    const newSkills = [...softwareSkills];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    const temp = newSkills[index];
+    newSkills[index] = newSkills[targetIndex];
+    newSkills[targetIndex] = temp;
+
+    setSoftwareSkills(newSkills);
+
+    try {
+      const updated = await infoService.reorderSoftwareSkills(newSkills);
+      setSoftwareSkills(updated || newSkills);
+    } catch (err) {
+      console.error('Failed to reorder software skills:', err);
+    }
+  };
+
 
   const handleReorderClient = async (index, direction) => {
     if (direction === 'up' && index === 0) return;
@@ -1133,6 +1200,9 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
       } else if (target.targetType === 'client') {
         const updated = await infoService.deleteClient(target.id);
         setClients(updated);
+      } else if (target.targetType === 'software_skill') {
+        const updated = await infoService.deleteSoftwareSkill(target.id);
+        setSoftwareSkills(updated);
       } else if (target.targetType === 'skill') {
         const currentSkills = Array.isArray(profileForm.skills) ? [...profileForm.skills] : [];
         const updatedSkills = currentSkills.filter(s => s.id !== target.id);
@@ -2657,14 +2727,15 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                         <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginTop: '0.35rem' }}>
                           {[
                             { value: 'mgd', label: 'MGD — Graphic Designer', color: '#005BAB', bg: '#005BAB', textColor: '#FFFFFF' },
+                            { value: 'ms', label: 'MS — Multimedia Specialist', color: '#005BAB', bg: '#005BAB', textColor: '#FFFFFF' },
                             { value: 'dpd', label: 'DPD — Digital Product Designer', color: '#005BAB', bg: '#FFF3DD', textColor: '#005BAB' }
                           ].map(opt => (
                             <button
                               key={opt.value}
                               type="button"
                               onClick={() => {
-                                const defaultCat = opt.value === 'mgd' ? 'desain-grafis' : 'aplikasi';
-                                const defaultSub = opt.value === 'mgd' ? 'Desain Logo' : 'UI/UX';
+                                const defaultCat = opt.value === 'mgd' ? 'desain-grafis' : opt.value === 'ms' ? 'multimedia' : 'aplikasi';
+                                const defaultSub = opt.value === 'mgd' ? 'Desain Logo' : opt.value === 'ms' ? 'Fotografi' : 'UI/UX';
                                 setFormData({
                                   ...formData,
                                   persona: opt.value,
@@ -2711,10 +2782,9 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                           className="form-select"
                         >
                           {formData.persona === 'mgd' ? (
-                            <>
-                              <option value="desain-grafis">Desain Grafis</option>
-                              <option value="multimedia">Multimedia</option>
-                            </>
+                            <option value="desain-grafis">Desain Grafis</option>
+                          ) : formData.persona === 'ms' ? (
+                            <option value="multimedia">Multimedia</option>
                           ) : (
                             <option value="aplikasi">Aplikasi</option>
                           )}
@@ -4058,6 +4128,228 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                   </div>
                 </div>
 
+                {/* BAGIAN 2: MULTIMEDIA SPECIALIST */}
+                <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF', borderRadius: '24px', border: '2.5px solid #005BAB' }}>
+                  <div style={{ paddingBottom: '1rem', marginBottom: '1.25rem', borderBottom: '2px dashed #005BAB', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
+                    <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#005BAB', display: 'flex', alignItems: 'center', gap: '0.6rem', margin: 0 }}>
+                      <Video size={20} />
+                      <span>Bagian Dokumen Multimedia Specialist</span>
+                    </h3>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#005BAB', background: '#FFFFFF', padding: '0.25rem 0.75rem', borderRadius: '999px', border: '1.5px solid #005BAB' }}>
+                      {documents.filter(d => d.persona === 'ms').length} Dokumen
+                    </span>
+                  </div>
+
+                  {/* FORM UPLOAD MS */}
+                  <div style={{ background: '#F0FDF4', padding: '1.25rem', borderRadius: '16px', border: '2px solid #BBF7D0', marginBottom: '1.5rem' }}>
+                    <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#005BAB', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      {editingDocId && docForm.persona === 'ms' ? <Edit size={16} /> : <Plus size={16} />}
+                      <span>{editingDocId && docForm.persona === 'ms' ? `Edit Dokumen Multimedia Specialist: "${docForm.title}"` : 'Form Unggah Dokumen Multimedia Specialist'}</span>
+                    </h4>
+
+                    <form onSubmit={(e) => {
+                      handleSubmitDocument(e, 'ms');
+                    }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+                        <div className="form-group">
+                          <label>Judul Dokumen *</label>
+                          <input
+                            type="text"
+                            required
+                            placeholder="contoh: CV ATS Multimedia Specialist"
+                            value={docForm.persona === 'ms' ? docForm.title : ''}
+                            onChange={(e) => setDocForm({ ...docForm, persona: 'ms', title: e.target.value })}
+                            className="form-input"
+                          />
+                        </div>
+
+                        <div className="form-group">
+                          <label>Tipe / Sub-Judul Dokumen *</label>
+                          <input
+                            type="text"
+                            required
+                            placeholder="contoh: Curriculum Vitae (Videography & Motion)"
+                            value={docForm.persona === 'ms' ? docForm.type : ''}
+                            onChange={(e) => setDocForm({ ...docForm, persona: 'ms', type: e.target.value })}
+                            className="form-input"
+                          />
+                        </div>
+
+                        <div className="form-group">
+                          <label>Kategori Dokumen *</label>
+                          <select
+                            value={docForm.persona === 'ms' ? (docForm.category || 'CV ATS') : 'CV ATS'}
+                            onChange={(e) => setDocForm({ ...docForm, persona: 'ms', category: e.target.value })}
+                            className="form-select"
+                            style={{ fontWeight: 800 }}
+                          >
+                            <option value="CV ATS">CV ATS</option>
+                            <option value="CV Kreatif">CV Kreatif</option>
+                            <option value="Portofolio">Portofolio</option>
+                          </select>
+                        </div>
+
+                        <div className="form-group">
+                          <label>Nama Berkas File *</label>
+                          <input
+                            type="text"
+                            placeholder="CV_ATS_Multimedia_Specialist.pdf"
+                            value={docForm.persona === 'ms' ? docForm.fileName : ''}
+                            onChange={(e) => setDocForm({ ...docForm, persona: 'ms', fileName: e.target.value })}
+                            className="form-input"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="form-group" style={{ marginTop: '0.75rem' }}>
+                        <label>Unggah Berkas PDF / Document Baru</label>
+                        <input
+                          type="file"
+                          onChange={handleDocFileUpload}
+                          className="form-input"
+                          style={{ padding: '0.4rem' }}
+                        />
+                        {docForm.fileUrl && docForm.persona === 'ms' && (
+                          <p style={{ fontSize: '0.78rem', color: '#005BAB', marginTop: '0.3rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                            <CheckCircle2 size={14} />
+                            <span>File Siap: {docForm.fileName || 'File Terlampir'}</span>
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="form-group">
+                        <label>Deskripsi Singkat Dokumen</label>
+                        <textarea
+                          placeholder="Deskripsi singkat dokumen untuk persona Multimedia Specialist..."
+                          value={docForm.persona === 'ms' ? docForm.description : ''}
+                          onChange={(e) => setDocForm({ ...docForm, persona: 'ms', description: e.target.value })}
+                          className="form-textarea"
+                          rows={2}
+                        />
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
+                        <button type="submit" className="btn-primary" style={{ padding: '0.55rem 1.25rem', fontSize: '0.88rem', background: '#005BAB' }}>
+                          <Plus size={16} />
+                          <span>{editingDocId && docForm.persona === 'ms' ? 'Simpan Perubahan Dokumen' : 'Unggah Dokumen Multimedia Specialist'}</span>
+                        </button>
+                        {editingDocId && docForm.persona === 'ms' && (
+                          <button type="button" onClick={() => { setEditingDocId(null); setDocForm({ title: '', type: '', category: 'CV ATS', persona: 'ms', description: '', fileUrl: '', fileName: '' }); }} className="btn-secondary" style={{ padding: '0.55rem 1.25rem', fontSize: '0.88rem' }}>
+                            Batal
+                          </button>
+                        )}
+                      </div>
+                    </form>
+                  </div>
+
+                  {/* LIST CARD DOKUMEN MS */}
+                  <div>
+                    <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#005BAB', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <FileText size={16} />
+                      <span>Daftar Dokumen Multimedia Specialist ({documents.filter(d => d.persona === 'ms').length} Dokumen)</span>
+                    </h4>
+                    {documents.filter(d => d.persona === 'ms').length === 0 ? (
+                      <EmptyStateCard
+                        icon={FileText}
+                        title="Belum Ada Dokumen Multimedia Specialist"
+                        description="Silakan unggah dokumen PDF untuk Multimedia Specialist pada form di atas."
+                      />
+                    ) : (
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+                        {documents
+                          .filter(d => d.persona === 'ms')
+                          .filter(d => {
+                            if (!adminSearchQuery.trim()) return true;
+                            const q = adminSearchQuery.toLowerCase().trim();
+                            return (d.title && d.title.toLowerCase().includes(q)) || (d.type && d.type.toLowerCase().includes(q));
+                          })
+                          .map(doc => (
+                            <div
+                              key={doc.id}
+                              className="herta-card"
+                              style={{
+                                padding: '1.15rem',
+                                background: '#FFFFFF',
+                                borderRadius: '18px',
+                                border: '2.5px solid #005BAB',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'space-between',
+                                position: 'relative'
+                              }}
+                            >
+                              <span style={{
+                                position: 'absolute',
+                                top: '0.85rem',
+                                right: '0.85rem',
+                                fontSize: '0.7rem',
+                                fontWeight: 800,
+                                background: (doc.category || 'CV ATS') === 'CV Kreatif' ? '#FEF3C7' : (doc.category || 'CV ATS') === 'Portofolio' ? '#D1FAE5' : '#EEF2FF',
+                                color: (doc.category || 'CV ATS') === 'CV Kreatif' ? '#D97706' : (doc.category || 'CV ATS') === 'Portofolio' ? '#059669' : '#4F46E5',
+                                border: `1.5px solid ${(doc.category || 'CV ATS') === 'CV Kreatif' ? '#D97706' : (doc.category || 'CV ATS') === 'Portofolio' ? '#059669' : '#4F46E5'}`,
+                                padding: '0.12rem 0.55rem',
+                                borderRadius: '999px',
+                                zIndex: 2
+                              }}>
+                                {doc.category || 'CV ATS'}
+                              </span>
+
+                              <div>
+                                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.65rem', marginBottom: '0.65rem', paddingRight: '5.5rem' }}>
+                                  <div style={{ padding: '0.5rem', borderRadius: '10px', background: '#F0FDF4', color: '#005BAB', border: '1.5px solid #005BAB', flexShrink: 0 }}>
+                                    <FileText size={22} />
+                                  </div>
+                                  <div style={{ flex: 1, minWidth: 0 }}>
+                                    <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.3, margin: 0 }}>{doc.title}</h4>
+                                    <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#005BAB', opacity: 0.85, display: 'block', marginTop: '0.15rem' }}>{doc.type}</span>
+                                  </div>
+                                </div>
+
+                                {doc.fileName && (
+                                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#005BAB', background: '#F0FDF4', padding: '0.3rem 0.65rem', borderRadius: '6px', border: '1px solid #BBF7D0', marginBottom: '0.65rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                                    <FileText size={12} />
+                                    <span>{doc.fileName}</span>
+                                  </div>
+                                )}
+                                {doc.description && (
+                                  <p style={{ fontSize: '0.82rem', color: '#005BAB', fontWeight: 600, lineHeight: 1.4, marginBottom: '0.85rem' }}>
+                                    {doc.description}
+                                  </p>
+                                )}
+                              </div>
+
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.65rem', borderTop: '1.5px solid #E2E8F0' }}>
+                                {(() => {
+                                  const realIdx = documents.findIndex(i => i.id === doc.id);
+                                  return (
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                                      <button type="button" disabled={realIdx <= 0} onClick={() => handleReorderEntity('documents', documents, realIdx, 'up')} className="btn-secondary" style={{ padding: '0.3rem 0.45rem', fontSize: '0.75rem', opacity: realIdx <= 0 ? 0.3 : 1 }}>
+                                        <ChevronUp size={14} />
+                                      </button>
+                                      <button type="button" disabled={realIdx >= documents.length - 1} onClick={() => handleReorderEntity('documents', documents, realIdx, 'down')} className="btn-secondary" style={{ padding: '0.3rem 0.45rem', fontSize: '0.75rem', opacity: realIdx >= documents.length - 1 ? 0.3 : 1 }}>
+                                        <ChevronDown size={14} />
+                                      </button>
+                                    </div>
+                                  );
+                                })()}
+                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                  <button onClick={() => { setEditingDocId(doc.id); setDocForm({ ...doc, category: doc.category || 'CV ATS', persona: 'ms' }); }} className="btn-secondary" style={{ padding: '0.35rem 0.75rem', fontSize: '0.78rem' }}>
+                                    <Edit size={13} />
+                                    <span>Edit</span>
+                                  </button>
+                                  <button onClick={() => setDeletingTarget({ id: doc.id, title: doc.title, label: 'Dokumen Multimedia Specialist', targetType: 'doc' })} className="btn-danger" style={{ padding: '0.35rem 0.75rem', fontSize: '0.78rem' }}>
+                                    <Trash2 size={13} />
+                                    <span>Hapus</span>
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
                 {/* BAGIAN 2: DIGITAL PRODUCT DESIGNER */}
                 <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF', borderRadius: '24px', border: '2.5px solid #005BAB' }}>
                   <div style={{ paddingBottom: '1rem', marginBottom: '1.25rem', borderBottom: '2px dashed #005BAB', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
@@ -5221,6 +5513,58 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                       </div>
                     </div>
 
+                    {/* MS — Multimedia Specialist Persona */}
+                    <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1.5px dashed #005BAB' }}>
+                      <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#005BAB', marginBottom: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ background: '#005BAB', color: '#FFFFFF', padding: '0.25rem 0.75rem', borderRadius: '999px', fontSize: '0.82rem' }}>MS</span>
+                        Multimedia Specialist — Tagline &amp; Bio Khusus
+                      </h4>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem' }}>
+                        <div className="form-group">
+                          <label>Tagline MS (Bahasa Indonesia)</label>
+                          <input
+                            type="text"
+                            placeholder="contoh: Spesialis Multimedia, Fotografi &amp; Videografi"
+                            value={profileForm.tagline_ms || ''}
+                            onChange={(e) => setProfileForm({ ...profileForm, tagline_ms: e.target.value })}
+                            className="form-input"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Tagline MS (English Version)</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Multimedia Specialist, Photography &amp; Videography"
+                            value={profileForm.tagline_ms_en || ''}
+                            onChange={(e) => setProfileForm({ ...profileForm, tagline_ms_en: e.target.value })}
+                            className="form-input"
+                          />
+                        </div>
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem', marginTop: '0.75rem' }}>
+                        <div className="form-group">
+                          <label>Bio MS (Bahasa Indonesia)</label>
+                          <textarea
+                            rows={4}
+                            placeholder="Bio singkat sebagai Multimedia Specialist dalam bahasa Indonesia..."
+                            value={profileForm.bio_ms || ''}
+                            onChange={(e) => setProfileForm({ ...profileForm, bio_ms: e.target.value })}
+                            className="form-textarea"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Bio MS (English Version)</label>
+                          <textarea
+                            rows={4}
+                            placeholder="Short bio as Multimedia Specialist in English..."
+                            value={profileForm.bio_ms_en || ''}
+                            onChange={(e) => setProfileForm({ ...profileForm, bio_ms_en: e.target.value })}
+                            className="form-textarea"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
                     {/* DPD — Digital Product Designer Persona */}
                     <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1.5px dashed #005BAB' }}>
                       <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#005BAB', marginBottom: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -5558,6 +5902,171 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                                   <span>Hapus</span>
                                 </button>
                               </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* CARD KELOLA DATA KEAHLIAN PERANGKAT LUNAK (SOFTWARE SKILLS 1:1) */}
+                <div className="herta-card" style={{ padding: '1.5rem', marginBottom: '2rem', background: '#FFFFFF', borderRadius: '24px', border: '2.5px solid #005BAB' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+                    <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#005BAB', display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0 }}>
+                      <Image size={20} />
+                      <span>Kelola Data Keahlian Perangkat Lunak (Software &amp; Tools 1:1)</span>
+                    </h3>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#005BAB', background: '#FFF3DD', padding: '0.25rem 0.75rem', borderRadius: '999px', border: '1.5px solid #005BAB' }}>
+                      {softwareSkills.length} Perangkat Lunak
+                    </span>
+                  </div>
+
+                  {/* FORM UNGGAH GAMBAR PERANGKAT LUNAK */}
+                  <form onSubmit={handleSubmitSoftwareSkill} style={{ background: '#FFF3DD', padding: '1.25rem', borderRadius: '16px', border: '2px solid #005BAB', marginBottom: '1.5rem' }}>
+                    <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#005BAB', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <Plus size={16} />
+                      <span>Tambah Perangkat Lunak Baru</span>
+                    </h4>
+
+                    <div className="form-group" style={{ marginBottom: '1rem' }}>
+                      <label style={{ fontSize: '0.88rem', fontWeight: 800, color: '#005BAB', marginBottom: '0.4rem', display: 'block' }}>
+                        Pilih Gambar Logo / Icon (Rasio 1:1) *
+                      </label>
+                      <input
+                        key={softwareSkillFileKey}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleSoftwareSkillImageChange}
+                        className="form-input"
+                        style={{ padding: '0.45rem', background: '#FFFFFF' }}
+                      />
+                    </div>
+
+                    {softwareSkillImage && (
+                      <div style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                        <div style={{
+                          position: 'relative',
+                          width: '72px',
+                          height: '72px',
+                          borderRadius: '16px',
+                          border: '2px solid #005BAB',
+                          background: '#FFFFFF',
+                          flexShrink: 0
+                        }}>
+                          <img src={softwareSkillImage} alt="Pratinjau 1:1" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '6px', borderRadius: '14px' }} />
+                          <button
+                            type="button"
+                            onClick={() => setSoftwareSkillImage('')}
+                            style={{
+                              position: 'absolute',
+                              top: '-8px',
+                              right: '-8px',
+                              background: '#EF4444',
+                              color: '#FFFFFF',
+                              border: '2px solid #FFFFFF',
+                              borderRadius: '999px',
+                              width: '24px',
+                              height: '24px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              cursor: 'pointer',
+                              boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
+                              zIndex: 5
+                            }}
+                            title="Hapus Pratinjau"
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                        <div>
+                          <p style={{ fontSize: '0.85rem', fontWeight: 800, color: '#005BAB', margin: 0 }}>Pratinjau Berkas Gambar (1:1)</p>
+                        </div>
+                      </div>
+                    )}
+
+                    <button type="submit" className="btn-primary" style={{ padding: '0.55rem 1.25rem', fontSize: '0.88rem' }}>
+                      <Plus size={16} />
+                      <span>Unggah &amp; Simpan Perangkat Lunak</span>
+                    </button>
+                  </form>
+
+                  {/* GRID LIST KEAHLIAN PERANGKAT LUNAK */}
+                  <div>
+                    <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#005BAB', marginBottom: '0.85rem' }}>
+                      Daftar Gambar Perangkat Lunak Tampil di Profil ({softwareSkills.length})
+                    </h4>
+
+                    {softwareSkills.length === 0 ? (
+                      <EmptyStateCard
+                        icon={Image}
+                        title="Belum Ada Perangkat Lunak Ditambahkan"
+                        description="Silakan unggah gambar logo/icon perangkat lunak (rasio 1:1) melalui form di atas."
+                      />
+                    ) : (
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: '1rem' }}>
+                        {softwareSkills.map((sk, idx) => (
+                          <div
+                            key={sk.id}
+                            style={{
+                              background: '#FFFFFF',
+                              border: '2px solid #005BAB',
+                              borderRadius: '16px',
+                              padding: '0.75rem',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                              gap: '0.65rem',
+                              position: 'relative'
+                            }}
+                          >
+                            <div style={{
+                              width: '64px',
+                              height: '64px',
+                              aspectRatio: '1 / 1',
+                              borderRadius: '12px',
+                              overflow: 'hidden',
+                              background: '#FFF3DD',
+                              border: '1.5px solid #005BAB',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              padding: '6px'
+                            }}>
+                              <img src={sk.image} alt={`Software Skill ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                            </div>
+
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                              <button
+                                type="button"
+                                disabled={idx === 0}
+                                onClick={() => handleReorderSoftwareSkill(idx, 'up')}
+                                className="btn-secondary"
+                                style={{ padding: '0.25rem 0.4rem', fontSize: '0.75rem', opacity: idx === 0 ? 0.3 : 1 }}
+                                title="Geser Kiri"
+                              >
+                                <ChevronLeft size={13} />
+                              </button>
+                              <button
+                                type="button"
+                                disabled={idx === softwareSkills.length - 1}
+                                onClick={() => handleReorderSoftwareSkill(idx, 'down')}
+                                className="btn-secondary"
+                                style={{ padding: '0.25rem 0.4rem', fontSize: '0.75rem', opacity: idx === softwareSkills.length - 1 ? 0.3 : 1 }}
+                                title="Geser Kanan"
+                              >
+                                <ChevronRight size={13} />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setDeletingTarget({ id: sk.id, title: `Keahlian Perangkat Lunak #${idx + 1}`, label: 'Perangkat Lunak', targetType: 'software_skill' })}
+                                className="btn-danger"
+                                style={{ padding: '0.25rem 0.4rem', fontSize: '0.75rem' }}
+                                title="Hapus"
+                              >
+                                <Trash2 size={13} />
+                              </button>
                             </div>
                           </div>
                         ))}

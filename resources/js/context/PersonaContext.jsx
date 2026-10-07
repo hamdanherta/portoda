@@ -8,14 +8,14 @@ export function PersonaProvider({ children }) {
   const [persona, setPersonaState] = useState(() => {
     try {
       const saved = localStorage.getItem(PERSONA_KEY);
-      return saved === 'dpd' ? 'dpd' : 'mgd';
+      return (saved === 'dpd' || saved === 'ms') ? saved : 'mgd';
     } catch (e) {
       return 'mgd';
     }
   });
 
   const setPersona = (newPersona) => {
-    const validPersona = newPersona === 'dpd' ? 'dpd' : 'mgd';
+    const validPersona = (newPersona === 'dpd' || newPersona === 'ms') ? newPersona : 'mgd';
     setPersonaState(validPersona);
     try {
       localStorage.setItem(PERSONA_KEY, validPersona);
@@ -25,7 +25,7 @@ export function PersonaProvider({ children }) {
   };
 
   const togglePersona = () => {
-    setPersona(persona === 'mgd' ? 'dpd' : 'mgd');
+    setPersona(persona === 'mgd' ? 'ms' : persona === 'ms' ? 'dpd' : 'mgd');
   };
 
   useEffect(() => {

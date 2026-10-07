@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Grid, Image, Video, Smartphone, Check, Search, X } from 'lucide-react';
+import { Check, Search, X, Layers } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { usePersona } from '../context/PersonaContext';
 
@@ -9,29 +9,29 @@ export default function CategoryFilter({ activeCategory, setActiveCategory, acti
 
   const isMgd = persona === 'mgd';
 
-  const allCategories = [
-    { id: 'all', label: t('cat_all'), icon: Grid },
-    { id: 'desain-grafis', label: t('cat_grafis'), icon: Image },
-    { id: 'multimedia', label: t('cat_multimedia'), icon: Video },
-    { id: 'aplikasi', label: t('cat_aplikasi'), icon: Smartphone }
-  ];
-
-  const categories = isMgd
-    ? allCategories.filter(c => c.id === 'all' || c.id === 'desain-grafis' || c.id === 'multimedia')
-    : allCategories.filter(c => c.id === 'aplikasi');
-
   useEffect(() => {
-    if (isMgd && activeCategory === 'aplikasi') {
-      setActiveCategory('all');
-      setActiveSubcategory('all');
-    } else if (!isMgd && activeCategory !== 'aplikasi') {
-      setActiveCategory('aplikasi');
+    let targetCat = 'desain-grafis';
+    if (persona === 'ms') {
+      targetCat = 'multimedia';
+    } else if (persona === 'dpd') {
+      targetCat = 'aplikasi';
+    }
+
+    if (activeCategory !== targetCat) {
+      setActiveCategory(targetCat);
       setActiveSubcategory('all');
     }
-  }, [persona, activeCategory, isMgd]);
+  }, [persona]);
+
+  const personaCategoryMap = {
+    mgd: 'desain-grafis',
+    ms: 'multimedia',
+    dpd: 'aplikasi'
+  };
+
+  const currentCategory = personaCategoryMap[persona] || 'desain-grafis';
 
   const subcategoryMap = {
-    'all': lang === 'en' ? ['All Subcategories'] : ['Semua'],
     'desain-grafis': lang === 'en' 
       ? ['All Subcategories', 'Logo Design', 'Poster', 'Banner', 'Packaging', 'Others'] 
       : ['Semua', 'Desain Logo', 'Poster', 'Banner', 'Kemasan', 'Lainnya'],
@@ -44,18 +44,13 @@ export default function CategoryFilter({ activeCategory, setActiveCategory, acti
   };
 
   const defaultSubAll = lang === 'en' ? 'All Subcategories' : 'Semua';
-  const availableSubcategories = subcategoryMap[activeCategory] || [defaultSubAll];
-
-  const handleMainCategoryChange = (catId) => {
-    setActiveCategory(catId);
-    setActiveSubcategory('all');
-  };
+  const availableSubcategories = subcategoryMap[currentCategory] || [defaultSubAll];
 
   return (
     <div className="container reveal-on-scroll" id="gallery-section" style={{ paddingBottom: '1.5rem', paddingTop: '1rem', position: 'relative', zIndex: 10 }}>
       {/* Search Input Bar */}
       <div style={{ position: 'relative', marginBottom: '1.5rem' }}>
-        <Search size={20} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: isMgd ? '#005BAB' : '#005BAB' }} />
+        <Search size={20} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#005BAB' }} />
         <input
           type="text"
           placeholder={t('filter_search_placeholder')}
@@ -100,72 +95,30 @@ export default function CategoryFilter({ activeCategory, setActiveCategory, acti
         )}
       </div>
 
-      {/* Main Category Header & Pills */}
+      {/* Main Section Heading */}
       <div style={{
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: '1rem',
-        marginBottom: '1.25rem',
+        gap: '0.85rem',
+        marginBottom: '1rem',
         textAlign: 'center'
       }}>
-        {/* Baris 1: Judul Galeri */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
           <h2 style={{ fontSize: '1.7rem', fontWeight: 800, color: isMgd ? '#FFF3DD' : '#005BAB', textAlign: 'center', letterSpacing: '-0.02em' }}>
             {t('filter_heading')}
           </h2>
         </div>
 
-        {/* Baris 2: Main Category Filter Buttons */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '0.65rem',
-          flexWrap: 'wrap'
-        }}>
-          {categories.map((cat) => {
-            const Icon = cat.icon;
-            const isActive = activeCategory === cat.id;
-            return (
-              <button
-                key={cat.id}
-                onClick={() => handleMainCategoryChange(cat.id)}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.4rem',
-                  padding: '0.5rem 1.1rem',
-                  borderRadius: '999px',
-                  fontSize: '0.9rem',
-                  fontWeight: 800,
-                  whiteSpace: 'nowrap',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  background: isActive ? '#005BAB' : (isMgd ? '#FFF3DD' : '#FFFFFF'),
-                  color: isActive ? '#FFFFFF' : '#005BAB',
-                  border: isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #005BAB',
-                  boxShadow: isActive ? '0 4px 14px rgba(0, 91, 171, 0.25)' : 'none'
-                }}
-              >
-                <Icon size={16} />
-                <span>{cat.label}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Sub-Category Pills */}
-      {availableSubcategories.length > 1 && (
+        {/* Directly Render Subcategory Pills for Active Persona */}
         <div style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           gap: '0.5rem',
           flexWrap: 'wrap',
-          marginTop: '0.75rem'
+          marginTop: '0.25rem'
         }}>
           {availableSubcategories.map((sub) => {
             const isSubAll = sub === 'Semua' || sub === 'All Subcategories';
@@ -177,25 +130,27 @@ export default function CategoryFilter({ activeCategory, setActiveCategory, acti
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '0.35rem',
-                  padding: '0.35rem 0.9rem',
+                  gap: '0.4rem',
+                  padding: '0.45rem 1.05rem',
                   borderRadius: '999px',
-                  fontSize: '0.82rem',
+                  fontSize: '0.88rem',
                   fontWeight: 800,
                   whiteSpace: 'nowrap',
                   color: isSubActive ? '#FFFFFF' : '#005BAB',
                   background: isSubActive ? '#005BAB' : (isMgd ? '#FFF3DD' : '#FFFFFF'),
                   border: isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #005BAB',
-                  transition: 'all 0.2s ease'
+                  boxShadow: isSubActive ? '0 4px 12px rgba(0, 91, 171, 0.25)' : 'none',
+                  transition: 'all 0.2s ease',
+                  cursor: 'pointer'
                 }}
               >
-                {isSubActive && <Check size={14} />}
+                {isSubActive && <Check size={15} />}
                 <span>{sub}</span>
               </button>
             );
           })}
         </div>
-      )}
+      </div>
     </div>
   );
 }

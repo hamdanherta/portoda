@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, User, Briefcase, Mail, MapPin, Palette, Video, Code, FileText, Download, MessageSquare, Award, ExternalLink, ChevronLeft, ChevronRight, Image as ImageIcon, Home, Calendar, Share2, Globe, Send, SearchX, Check, Loader2 } from 'lucide-react';
+import { X, User, Briefcase, Mail, MapPin, Palette, Video, Code, FileText, Download, MessageSquare, Award, ExternalLink, ChevronLeft, ChevronRight, Image as ImageIcon, Home, Calendar, Share2, Globe, Send, SearchX, Check, Loader2, Laptop } from 'lucide-react';
 import { infoService } from '../services/infoService';
 import { useLanguage } from '../context/LanguageContext';
 import { usePersona } from '../context/PersonaContext';
@@ -252,24 +252,32 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
   const [contactsList, setContactsList] = useState([]);
   const [profileData, setProfileData] = useState({});
   const [certificatesList, setCertificatesList] = useState([]);
+  const [softwareSkillsList, setSoftwareSkillsList] = useState([]);
   const [loading, setLoading] = useState(true);
   const { lang, t, getLocalizedField } = useLanguage();
   const { persona } = usePersona();
 
   const isMgd = persona === 'mgd';
+  const isMs  = persona === 'ms';
+  const isDpd = persona === 'dpd';
 
   // Filter dokumen berdasarkan persona aktif
-  // 'mgd' = Graphic Designer, 'dpd' = Digital Product Designer
   const filteredDocuments = documentsList.filter(doc => {
-    const docPersona = doc.persona || 'mgd';
-    return docPersona === persona;
+    const p = doc.persona || 'both';
+    if (p === 'both' || p === 'all' || !doc.persona) return true;
+    return p === persona;
   });
-  const currentTagline = isMgd
+
+  const currentTagline = persona === 'mgd'
     ? (lang === 'en' ? (profileData?.tagline_mgd_en || profileData?.tagline_mgd || profileData?.tagline_en || 'Graphic Designer') : (profileData?.tagline_mgd || profileData?.tagline || 'Graphic Designer'))
+    : persona === 'ms'
+    ? (lang === 'en' ? (profileData?.tagline_ms_en || profileData?.tagline_ms || profileData?.tagline_en || 'Multimedia Specialist') : (profileData?.tagline_ms || profileData?.tagline || 'Multimedia Specialist'))
     : (lang === 'en' ? (profileData?.tagline_dpd_en || profileData?.tagline_dpd || profileData?.tagline_en || 'Digital Product Designer') : (profileData?.tagline_dpd || profileData?.tagline || 'Digital Product Designer'));
 
-  const currentBio = isMgd
+  const currentBio = persona === 'mgd'
     ? (lang === 'en' ? (profileData?.bio_mgd_en || profileData?.bio_mgd || profileData?.bio_en || t('hero_bio')) : (profileData?.bio_mgd || profileData?.bio || t('hero_bio')))
+    : persona === 'ms'
+    ? (lang === 'en' ? (profileData?.bio_ms_en || profileData?.bio_ms || profileData?.bio_en || t('hero_bio')) : (profileData?.bio_ms || profileData?.bio || t('hero_bio')))
     : (lang === 'en' ? (profileData?.bio_dpd_en || profileData?.bio_dpd || profileData?.bio_en || t('hero_bio')) : (profileData?.bio_dpd || profileData?.bio || t('hero_bio')));
 
   useEffect(() => {
@@ -277,12 +285,13 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
     const loadAll = async () => {
       setLoading(true);
       try {
-        const [exps, docs, cnts, prof, certs] = await Promise.all([
+        const [exps, docs, cnts, prof, certs, sskills] = await Promise.all([
           infoService.getExperiences(),
           infoService.getDocuments(),
           infoService.getContacts(),
           infoService.getProfile(),
-          infoService.getCertificates()
+          infoService.getCertificates(),
+          infoService.getSoftwareSkills()
         ]);
         if (isMounted) {
           setExperiences(exps || []);
@@ -290,6 +299,7 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
           setContactsList(cnts || []);
           setProfileData(prof || {});
           setCertificatesList(certs || []);
+          setSoftwareSkillsList(sskills || []);
         }
       } catch (err) {
         console.error('Failed to load info modal data:', err);
@@ -349,39 +359,37 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
 
   const handleDownload = async (doc) => {
     const docTitle = getLocalizedField(doc, 'title');
-    const fileUrl = doc.file_url || doc.fileUrl || doc.file_path || doc.url || '';
+    const rawUrl = doc.file_url || doc.fileUrl || doc.file_path || doc.url || '';
     const fileName = doc.file_name || doc.fileName || `${docTitle || 'Dokumen'}.pdf`;
 
-    if (!fileUrl) {
+    if (!rawUrl) {
       alert(lang === 'en' ? 'Document file is not available.' : 'Berkas dokumen belum tersedia.');
       return;
     }
 
-    if (fileUrl.startsWith('data:')) {
-      try {
-        const res = await fetch(fileUrl);
-        const blob = await res.blob();
-        const blobUrl = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = blobUrl;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
-        return;
-      } catch (e) {
-        console.error('Failed to convert base64 data to blob:', e);
-      }
-    }
+    // Build absolute URL
+    const fileUrl = rawUrl.startsWith('http') ? rawUrl
+      : rawUrl.startsWith('/')
+        ? `${window.location.origin}${rawUrl}`
+        : `${window.location.origin}/${rawUrl}`;
 
-    const a = document.createElement('a');
-    a.href = fileUrl;
-    a.download = fileName;
-    a.target = '_blank';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    try {
+      const res = await fetch(fileUrl, { method: 'GET', credentials: 'same-origin' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const blob = await res.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 30000);
+    } catch (e) {
+      console.error('Download via fetch failed, falling back:', e);
+      // Fallback: open in new tab
+      window.open(fileUrl, '_blank');
+    }
   };
 
   // Auto download document if opened via share link (?doc=ID or ?document=ID)
@@ -400,6 +408,10 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
 
   if (!activeType) return null;
 
+  const modalBg = isMgd ? '#005BAB' : isMs ? '#FFFFFF' : '#FFF3DD';
+  const modalColor = isMgd ? '#FFFFFF' : '#005BAB';
+  const modalBorder = isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #005BAB';
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div 
@@ -411,8 +423,9 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
           maxHeight: '90vh',
           overflowY: 'auto',
           borderRadius: 'var(--radius-lg)',
-          background: '#FFF3DD',
-          border: '2.5px solid #005BAB',
+          background: modalBg,
+          border: modalBorder,
+          color: modalColor,
           position: 'relative',
           padding: '2rem',
           scrollbarWidth: 'none',
@@ -427,9 +440,9 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
             top: '1rem',
             right: '1rem',
             zIndex: 20,
-            background: '#FFFFFF',
-            color: '#005BAB',
-            border: '2.5px solid #005BAB',
+            background: isMgd ? '#FFF3DD' : '#005BAB',
+            color: isMgd ? '#005BAB' : '#FFFFFF',
+            border: isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #FFFFFF',
             width: '40px',
             height: '40px',
             borderRadius: '999px',
@@ -457,19 +470,19 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
               width: '56px',
               height: '56px',
               borderRadius: '999px',
-              background: '#FFF3DD',
-              border: '2.5px solid #005BAB',
+              background: isMgd ? '#FFF3DD' : '#005BAB',
+              border: isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #FFFFFF',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
             }}>
-              <Loader2 size={30} color="#005BAB" className="animate-spin" />
+              <Loader2 size={30} color={isMgd ? '#005BAB' : '#FFFFFF'} className="animate-spin" />
             </div>
             <div style={{ textAlign: 'center' }}>
-              <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#005BAB', margin: 0 }}>
+              <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: modalColor, margin: 0 }}>
                 {lang === 'en' ? 'Loading Data...' : 'Memuat Data...'}
               </h4>
-              <p style={{ fontSize: '0.82rem', fontWeight: 600, color: '#005BAB', opacity: 0.8, marginTop: '0.35rem', margin: 0 }}>
+              <p style={{ fontSize: '0.82rem', fontWeight: 600, color: modalColor, opacity: 0.8, marginTop: '0.35rem', margin: 0 }}>
                 {lang === 'en' ? 'Please wait a moment while we prepare the content.' : 'Mohon tunggu sebentar, sedang menyinkronkan data.'}
               </p>
             </div>
@@ -488,6 +501,8 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                 <p style={{ fontSize: '0.88rem', color: '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
                   {isMgd
                     ? (lang === 'en' ? 'Resumes, CVs & Portfolio PDF for Graphic Designer Role' : 'Berkas CV, Portofolio & Dokumen untuk Lamaran Graphic Designer')
+                    : isMs
+                    ? (lang === 'en' ? 'Resumes, CVs & Portfolio PDF for Multimedia Specialist Role' : 'Berkas CV, Portofolio & Dokumen untuk Lamaran Multimedia Specialist')
                     : (lang === 'en' ? 'Resumes, CVs & Portfolio PDF for Digital Product Designer Role' : 'Berkas CV, Portofolio & Dokumen untuk Lamaran Digital Product Designer')
                   }
                 </p>
@@ -502,7 +517,15 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                 description={lang === 'en' ? 'Documents and PDF files will appear here once uploaded.' : 'Berkas CV, Portofolio PDF, dan dokumen resmi Hamdani akan tampil di sini setelah diunggah.'}
               />
             ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.2rem' }}>
+              <div
+                className="docs-grid"
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(2, 1fr)',
+                  gap: '1.2rem',
+                  alignItems: 'start'
+                }}
+              >
                 {filteredDocuments.map((doc) => {
                   const docTitle = getLocalizedField(doc, 'title');
                   const docType = getLocalizedField(doc, 'type');
@@ -511,7 +534,7 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                   const isCopied = copiedDocId === doc.id;
 
                   return (
-                    <div key={doc.id} className="herta-card" style={{ padding: '1.35rem', background: '#FFFFFF', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative' }}>
+                    <div key={doc.id} className="herta-card" style={{ padding: '1.35rem', background: '#FFFFFF', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative', minWidth: 0 }}>
                       <span style={{
                         position: 'absolute',
                         top: '1rem',
@@ -673,6 +696,51 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                         <span style={{ wordBreak: 'break-word', lineHeight: 1.35 }}>{getLocalizedField(skill, 'title')}</span>
                       </div>
                       <p style={{ fontSize: '0.82rem', color: '#005BAB', fontWeight: 600 }}>{getLocalizedField(skill, 'desc')}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Keahlian Perangkat Lunak (Software Skills - 1:1 Ratio Images Only) */}
+            {softwareSkillsList && softwareSkillsList.length > 0 && (
+              <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF', marginTop: '1.5rem' }}>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#005BAB', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
+                  <Laptop size={20} style={{ flexShrink: 0 }} />
+                  <span>{lang === 'en' ? 'Software Skills & Tools' : 'Keahlian Perangkat Lunak'}</span>
+                </h3>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(75px, 1fr))',
+                  gap: '0.85rem',
+                  alignItems: 'center'
+                }}>
+                  {softwareSkillsList.map((skill) => (
+                    <div
+                      key={skill.id}
+                      style={{
+                        position: 'relative',
+                        width: '100%',
+                        paddingTop: '100%',
+                        borderRadius: '16px',
+                        border: '2.5px solid #005BAB',
+                        overflow: 'hidden',
+                        background: '#FFF3DD',
+                        boxShadow: '0 4px 12px rgba(0, 91, 171, 0.12)'
+                      }}
+                    >
+                      <WatermarkedImage
+                        src={skill.image}
+                        alt="Keahlian Perangkat Lunak"
+                        objectFit="cover"
+                        style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: '100%'
+                        }}
+                      />
                     </div>
                   ))}
                 </div>
@@ -1030,11 +1098,18 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
         )}
 
         {/* Modal Footer Button */}
-        <div style={{ marginTop: '1.75rem', paddingTop: '1rem', borderTop: '2px solid #005BAB', display: 'flex', justifyContent: 'flex-end' }}>
+        <div style={{ marginTop: '1.75rem', paddingTop: '1rem', borderTop: isMgd ? '2px solid #FFF3DD' : '2px solid #005BAB', display: 'flex', justifyContent: 'flex-end' }}>
           <button onClick={onClose} className="btn-primary">
             <span>{t('detail_close')}</span>
           </button>
         </div>
+        <style>{`
+          @media (max-width: 600px) {
+            .docs-grid {
+              grid-template-columns: 1fr !important;
+            }
+          }
+        `}</style>
       </div>
     </div>
   );

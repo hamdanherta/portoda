@@ -24,12 +24,16 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
 
   const isMgd = persona === 'mgd';
 
-  const currentTagline = isMgd
+  const currentTagline = persona === 'mgd'
     ? (lang === 'en' ? (profile?.tagline_mgd_en || profile?.tagline_mgd || profile?.tagline_en || 'Graphic Designer') : (profile?.tagline_mgd || profile?.tagline || 'Graphic Designer'))
+    : persona === 'ms'
+    ? (lang === 'en' ? (profile?.tagline_ms_en || profile?.tagline_ms || profile?.tagline_en || 'Multimedia Specialist') : (profile?.tagline_ms || profile?.tagline || 'Multimedia Specialist'))
     : (lang === 'en' ? (profile?.tagline_dpd_en || profile?.tagline_dpd || profile?.tagline_en || 'Digital Product Designer') : (profile?.tagline_dpd || profile?.tagline || 'Digital Product Designer'));
 
-  const currentBio = isMgd
+  const currentBio = persona === 'mgd'
     ? (lang === 'en' ? (profile?.bio_mgd_en || profile?.bio_mgd || profile?.bio_en || t('hero_bio')) : (profile?.bio_mgd || profile?.bio || t('hero_bio')))
+    : persona === 'ms'
+    ? (lang === 'en' ? (profile?.bio_ms_en || profile?.bio_ms || profile?.bio_en || t('hero_bio')) : (profile?.bio_ms || profile?.bio || t('hero_bio')))
     : (lang === 'en' ? (profile?.bio_dpd_en || profile?.bio_dpd || profile?.bio_en || t('hero_bio')) : (profile?.bio_dpd || profile?.bio || t('hero_bio')));
 
   const getExperienceStats = () => {
@@ -77,9 +81,8 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
             alignItems: 'flex-start',
             gap: '2rem',
             flexWrap: 'wrap',
-            marginBottom: '2.5rem',
-            paddingBottom: '2rem',
-            borderBottom: '2.5px solid #005BAB',
+            marginBottom: '1rem',
+            paddingBottom: '0.5rem',
             position: 'relative',
             zIndex: 1
           }} className="hero-profile-row reveal-on-scroll">
@@ -200,7 +203,8 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
             </div>
           </div>
 
-          {/* STATS BAR RATA TENGAH LETS RIGHT ABOVE THE 3 CATEGORY CARDS */}
+          {/* STATS BAR (DILAMPIRAN 2 - DI-COMMENT / DIHAPUS SESUAI PERMINTAAN USER) */}
+          {/*
           <div style={{
             display: 'flex',
             alignItems: 'center',
@@ -217,7 +221,6 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
             zIndex: 2,
             transitionDelay: '0.1s'
           }} className="hero-stats-bar reveal-on-scroll">
-            {/* Stat 1: Jam Terbang */}
             <div style={{ textAlign: 'center', minWidth: '120px' }} className="hero-stat-box hero-stat-hours">
               <div style={{
                 fontSize: 'clamp(1.9rem, 3.2vw, 2.6rem)',
@@ -236,19 +239,10 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
               <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#005BAB', marginTop: '0.25rem', lineHeight: 1.3 }}>
                 {t('hero_stat_hours')}
               </div>
-              {/* <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#005BAB', opacity: 0.85, marginTop: '0.1rem' }}>
-                {lang === 'en' ? (
-                  <>as <br className="hero-subtext-br" />Graphic Designer</>
-                ) : (
-                  <>Sebagai <br className="hero-subtext-br" />Desainer Grafis</>
-                )}
-              </div> */}
             </div>
 
-            {/* Divider Vertical */}
             <div style={{ width: '2px', height: '48px', background: '#005BAB', opacity: 0.25 }} className="stat-divider" />
 
-            {/* Stat 2: Proyek Selesai */}
             <div style={{ textAlign: 'center', minWidth: '120px' }} className="hero-stat-box hero-stat-completed">
               <div style={{
                 fontSize: 'clamp(1.9rem, 3.2vw, 2.6rem)',
@@ -267,15 +261,10 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
               <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#005BAB', marginTop: '0.25rem', lineHeight: 1.3 }}>
                 {t('hero_stat_completed')}
               </div>
-              {/* <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#005BAB', opacity: 0.85, marginTop: '0.1rem' }}>
-                {t('hero_stat_completed_sub')}
-              </div> */}
             </div>
 
-            {/* Divider Vertical */}
             <div style={{ width: '2px', height: '48px', background: '#005BAB', opacity: 0.25 }} className="stat-divider" />
 
-            {/* Stat 3: Pengalaman Kerja */}
             <div style={{ textAlign: 'center', minWidth: '120px' }} className="hero-stat-box hero-stat-exp">
               <div style={{
                 fontSize: 'clamp(1.9rem, 3.2vw, 2.6rem)',
@@ -296,17 +285,12 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
               <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#005BAB', marginTop: '0.25rem', lineHeight: 1.3 }}>
                 {t('hero_stat_exp')}
               </div>
-              {/* <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#005BAB', opacity: 0.85, marginTop: '0.1rem' }}>
-                {lang === 'en' ? (
-                  <>as <br className="hero-subtext-br" />Graphic Designer</>
-                ) : (
-                  <>Sebagai <br className="hero-subtext-br" />Desainer Grafis</>
-                )}
-              </div> */}
             </div>
           </div>
+          */}
 
-          {/* TITLE UNTUK 3 SKILL UTAMA (RATA TENGAH) */}
+          {/* TITLE UNTUK 3 SKILL UTAMA (DILAMPIRAN 1 - DI-COMMENT SEPERTI PERMINTAAN USER) */}
+          {/*
           <div style={{ textAlign: 'center', marginBottom: '1.5rem', marginTop: '0.85rem', position: 'relative', zIndex: 1, transitionDelay: '0.15s' }} className="reveal-on-scroll">
             <h2 style={{
               fontSize: 'clamp(1.15rem, 2.2vw, 1.45rem)',
@@ -319,7 +303,6 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
             </h2>
           </div>
 
-          {/* 3 PILLARS STAT CARDS */}
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
@@ -375,6 +358,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
               <p style={{ fontSize: '0.85rem', color: '#FFF3DD', fontWeight: 600 }}>{t('hero_cat_aplikasi_desc')}</p>
             </div>
           </div>
+          */}
         </div>
       </div>
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, Briefcase, Mail, User, FileText, Globe, Award, Sparkles, Layers, Paintbrush, Monitor } from 'lucide-react';
+import { Menu, X, Briefcase, Mail, User, FileText, Globe, Award, Sparkles, Layers, Paintbrush, Monitor, Video } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { usePersona } from '../context/PersonaContext';
 
@@ -35,6 +35,105 @@ export default function Navbar({ onOpenNavModal }) {
   };
 
   const isMgd = persona === 'mgd';
+  const isMs  = persona === 'ms';
+  const isDpd = persona === 'dpd';
+
+  // Header card theme
+  const headerBg     = isMgd ? '#005BAB' : isMs ? '#FFFFFF' : '#FFF3DD';
+  const headerBorder = isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #005BAB';
+  const headerColor  = isMgd ? '#FFFFFF' : '#005BAB';
+
+  // Nav button theme (items in desktop nav)
+  const navBtnBg    = isMgd ? '#FFF3DD' : isMs ? '#005BAB' : '#005BAB';
+  const navBtnColor = isMgd ? '#005BAB' : '#FFFFFF';
+
+  // Mobile menu toggle button
+  const menuBtnBg    = isMgd ? '#FFFFFF' : isMs ? '#005BAB' : '#005BAB';
+  const menuBtnColor = isMgd ? '#005BAB' : '#FFFFFF';
+
+  // Language switcher theme
+  const langSwitcherBg     = isMgd ? 'rgba(255,255,255,0.18)' : 'rgba(0,91,171,0.12)';
+  const langSwitcherBorder = isMgd ? '1.5px solid rgba(255,255,255,0.35)' : '1.5px solid #005BAB';
+  const langPillBg         = isMgd ? '#FFF3DD' : '#005BAB';
+  const getLangColor = (l) => {
+    if (displayLang === l) {
+      return isMgd ? '#005BAB' : '#FFFFFF';
+    }
+    return isMgd ? '#FFFFFF' : '#005BAB';
+  };
+
+  // Switcher Track theme:
+  // When MGD: track = #FFFFFF (white container)
+  // When MS:  track = #005BAB (blue container)
+  // When DPD: track = #FFF3DD (cream container)
+  const trackBg     = isMgd ? '#FFFFFF' : isMs ? '#005BAB' : '#FFF3DD';
+  const trackBorder = isMgd ? '2.5px solid #FFFFFF' : '2.5px solid #005BAB';
+
+  // Function to compute button style based on persona active/inactive state:
+  // 1. MGD (Graphic Designer):
+  //    - Active: fill #005BAB, text #FFFFFF, white border (2.5px solid #FFFFFF)
+  //    - Inactive on white track (MGD): text #005BAB
+  //    - Inactive on blue track (MS): text #FFF3DD
+  //    - Inactive on cream track (DPD): text #005BAB
+  // 2. MS (Multimedia Specialist):
+  //    - Active: fill #FFFFFF, text #005BAB, blue border (2.5px solid #005BAB)
+  //    - Inactive: text depending on track
+  // 3. DPD (Digital Product Designer):
+  //    - Active: fill #005BAB (blue fill), text #FFFFFF (white text), blue border (2.5px solid #005BAB)
+  //    - Inactive: text depending on track
+  const getBtnStyle = (pKey) => {
+    const isActive = persona === pKey;
+
+    if (pKey === 'mgd') {
+      if (isActive) {
+        return {
+          background: '#005BAB',
+          color: '#FFFFFF',
+          border: '2.5px solid #FFFFFF',
+          boxShadow: '0 4px 14px rgba(0, 91, 171, 0.25)'
+        };
+      }
+      return {
+        background: 'transparent',
+        color: isMs ? '#FFF3DD' : '#005BAB',
+        border: '2.5px solid transparent'
+      };
+    }
+
+    if (pKey === 'ms') {
+      if (isActive) {
+        return {
+          background: '#FFFFFF',
+          color: '#005BAB',
+          border: '2.5px solid #005BAB',
+          boxShadow: '0 4px 14px rgba(0, 91, 171, 0.2)'
+        };
+      }
+      return {
+        background: 'transparent',
+        color: isMs ? '#FFF3DD' : '#005BAB',
+        border: '2.5px solid transparent'
+      };
+    }
+
+    if (pKey === 'dpd') {
+      if (isActive) {
+        return {
+          background: '#005BAB',
+          color: '#FFFFFF',
+          border: '2.5px solid #005BAB',
+          boxShadow: '0 4px 14px rgba(0, 91, 171, 0.25)'
+        };
+      }
+      return {
+        background: 'transparent',
+        color: isMs ? '#FFF3DD' : '#005BAB',
+        border: '2.5px solid transparent'
+      };
+    }
+
+    return {};
+  };
 
   return (
     <header style={{
@@ -46,20 +145,20 @@ export default function Navbar({ onOpenNavModal }) {
       <div className="container" style={{ maxWidth: '1300px' }}>
         {/* Floating Herta Card Header */}
         <div className="herta-card herta-header-card" style={{
-          background: isMgd ? '#005BAB' : '#FFF3DD',
-          color: isMgd ? '#FFFFFF' : '#005BAB',
+          background: headerBg,
+          color: headerColor,
           borderRadius: '32px',
-          border: isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #005BAB',
+          border: headerBorder,
           padding: '1.1rem 2rem',
-          boxShadow: isMgd ? '0 14px 36px rgba(0, 91, 171, 0.25)' : '0 14px 36px rgba(0, 91, 171, 0.15)',
+          boxShadow: isMgd ? '0 14px 36px rgba(0, 91, 171, 0.25)' : isMs ? '0 14px 36px rgba(0, 91, 171, 0.12)' : '0 14px 36px rgba(0, 91, 171, 0.15)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           minHeight: '90px',
-          transition: 'background 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s ease, border-color 0.4s ease, shadow 0.4s ease'
+          transition: 'background 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s ease, border-color 0.4s ease'
         }}>
           {/* Brand Logo */}
-          <div 
+          <div
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', cursor: 'pointer', position: 'relative', zIndex: 1 }}
           >
@@ -78,7 +177,7 @@ export default function Navbar({ onOpenNavModal }) {
             />
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span style={{ fontSize: '1.55rem', fontWeight: 800, color: isMgd ? '#FFFFFF' : '#005BAB', letterSpacing: '-0.02em' }}>
+                <span style={{ fontSize: '1.55rem', fontWeight: 800, color: headerColor, letterSpacing: '-0.02em' }}>
                   Portoda
                 </span>
               </div>
@@ -91,31 +190,30 @@ export default function Navbar({ onOpenNavModal }) {
           {/* Right Section: Desktop Nav + Language Toggle */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
             {/* Language Switcher Capsule Toggle (Desktop & Tablet) */}
-            <div 
+            <div
               style={{
                 position: 'relative',
                 display: 'inline-flex',
                 alignItems: 'center',
-                background: isMgd ? 'rgba(255, 255, 255, 0.18)' : 'rgba(0, 91, 171, 0.12)',
+                background: langSwitcherBg,
                 backdropFilter: 'blur(8px)',
                 WebkitBackdropFilter: 'blur(8px)',
                 borderRadius: '999px',
                 padding: '3px',
-                border: isMgd ? '1.5px solid rgba(255, 255, 255, 0.35)' : '1.5px solid #005BAB',
+                border: langSwitcherBorder,
                 boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.08)',
                 userSelect: 'none'
               }}
               className="lang-switcher-pill"
             >
-              {/* Sliding Active Pill Background */}
-              <div 
+              <div
                 style={{
                   position: 'absolute',
                   top: '3px',
                   bottom: '3px',
                   left: '3px',
                   width: 'calc(50% - 3px)',
-                  background: isMgd ? '#FFF3DD' : '#005BAB',
+                  background: langPillBg,
                   borderRadius: '999px',
                   boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
                   transform: displayLang === 'en' ? 'translateX(100%)' : 'translateX(0%)',
@@ -142,7 +240,7 @@ export default function Navbar({ onOpenNavModal }) {
                   cursor: 'pointer',
                   border: 'none',
                   background: 'transparent',
-                  color: displayLang === 'id' ? (isMgd ? '#005BAB' : '#FFF3DD') : (isMgd ? '#FFFFFF' : '#005BAB'),
+                  color: getLangColor('id'),
                   transition: 'color 0.2s ease'
                 }}
               >
@@ -164,7 +262,7 @@ export default function Navbar({ onOpenNavModal }) {
                   cursor: 'pointer',
                   border: 'none',
                   background: 'transparent',
-                  color: displayLang === 'en' ? (isMgd ? '#005BAB' : '#FFF3DD') : (isMgd ? '#FFFFFF' : '#005BAB'),
+                  color: getLangColor('en'),
                   transition: 'color 0.2s ease'
                 }}
               >
@@ -188,8 +286,8 @@ export default function Navbar({ onOpenNavModal }) {
                       borderRadius: '999px',
                       fontSize: '0.88rem',
                       fontWeight: 800,
-                      color: isMgd ? '#005BAB' : '#FFF3DD',
-                      background: isMgd ? '#FFF3DD' : '#005BAB',
+                      color: navBtnColor,
+                      background: navBtnBg,
                       border: '2px solid #005BAB',
                       transition: 'all 0.2s ease',
                       whiteSpace: 'nowrap'
@@ -208,8 +306,8 @@ export default function Navbar({ onOpenNavModal }) {
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 style={{
                   padding: '0.6rem',
-                  color: isMgd ? '#005BAB' : '#FFF3DD',
-                  background: isMgd ? '#FFFFFF' : '#005BAB',
+                  color: menuBtnColor,
+                  background: menuBtnBg,
                   borderRadius: '14px',
                   border: '2px solid #005BAB',
                   cursor: 'pointer'
@@ -244,43 +342,28 @@ export default function Navbar({ onOpenNavModal }) {
             opacity: 0.95
           }}>
             {lang === 'en'
-              ? 'Hamdani Specializes in 2 Career Paths. Select A Category Below To Explore The Relevant Works'
-              : 'Hamdani Memiliki 2 Spesialisasi Karir. Silakan Pilih Kategori Di Bawah Ini Untuk Melihat Karya'}
+              ? 'Hamdani has three types of portfolios. Please select a category below to view the respective works.'
+              : 'Hamdani Memiliki Tiga Jenis Portofolio. Silakan Pilih Kategori Di Bawah Ini Untuk Melihat Masing-Masing Karya'}
           </p>
 
-          <div style={{
-            position: 'relative',
-            display: 'flex',
-            alignItems: 'center',
-            background: isMgd ? '#FFFFFF' : '#005BAB',
-            borderRadius: '999px',
-            padding: '4px',
-            border: isMgd ? '2.5px solid #FFFFFF' : '2.5px solid #005BAB',
-            boxShadow: '0 8px 24px rgba(0, 91, 171, 0.15)',
-            width: '100%',
-            maxWidth: '620px',
-            transition: 'background 0.3s ease, border-color 0.3s ease'
-          }}>
-            {/* Sliding Pill Indicator */}
-            <div
-              style={{
-                position: 'absolute',
-                top: '4px',
-                bottom: '4px',
-                left: '4px',
-                width: 'calc(50% - 4px)',
-                background: isMgd ? '#005BAB' : '#FFF3DD',
-                borderRadius: '999px',
-                boxShadow: '0 4px 12px rgba(0, 91, 171, 0.2)',
-                transform: persona === 'dpd' ? 'translateX(100%)' : 'translateX(0%)',
-                transition: 'transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
-                willChange: 'transform',
-                pointerEvents: 'none',
-                zIndex: 1
-              }}
-            />
-
-            {/* Option 1: MGD */}
+          {/* Unified Persona Switch Track (Horizontal on Desktop, Vertical on Mobile) */}
+          <div
+            className="persona-switch-track"
+            style={{
+              position: 'relative',
+              display: 'flex',
+              alignItems: 'center',
+              background: trackBg,
+              borderRadius: '999px',
+              padding: '5px',
+              border: trackBorder,
+              boxShadow: '0 8px 24px rgba(0, 91, 171, 0.15)',
+              width: '100%',
+              maxWidth: '780px',
+              transition: 'background 0.3s ease, border-color 0.3s ease'
+            }}
+          >
+            {/* Option 1: Graphic Designer (MGD) */}
             <button
               type="button"
               onClick={() => setPersona('mgd')}
@@ -291,25 +374,48 @@ export default function Navbar({ onOpenNavModal }) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '0.4rem',
-                padding: '0.6rem 0.5rem',
+                gap: '0.45rem',
+                padding: '0.65rem 0.85rem',
                 borderRadius: '999px',
                 fontSize: '0.86rem',
                 fontWeight: 800,
-                border: 'none',
-                background: 'transparent',
-                color: isMgd ? '#FFFFFF' : '#FFF3DD',
                 cursor: 'pointer',
-                transition: 'color 0.25s ease',
-                textAlign: 'center'
+                transition: 'all 0.25s ease',
+                textAlign: 'center',
+                ...getBtnStyle('mgd')
               }}
             >
               <Paintbrush size={16} style={{ flexShrink: 0 }} />
-              <span className="persona-label-desktop">Graphic Designer</span>
-              <span className="persona-label-mobile">Graphic Design</span>
+              <span>Graphic Designer</span>
             </button>
 
-            {/* Option 2: DPD */}
+            {/* Option 2: Multimedia Specialist (MS) */}
+            <button
+              type="button"
+              onClick={() => setPersona('ms')}
+              style={{
+                flex: 1,
+                position: 'relative',
+                zIndex: 2,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.45rem',
+                padding: '0.65rem 0.85rem',
+                borderRadius: '999px',
+                fontSize: '0.86rem',
+                fontWeight: 800,
+                cursor: 'pointer',
+                transition: 'all 0.25s ease',
+                textAlign: 'center',
+                ...getBtnStyle('ms')
+              }}
+            >
+              <Video size={16} style={{ flexShrink: 0 }} />
+              <span>Multimedia Specialist</span>
+            </button>
+
+            {/* Option 3: Digital Product Designer (DPD) */}
             <button
               type="button"
               onClick={() => setPersona('dpd')}
@@ -320,22 +426,19 @@ export default function Navbar({ onOpenNavModal }) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '0.4rem',
-                padding: '0.6rem 0.5rem',
+                gap: '0.45rem',
+                padding: '0.65rem 0.85rem',
                 borderRadius: '999px',
                 fontSize: '0.86rem',
                 fontWeight: 800,
-                border: 'none',
-                background: 'transparent',
-                color: !isMgd ? '#005BAB' : '#005BAB',
                 cursor: 'pointer',
-                transition: 'color 0.25s ease',
-                textAlign: 'center'
+                transition: 'all 0.25s ease',
+                textAlign: 'center',
+                ...getBtnStyle('dpd')
               }}
             >
               <Monitor size={16} style={{ flexShrink: 0 }} />
-              <span className="persona-label-desktop">Digital Product Designer</span>
-              <span className="persona-label-mobile">Product Design</span>
+              <span>Digital Product Designer</span>
             </button>
           </div>
         </div>
@@ -345,7 +448,7 @@ export default function Navbar({ onOpenNavModal }) {
       {mobileMenuOpen && (
         <div className="container mobile-drawer" style={{ maxWidth: '1300px', marginTop: '0.75rem' }}>
           <div className="herta-card" style={{
-            background: isMgd ? '#005BAB' : '#FFF3DD',
+            background: isMgd ? '#005BAB' : isMs ? '#FFFFFF' : '#FFF3DD',
             color: isMgd ? '#FFFFFF' : '#005BAB',
             borderRadius: '24px',
             border: isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #005BAB',
@@ -368,7 +471,7 @@ export default function Navbar({ onOpenNavModal }) {
                 padding: '2px',
                 border: isMgd ? '1px solid rgba(255, 255, 255, 0.3)' : '1px solid #005BAB'
               }}>
-                <div 
+                <div
                   style={{
                     position: 'absolute',
                     top: '2px',
@@ -395,7 +498,7 @@ export default function Navbar({ onOpenNavModal }) {
                     fontWeight: 800,
                     border: 'none',
                     background: 'transparent',
-                    color: displayLang === 'id' ? (isMgd ? '#005BAB' : '#FFF3DD') : (isMgd ? '#FFFFFF' : '#005BAB'),
+                    color: displayLang === 'id' ? (isMgd ? '#005BAB' : '#FFFFFF') : (isMgd ? '#FFFFFF' : '#005BAB'),
                     transition: 'color 0.2s ease'
                   }}
                 >
@@ -412,7 +515,7 @@ export default function Navbar({ onOpenNavModal }) {
                     fontWeight: 800,
                     border: 'none',
                     background: 'transparent',
-                    color: displayLang === 'en' ? (isMgd ? '#005BAB' : '#FFF3DD') : (isMgd ? '#FFFFFF' : '#005BAB'),
+                    color: displayLang === 'en' ? (isMgd ? '#005BAB' : '#FFFFFF') : (isMgd ? '#FFFFFF' : '#005BAB'),
                     transition: 'color 0.2s ease'
                   }}
                 >
@@ -438,7 +541,7 @@ export default function Navbar({ onOpenNavModal }) {
                     padding: '0.85rem 1.2rem',
                     borderRadius: '16px',
                     fontWeight: 800,
-                    color: isMgd ? '#005BAB' : '#FFF3DD',
+                    color: isMgd ? '#005BAB' : '#FFFFFF',
                     background: isMgd ? '#FFF3DD' : '#005BAB',
                     border: '2px solid #005BAB'
                   }}
@@ -469,6 +572,21 @@ export default function Navbar({ onOpenNavModal }) {
           .herta-header-card {
             padding: 1.1rem 2rem !important;
             min-height: 90px !important;
+          }
+        }
+
+        /* Mobile View: Persona switcher stacks vertically while retaining exact desktop style/colors */
+        @media (max-width: 680px) {
+          .persona-switch-track {
+            flex-direction: column !important;
+            border-radius: 24px !important;
+            padding: 8px !important;
+            gap: 0.5rem !important;
+          }
+          .persona-switch-track button {
+            width: 100% !important;
+            padding: 0.75rem 1rem !important;
+            font-size: 0.9rem !important;
           }
         }
       `}</style>

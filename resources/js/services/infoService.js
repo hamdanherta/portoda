@@ -418,6 +418,72 @@ export const infoService = {
     }
   },
 
+  // --- SOFTWARE SKILLS ---
+  async getSoftwareSkills() {
+    try {
+      const response = await axios.get('/api/software-skills');
+      return response.data || [];
+    } catch (err) {
+      console.error('Failed to get software skills:', err);
+      return [];
+    }
+  },
+
+  async saveSoftwareSkill(skillData, onProgress = null) {
+    if (onProgress) onProgress(10);
+    const payload = { ...skillData };
+    if (payload.image) {
+      payload.image = await uploadBase64ToStorage(payload.image, 'portfolio', 'software_skills', (p) => {
+        if (onProgress) onProgress(10 + Math.round(p * 0.7));
+      });
+    }
+
+    try {
+      const response = await axios.post('/api/software-skills', payload, {
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total && onProgress) {
+            const pct = 80 + Math.round((progressEvent.loaded * 20) / progressEvent.total);
+            onProgress(pct);
+          }
+        }
+      });
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('portoda_info_updated'));
+      }
+      if (onProgress) onProgress(100);
+      return response.data;
+    } catch (err) {
+      console.error('Failed to save software skill:', err);
+      throw err;
+    }
+  },
+
+  async deleteSoftwareSkill(id) {
+    try {
+      const response = await axios.delete(`/api/software-skills/${id}`);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('portoda_info_updated'));
+      }
+      return response.data;
+    } catch (err) {
+      console.error('Failed to delete software skill:', err);
+      throw err;
+    }
+  },
+
+  async reorderSoftwareSkills(items) {
+    try {
+      const response = await axios.post('/api/software-skills/reorder', { items });
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('portoda_info_updated'));
+      }
+      return response.data;
+    } catch (err) {
+      console.error('Failed to reorder software skills:', err);
+      throw err;
+    }
+  },
+
   // Reset all info data to initial defaults in MySQL
   async resetAllInfo() {
     try {

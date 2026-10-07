@@ -7,22 +7,29 @@ export default function Footer({ onCategoryClick, onOpenAdmin, isLoggedIn }) {
   const { lang, t } = useLanguage();
   const { persona } = usePersona();
   const isMgd = persona === 'mgd';
+  const isMs  = persona === 'ms';
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const footerBg     = isMs ? '#FFFFFF' : '#005BAB';
+  const footerColor  = isMs ? '#005BAB' : '#FFFFFF';
+  const footerBorder = isMs ? '2.5px solid #005BAB' : isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #005BAB';
+  const subtextColor = isMs ? '#005BAB' : '#FFF3DD';
 
   return (
     <footer style={{ padding: '1.5rem 0 2.5rem' }}>
       <div className="container reveal-on-scroll">
         {/* Floating Herta Card Footer */}
         <div className="herta-card" style={{
-          background: '#005BAB',
-          color: '#FFFFFF',
+          background: footerBg,
+          color: footerColor,
           borderRadius: '28px',
-          border: isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #005BAB',
+          border: footerBorder,
           padding: '2.5rem 2rem 1.75rem',
-          boxShadow: '0 12px 32px rgba(0, 91, 171, 0.18)'
+          boxShadow: isMs ? '0 12px 32px rgba(0, 91, 171, 0.12)' : '0 12px 32px rgba(0, 91, 171, 0.18)',
+          transition: 'all 0.4s ease'
         }}>
           <div style={{
             marginBottom: '1.75rem'
@@ -30,7 +37,7 @@ export default function Footer({ onCategoryClick, onOpenAdmin, isLoggedIn }) {
             {/* Brand Info */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '0.85rem' }}>
               <img
-                src="/logocream.png"
+                src={isMs ? "/logoblue.png" : "/logocream.png"}
                 alt="Portoda Logo"
                 style={{
                   height: '44px',
@@ -38,17 +45,17 @@ export default function Footer({ onCategoryClick, onOpenAdmin, isLoggedIn }) {
                   objectFit: 'contain'
                 }}
               />
-              <span style={{ fontSize: '1.45rem', fontWeight: 800, color: '#FFFFFF' }}>
+              <span style={{ fontSize: '1.45rem', fontWeight: 800, color: footerColor }}>
                 PORTODA — {t('nav_subtitle')}
               </span>
             </div> 
-            <p style={{ fontSize: '0.9rem', color: '#FFF3DD', lineHeight: 1.6, fontWeight: 400, maxWidth: '820px' }}>
+            <p style={{ fontSize: '0.9rem', color: subtextColor, lineHeight: 1.6, fontWeight: 500, maxWidth: '820px' }}>
               {t('footer_tagline')}
             </p>
 
             {/* Ikuti & Temukan Hamdani (Social Media Links) */}
             <div style={{ marginTop: '1.5rem' }}>
-              <span style={{ fontSize: 'clamp(1.2rem, 2.4vw, 1.5rem)', fontWeight: 800, color: '#FFF3DD', display: 'block', marginBottom: '0.85rem', letterSpacing: '-0.01em' }}>
+              <span style={{ fontSize: 'clamp(1.2rem, 2.4vw, 1.5rem)', fontWeight: 800, color: subtextColor, display: 'block', marginBottom: '0.85rem', letterSpacing: '-0.01em' }}>
                 {lang === 'en' ? 'Follow & Find Hamdani' : 'Ikuti dan Temukan Hamdani'}
               </span>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flexWrap: 'wrap' }}>
@@ -74,14 +81,14 @@ export default function Footer({ onCategoryClick, onOpenAdmin, isLoggedIn }) {
                       justifyContent: 'center',
                       padding: '0.4rem',
                       borderRadius: '14px',
-                      background: 'rgba(255, 255, 255, 0.12)',
-                      border: '1.5px solid rgba(255, 243, 221, 0.35)',
+                      background: isMs ? 'rgba(0, 91, 171, 0.08)' : 'rgba(255, 255, 255, 0.12)',
+                      border: isMs ? '1.5px solid #005BAB' : '1.5px solid rgba(255, 243, 221, 0.35)',
                       transition: 'all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
                       textDecoration: 'none'
                     }}
                   >
                     <img
-                      src={item.icon}
+                      src={isMs ? `/sosmed2/${item.id}.png` : item.icon}
                       alt={item.name}
                       style={{
                         height: '38px',
@@ -99,14 +106,14 @@ export default function Footer({ onCategoryClick, onOpenAdmin, isLoggedIn }) {
           {/* Bottom Bar */}
           <div style={{
             paddingTop: '1.25rem',
-            borderTop: '2px solid rgba(255, 243, 221, 0.25)',
+            borderTop: isMs ? '2px solid rgba(0, 91, 171, 0.2)' : '2px solid rgba(255, 243, 221, 0.25)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             flexWrap: 'wrap',
             gap: '1rem',
             fontSize: '0.85rem',
-            color: '#FFF3DD',
+            color: subtextColor,
             fontWeight: 700,
             position: 'relative',
             zIndex: 1
@@ -125,8 +132,8 @@ export default function Footer({ onCategoryClick, onOpenAdmin, isLoggedIn }) {
                     gap: '0.45rem',
                     fontSize: '0.78rem',
                     fontWeight: 700,
-                    color: '#005BAB',
-                    backgroundColor: '#FFF3DD',
+                    color: isMs ? '#FFFFFF' : '#005BAB',
+                    backgroundColor: isMs ? '#005BAB' : '#FFF3DD',
                     border: '2px solid #005BAB',
                     padding: '0.28rem 0.85rem',
                     borderRadius: '999px',
@@ -158,12 +165,12 @@ export default function Footer({ onCategoryClick, onOpenAdmin, isLoggedIn }) {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.4rem',
-                color: '#FFFFFF',
+                color: isMs ? '#005BAB' : '#FFFFFF',
                 fontWeight: 800,
-                background: 'rgba(255, 255, 255, 0.18)',
+                background: isMs ? 'rgba(0, 91, 171, 0.08)' : 'rgba(255, 255, 255, 0.18)',
                 padding: '0.4rem 1rem',
                 borderRadius: '999px',
-                border: '1.5px solid #FFFFFF'
+                border: isMs ? '1.5px solid #005BAB' : '1.5px solid #FFFFFF'
               }}
             >
               <span>{t('footer_back_to_top')}</span>
@@ -175,9 +182,9 @@ export default function Footer({ onCategoryClick, onOpenAdmin, isLoggedIn }) {
       <style>{`
         .footer-social-icon-link:hover {
           transform: translateY(-4px) scale(1.15) !important;
-          background: rgba(255, 255, 255, 0.28) !important;
-          border-color: #FFF3DD !important;
-          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+          background: rgba(0, 91, 171, 0.15) !important;
+          border-color: #005BAB !important;
+          box-shadow: 0 8px 20px rgba(0, 91, 171, 0.25);
         }
       `}</style>
     </footer>

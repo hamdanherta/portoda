@@ -161,9 +161,11 @@ function AppContent({ karyaId, docId }) {
   const filteredItems = useMemo(() => {
     let result = [...allItems];
 
-    // Filter by Active Persona (MGD vs DPD)
+    // Filter by Active Persona (MGD vs MS vs DPD)
     if (persona === 'mgd') {
-      result = result.filter(i => i.persona === 'mgd' || (!i.persona && (i.category === 'desain-grafis' || i.category === 'multimedia')));
+      result = result.filter(i => i.persona === 'mgd' || (!i.persona && i.category === 'desain-grafis'));
+    } else if (persona === 'ms') {
+      result = result.filter(i => i.persona === 'ms' || (!i.persona && i.category === 'multimedia'));
     } else if (persona === 'dpd') {
       result = result.filter(i => i.persona === 'dpd' || (!i.persona && i.category === 'aplikasi'));
     }
@@ -358,7 +360,7 @@ function AppContent({ karyaId, docId }) {
     }, 100);
   };
 
-  const isMgd = persona === 'mgd';
+  const appBg = persona === 'mgd' ? '#005BAB' : persona === 'ms' ? '#FFFFFF' : '#FFF3DD';
 
   return (
     <div className="app-container" style={{
@@ -367,7 +369,7 @@ function AppContent({ karyaId, docId }) {
       flexDirection: 'column',
       position: 'relative',
       overflowX: 'hidden',
-      backgroundColor: isMgd ? '#005BAB' : '#FFF3DD',
+      backgroundColor: appBg,
       transition: 'background-color 0.4s ease'
     }}>
 

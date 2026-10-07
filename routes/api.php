@@ -50,6 +50,11 @@ Route::post('/clients', [InfoController::class, 'saveClient']);
 Route::post('/clients/reorder', [InfoController::class, 'reorderClients']);
 Route::delete('/clients/{id}', [InfoController::class, 'deleteClient']);
 
+Route::get('/software-skills', [InfoController::class, 'getSoftwareSkills']);
+Route::post('/software-skills', [InfoController::class, 'saveSoftwareSkill']);
+Route::post('/software-skills/reorder', [InfoController::class, 'reorderSoftwareSkills']);
+Route::delete('/software-skills/{id}', [InfoController::class, 'deleteSoftwareSkill']);
+
 use App\Http\Controllers\Api\AnalyticsController;
 
 // Analytics Routes

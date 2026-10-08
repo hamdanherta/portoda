@@ -500,10 +500,10 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                 <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: modalColor, lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>{t('doc_title')}</h2>
                 <p style={{ fontSize: '0.88rem', color: isMgd ? '#FFF3DD' : '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
                   {isMgd
-                    ? (lang === 'en' ? 'Resumes, CVs & Portfolio PDF for Graphic Designer Role' : 'Berkas CV, Portofolio & Dokumen untuk Lamaran Graphic Designer')
+                    ? (lang === 'en' ? 'Please download Hamdani CV if needed' : 'Silahkan Unduh Berkas CV Hamdani Jika Diperlukan')
                     : isMs
-                    ? (lang === 'en' ? 'Resumes, CVs & Portfolio PDF for Multimedia Specialist Role' : 'Berkas CV, Portofolio & Dokumen untuk Lamaran Multimedia Specialist')
-                    : (lang === 'en' ? 'Resumes, CVs & Portfolio PDF for Digital Product Designer Role' : 'Berkas CV, Portofolio & Dokumen untuk Lamaran Digital Product Designer')
+                    ? (lang === 'en' ? 'Please download Hamdani CV if needed' : 'Silahkan Unduh Berkas CV Hamdani Jika Diperlukan')
+                    : (lang === 'en' ? 'Please download Hamdani CV if needed' : 'Silahkan Unduh Berkas CV Hamdani Jika Diperlukan')
                   }
                 </p>
               </div>
@@ -711,10 +711,10 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                 </h3>
                 <div style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(75px, 1fr))',
+                  gridTemplateColumns: 'repeat(6, 1fr)',
                   gap: '0.85rem',
                   alignItems: 'center'
-                }}>
+                }} className="software-skills-grid">
                   {softwareSkillsList.map((skill) => (
                     <div
                       key={skill.id}

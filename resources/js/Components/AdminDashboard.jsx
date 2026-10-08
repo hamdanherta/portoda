@@ -3963,7 +3963,6 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                           >
                             <option value="CV ATS">CV ATS</option>
                             <option value="CV Kreatif">CV Kreatif</option>
-                            <option value="Portofolio">Portofolio</option>
                           </select>
                         </div>
 
@@ -4185,7 +4184,6 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                           >
                             <option value="CV ATS">CV ATS</option>
                             <option value="CV Kreatif">CV Kreatif</option>
-                            <option value="Portofolio">Portofolio</option>
                           </select>
                         </div>
 
@@ -4407,7 +4405,6 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                           >
                             <option value="CV ATS">CV ATS</option>
                             <option value="CV Kreatif">CV Kreatif</option>
-                            <option value="Portofolio">Portofolio</option>
                           </select>
                         </div>
 

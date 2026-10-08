@@ -2,7 +2,7 @@ export const translations = {
   id: {
     // Navbar
     nav_experiences: 'Pengalaman',
-    nav_documents: 'Dokumen Hamdani',
+    nav_documents: 'Unduh CV',
     nav_certificates: 'Sertifikat',
     nav_contact: 'Kontak',
     nav_profile: 'Profil',
@@ -73,7 +73,7 @@ export const translations = {
     exp_title: 'Pengalaman & Riwayat Karier', 
 
     // Info Modal - Documents
-    doc_title: 'Berkas & Dokumen Hamdani',
+    doc_title: 'Unduh CV Hamdani',
     doc_download: 'Unduh Berkas',
     doc_preview: 'Pratinjau',
 
@@ -107,7 +107,7 @@ export const translations = {
   en: {
     // Navbar
     nav_experiences: 'Work Experience',
-    nav_documents: 'Hamdani\'s Documents',
+    nav_documents: 'Download CV',
     nav_certificates: 'Certificates',
     nav_contact: 'Contact',
     nav_profile: 'Profile',
@@ -179,7 +179,7 @@ export const translations = {
     exp_title: 'Work Experience & Career History',
 
     // Info Modal - Documents
-    doc_title: 'Hamdani\'s Documents & Files',
+    doc_title: 'Download CV',
     doc_download: 'Download File',
     doc_preview: 'Preview',
 

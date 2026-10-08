@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Palette, Video, Code, ArrowRight, MapPin, Mail, MessageSquare, Clock, Briefcase, Award } from 'lucide-react';
+import { Sparkles, Palette, Video, Code, ArrowRight, MapPin, Mail, MessageSquare, Clock, Briefcase, Award, Building2 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { usePersona } from '../context/PersonaContext';
 import { infoService } from '../services/infoService';
@@ -9,6 +9,13 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
   const { persona } = usePersona();
   const [profile, setProfile] = React.useState({});
   const [experiences, setExperiences] = React.useState([]);
+
+  const handleScrollToClients = () => {
+    const target = document.getElementById('klien-hamdani');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   React.useEffect(() => {
     const loadInfo = async () => {
@@ -186,6 +193,39 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
                   </span>
                 </div>
 
+                {/* Button Klien Saya (Kuning Soft) */}
+                <button
+                  onClick={handleScrollToClients}
+                  className="hero-cta-clients"
+                  style={{
+                    padding: '0.65rem 1.4rem',
+                    fontSize: '0.92rem',
+                    fontWeight: 800,
+                    borderRadius: '999px',
+                    background: '#FAFFA4',
+                    color: '#005BAB', 
+                    border: '2.5px solid #005BAB',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.55rem',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 12px rgba(217, 119, 6, 0.15)',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <Building2 size={16} />
+                  <span>{lang === 'en' ? 'My Clients' : 'Lihat Klien Saya'}</span>
+                  <ArrowRight size={16} />
+                </button>
+
+                
+
+                {/* Button Explore (Jelajahi Karya) */}
+                <button onClick={onExploreClick} className="btn-green hero-cta-explore" style={{ padding: '0.65rem 1.4rem', fontSize: '0.92rem' }}>
+                  <span>{t('hero_btn_explore')}</span>
+                  <ArrowRight size={16} />
+                </button>
+
                 {/* Button Contact */}
                 {onOpenContact && (
                   <button onClick={onOpenContact} className="btn-secondary hero-cta-contact" style={{ padding: '0.65rem 1.4rem', fontSize: '0.92rem' }}>
@@ -193,12 +233,6 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
                     <span>{t('hero_btn_contact')}</span>
                   </button>
                 )}
-
-                {/* Button Explore (Jelajahi Karya) - Paling Bawah di Mobile View */}
-                <button onClick={onExploreClick} className="btn-green hero-cta-explore" style={{ padding: '0.65rem 1.4rem', fontSize: '0.92rem' }}>
-                  <span>{t('hero_btn_explore')}</span>
-                  <ArrowRight size={16} />
-                </button>
               </div>
             </div>
           </div>
@@ -378,11 +412,14 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
             display: flex !important;
             justify-content: center !important;
           }
-          .hero-cta-contact {
+          .hero-cta-clients {
             order: 2 !important;
           }
           .hero-cta-explore {
             order: 3 !important;
+          }
+          .hero-cta-contact {
+            order: 4 !important;
           }
 
           .hero-title-br {
@@ -461,11 +498,14 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
             margin-bottom: 0.25rem !important;
             order: 1 !important;
           }
-          .hero-cta-explore {
+          .hero-cta-clients {
             order: 2 !important;
           }
-          .hero-cta-contact {
+          .hero-cta-explore {
             order: 3 !important;
+          }
+          .hero-cta-contact {
+            order: 4 !important;
           }
 
           .hero-title-br {

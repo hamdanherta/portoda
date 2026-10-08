@@ -386,7 +386,7 @@ export default function Navbar({ onOpenNavModal }) {
               }}
             >
               <Paintbrush size={16} style={{ flexShrink: 0 }} />
-              <span>Graphic Designer</span>
+              <span>Graphic Design</span>
             </button>
 
             {/* Option 2: Multimedia Specialist (MS) */}
@@ -412,7 +412,7 @@ export default function Navbar({ onOpenNavModal }) {
               }}
             >
               <Video size={16} style={{ flexShrink: 0 }} />
-              <span>Multimedia Specialist</span>
+              <span>Multimedia</span>
             </button>
 
             {/* Option 3: Digital Product Designer (DPD) */}
@@ -438,7 +438,7 @@ export default function Navbar({ onOpenNavModal }) {
               }}
             >
               <Monitor size={16} style={{ flexShrink: 0 }} />
-              <span>Digital Product Designer</span>
+              <span>Digital Product Design</span>
             </button>
           </div>
         </div>

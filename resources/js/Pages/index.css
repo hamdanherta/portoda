@@ -580,6 +580,14 @@ img, video, iframe, canvas {
     white-space: nowrap;
   }
 }
-
-
+@media (max-width: 640px) {
+  .software-skills-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}
+@media (max-width: 480px) {
+  .software-skills-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
 

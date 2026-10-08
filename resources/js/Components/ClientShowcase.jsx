@@ -11,7 +11,7 @@ export default function ClientShowcase({ clients = [] }) {
   }
 
   return (
-    <section className="reveal-on-scroll reveal-visible" style={{ marginTop: '-0.5rem', marginBottom: '2rem' }}>
+    <section id="klien-hamdani" className="reveal-on-scroll reveal-visible" style={{ marginTop: '-0.5rem', marginBottom: '2rem' }}>
       <div className="container" style={{ position: 'relative', zIndex: 10 }}>  
         {/* Section Header */}
         <div style={{

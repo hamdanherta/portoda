@@ -697,60 +697,6 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
               </div>
             )}
 
-            {/* Keahlian Perangkat Lunak (Software Skills - 1:1 Ratio Images Only) */}
-            {softwareSkillsList && softwareSkillsList.length > 0 && (
-              <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF', border: '2px solid #005BAB', marginTop: '1.5rem' }}>
-                <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#005BAB', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
-                  <Laptop size={20} style={{ flexShrink: 0 }} />
-                  <span>{lang === 'en' ? 'Software Skills & Tools' : 'Keahlian Perangkat Lunak'}</span>
-                </h3>
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))',
-                  gap: '1rem'
-                }} className="software-skills-grid">
-                  {softwareSkillsList.map((skill, idx) => (
-                    <div
-                      key={skill.id || idx}
-                      style={{
-                        background: '#FFFFFF',
-                        border: '2px solid #005BAB',
-                        borderRadius: '16px',
-                        padding: '0.75rem',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxShadow: '0 2px 8px rgba(0, 91, 171, 0.08)'
-                      }}
-                    >
-                      <div style={{
-                        width: '100%',
-                        aspectRatio: '1 / 1',
-                        borderRadius: '12px',
-                        overflow: 'hidden',
-                        background: '#FFFFFF',
-                        border: '1.5px solid #FFFFFF',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        padding: '6px'
-                      }}>
-                        <img
-                          src={skill.image}
-                          alt={`Software Skill ${idx + 1}`}
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'contain'
-                          }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         )}
 

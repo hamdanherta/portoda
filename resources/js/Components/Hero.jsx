@@ -4,11 +4,45 @@ import { useLanguage } from '../context/LanguageContext';
 import { usePersona } from '../context/PersonaContext';
 import { infoService } from '../services/infoService';
 
+function AnimatedCounter({ end, duration = 1800 }) {
+  const [count, setCount] = React.useState(0);
+  const target = parseInt(end, 10) || 0;
+
+  React.useEffect(() => {
+    let startTimestamp = null;
+    let frameId = null;
+
+    const step = (timestamp) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      // Ease out expo for smooth decelerating animation
+      const easeOut = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      const currentVal = Math.floor(easeOut * target);
+      setCount(currentVal);
+
+      if (progress < 1) {
+        frameId = requestAnimationFrame(step);
+      } else {
+        setCount(target);
+      }
+    };
+
+    frameId = requestAnimationFrame(step);
+    return () => {
+      if (frameId) cancelAnimationFrame(frameId);
+    };
+  }, [target, duration]);
+
+  return <span>{count}</span>;
+}
+
 export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) {
   const { lang, t } = useLanguage();
   const { persona } = usePersona();
   const [profile, setProfile] = React.useState({});
   const [experiences, setExperiences] = React.useState([]);
+  const [softwareSkills, setSoftwareSkills] = React.useState([]);
+  const [clients, setClients] = React.useState([]);
 
   const handleScrollToClients = () => {
     const target = document.getElementById('klien-hamdani');
@@ -21,8 +55,12 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
     const loadInfo = async () => {
       const p = await infoService.getProfile();
       const exps = await infoService.getExperiences();
+      const sskills = await infoService.getSoftwareSkills();
+      const clts = await infoService.getClients();
       setProfile(p || {});
       setExperiences(exps || []);
+      setSoftwareSkills(sskills || []);
+      setClients(clts || []);
     };
     loadInfo();
     window.addEventListener('portoda_info_updated', loadInfo);
@@ -237,167 +275,268 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
             </div>
           </div>
 
-          {/* STATS BAR (DILAMPIRAN 2 - DI-COMMENT / DIHAPUS SESUAI PERMINTAAN USER) */}
-          {/*
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-around',
-            gap: 'clamp(1rem, 3vw, 2.5rem)',
-            flexWrap: 'wrap',
-            margin: '1.75rem 0 1.75rem',
-            padding: '1.25rem 1.75rem',
-            background: '#FFF3DD',
-            borderRadius: '24px',
-            border: '2.5px solid #005BAB',
-            boxShadow: '0 8px 20px rgba(0, 91, 171, 0.08)',
-            position: 'relative',
-            zIndex: 2,
-            transitionDelay: '0.1s'
-          }} className="hero-stats-bar reveal-on-scroll">
-            <div style={{ textAlign: 'center', minWidth: '120px' }} className="hero-stat-box hero-stat-hours">
-              <div style={{
-                fontSize: 'clamp(1.9rem, 3.2vw, 2.6rem)',
-                fontWeight: 800,
-                color: '#005BAB',
-                lineHeight: 1.1,
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.2rem',
-                letterSpacing: '-0.03em'
-              }}>
-                <span style={{ fontSize: '1.6rem', fontWeight: 800, color: '#005BAB' }}>±</span>
-                <span>4170</span>
-              </div>
-              <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#005BAB', marginTop: '0.25rem', lineHeight: 1.3 }}>
-                {t('hero_stat_hours')}
-              </div>
-            </div>
-
-            <div style={{ width: '2px', height: '48px', background: '#005BAB', opacity: 0.25 }} className="stat-divider" />
-
-            <div style={{ textAlign: 'center', minWidth: '120px' }} className="hero-stat-box hero-stat-completed">
-              <div style={{
-                fontSize: 'clamp(1.9rem, 3.2vw, 2.6rem)',
-                fontWeight: 800,
-                color: '#005BAB',
-                lineHeight: 1.1,
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.15rem',
-                letterSpacing: '-0.03em'
-              }}>
-                <span>{totalItems}</span>
-                <span style={{ fontSize: '1.7rem', fontWeight: 800, color: '#005BAB' }}>+</span>
-              </div>
-              <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#005BAB', marginTop: '0.25rem', lineHeight: 1.3 }}>
-                {t('hero_stat_completed')}
-              </div>
-            </div>
-
-            <div style={{ width: '2px', height: '48px', background: '#005BAB', opacity: 0.25 }} className="stat-divider" />
-
-            <div style={{ textAlign: 'center', minWidth: '120px' }} className="hero-stat-box hero-stat-exp">
-              <div style={{
-                fontSize: 'clamp(1.9rem, 3.2vw, 2.6rem)',
-                fontWeight: 800,
-                color: '#005BAB',
-                lineHeight: 1.1,
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.2rem',
-                letterSpacing: '-0.03em'
-              }}>
-                <span>{expStats.years}</span>
-                <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#005BAB', marginLeft: '0.1rem' }}>
-                  {lang === 'en' ? 'Yrs' : 'Tahun'}
-                </span>
-              </div>
-              <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#005BAB', marginTop: '0.25rem', lineHeight: 1.3 }}>
-                {t('hero_stat_exp')}
-              </div>
-            </div>
-          </div>
-          */}
-
-          {/* TITLE UNTUK 3 SKILL UTAMA (DILAMPIRAN 1 - DI-COMMENT SEPERTI PERMINTAAN USER) */}
-          {/*
-          <div style={{ textAlign: 'center', marginBottom: '1.5rem', marginTop: '0.85rem', position: 'relative', zIndex: 1, transitionDelay: '0.15s' }} className="reveal-on-scroll">
-            <h2 style={{
-              fontSize: 'clamp(1.15rem, 2.2vw, 1.45rem)',
-              fontWeight: 800,
-              color: '#005BAB',
-              letterSpacing: '-0.02em',
-              margin: 0
-            }}>
-              {t('hero_skills_title')}
-            </h2>
-          </div>
-
-          <div style={{
+          {/* 2-COLUMN SECTION: Proyek Kreatif & Jam Terbang vs Software yang Digunakan */}
+          <div className="hero-metrics-software-section" style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-            gap: '1rem',
+            gridTemplateColumns: '1fr 1fr',
+            alignItems: 'center',
+            gap: 'clamp(2rem, 5vw, 4rem)',
+            marginTop: '2.25rem',
+            paddingTop: '2.25rem',
+            paddingBottom: '0.5rem',
+            borderTop: '2px solid rgba(0, 91, 171, 0.15)',
             position: 'relative',
-            zIndex: 1
+            zIndex: 2
           }}>
-            <div className="herta-card-cream reveal-on-scroll" style={{ background: '#FFFFFF', border: '2.5px solid #005BAB', padding: '1.25rem', textAlign: 'center', transitionDelay: '0.2s', borderRadius: '22px' }}>
-              <div style={{
-                display: 'inline-flex',
-                padding: '0.6rem',
-                borderRadius: '16px',
-                background: '#005BAB',
-                color: '#FFFFFF',
-                marginBottom: '0.6rem',
-                border: '2px solid #005BAB'
-              }}>
-                <Palette size={22} />
+            {/* Kolom 1: Angka Statistik 2 Kolom x 2 Baris */}
+            <div className="hero-metrics-grid" style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+              gap: 'clamp(1.5rem, 3vw, 2.5rem) clamp(1.5rem, 3.5vw, 3rem)',
+              justifySelf: 'center',
+              width: '100%',
+              maxWidth: '520px',
+              paddingLeft: 'clamp(2.5rem, 5.5vw, 5rem)',
+              paddingRight: 'clamp(0.5rem, 1.5vw, 1.5rem)',
+              boxSizing: 'border-box'
+            }}>
+              {/* Item 1: Proyek Kreatif Selesai */}
+              <div className="hero-metric-item" style={{ display: 'flex', flexDirection: 'column' }}>
+                <div className="hero-metric-number" style={{
+                  fontSize: 'clamp(2.2rem, 4.2vw, 3.4rem)',
+                  fontWeight: 800,
+                  color: '#005BAB',
+                  lineHeight: 1,
+                  letterSpacing: '-0.03em',
+                  display: 'flex',
+                  alignItems: 'baseline'
+                }}>
+                  <AnimatedCounter end={totalItems} duration={1600} />
+                  <span style={{ color: '#005BAB', marginLeft: '0.1rem' }}>+</span>
+                </div>
+                <div className="hero-metric-label" style={{
+                  fontSize: 'clamp(0.95rem, 1.6vw, 1.25rem)',
+                  fontWeight: 500,
+                  color: '#005BAB',
+                  lineHeight: 1.25,
+                  marginTop: '0.45rem'
+                }}>
+                  {lang === 'en' ? 'Completed Creative' : 'Proyek Kreatif'}
+                  <br />
+                  <span style={{ fontWeight: 800 }}>{lang === 'en' ? 'Projects' : 'Selesai'}</span>
+                </div>
               </div>
-              <h3 style={{ fontSize: '1.1rem', color: '#005BAB', marginBottom: '0.2rem' }}>{t('hero_cat_grafis')}</h3>
-              <p style={{ fontSize: '0.85rem', color: '#005BAB', fontWeight: 600 }}>{t('hero_cat_grafis_desc')}</p>
+
+              {/* Item 2: Jam Terbang Dunia Kreatif (Statis 4310) */}
+              <div className="hero-metric-item" style={{ display: 'flex', flexDirection: 'column' }}>
+                <div className="hero-metric-number" style={{
+                  fontSize: 'clamp(2.2rem, 4.2vw, 3.4rem)',
+                  fontWeight: 800,
+                  color: '#005BAB',
+                  lineHeight: 1,
+                  letterSpacing: '-0.03em',
+                  display: 'flex',
+                  alignItems: 'baseline'
+                }}>
+                  <AnimatedCounter end={4310} duration={2000} />
+                  <span style={{ color: '#005BAB', marginLeft: '0.1rem' }}>+</span>
+                </div>
+                <div className="hero-metric-label" style={{
+                  fontSize: 'clamp(0.95rem, 1.6vw, 1.25rem)',
+                  fontWeight: 500,
+                  color: '#005BAB',
+                  lineHeight: 1.25,
+                  marginTop: '0.45rem'
+                }}>
+                  {lang === 'en' ? 'Flight Hours in' : 'Jam Terbang'}
+                  <br />
+                  <span style={{ fontWeight: 800 }}>{lang === 'en' ? 'Creative Industry' : 'Dunia Kreatif'}</span>
+                </div>
+              </div>
+
+              {/* Item 3: Bulan Pengalaman Kerja (23 Bulan) */}
+              <div className="hero-metric-item" style={{ display: 'flex', flexDirection: 'column' }}>
+                <div className="hero-metric-number" style={{
+                  fontSize: 'clamp(2.2rem, 4.2vw, 3.4rem)',
+                  fontWeight: 800,
+                  color: '#005BAB',
+                  lineHeight: 1,
+                  letterSpacing: '-0.03em',
+                  display: 'flex',
+                  alignItems: 'baseline'
+                }}>
+                  <AnimatedCounter end={23} duration={1400} />
+                </div>
+                <div className="hero-metric-label" style={{
+                  fontSize: 'clamp(0.95rem, 1.6vw, 1.25rem)',
+                  fontWeight: 500,
+                  color: '#005BAB',
+                  lineHeight: 1.25,
+                  marginTop: '0.45rem'
+                }}>
+                  {lang === 'en' ? 'Months of Work' : 'Bulan Pengalaman'}
+                  <br />
+                  <span style={{ fontWeight: 800 }}>{lang === 'en' ? 'Experience' : 'Kerja'}</span>
+                </div>
+              </div>
+
+              {/* Item 4: Mitra Klien Kolaborasi (Diambil dari total data clients di database) */}
+              <div className="hero-metric-item" style={{ display: 'flex', flexDirection: 'column' }}>
+                <div className="hero-metric-number" style={{
+                  fontSize: 'clamp(2.2rem, 4.2vw, 3.4rem)',
+                  fontWeight: 800,
+                  color: '#005BAB',
+                  lineHeight: 1,
+                  letterSpacing: '-0.03em',
+                  display: 'flex',
+                  alignItems: 'baseline'
+                }}>
+                  <AnimatedCounter end={clients.length > 0 ? clients.length : 24} duration={1500} />
+                  <span style={{ color: '#005BAB', marginLeft: '0.1rem' }}>+</span>
+                </div>
+                <div className="hero-metric-label" style={{
+                  fontSize: 'clamp(0.95rem, 1.6vw, 1.25rem)',
+                  fontWeight: 500,
+                  color: '#005BAB',
+                  lineHeight: 1.25,
+                  marginTop: '0.45rem'
+                }}>
+                  {lang === 'en' ? 'Partner Clients' : 'Mitra Klien'}
+                  <br />
+                  <span style={{ fontWeight: 800 }}>{lang === 'en' ? 'Collaboration' : 'Kolaborasi'}</span>
+                </div>
+              </div>
             </div>
 
-            <div className="herta-card-cream reveal-on-scroll" style={{ background: '#FFF3DD', border: '2.5px solid #005BAB', padding: '1.25rem', textAlign: 'center', transitionDelay: '0.3s', borderRadius: '22px' }}>
-              <div style={{
-                display: 'inline-flex',
-                padding: '0.6rem',
-                borderRadius: '16px',
-                background: '#005BAB',
-                color: '#FFFFFF',
-                marginBottom: '0.6rem',
-                border: '2px solid #005BAB'
-              }}>
-                <Video size={22} />
-              </div>
-              <h3 style={{ fontSize: '1.1rem', color: '#005BAB', marginBottom: '0.2rem' }}>{t('hero_cat_multimedia')}</h3>
-              <p style={{ fontSize: '0.85rem', color: '#005BAB', fontWeight: 600 }}>{t('hero_cat_multimedia_desc')}</p>
-            </div>
-
-            <div className="herta-card-cream reveal-on-scroll" style={{ background: '#005BAB', border: '2.5px solid #005BAB', padding: '1.25rem', textAlign: 'center', transitionDelay: '0.4s', borderRadius: '22px' }}>
-              <div style={{
-                display: 'inline-flex',
-                padding: '0.6rem',
-                borderRadius: '16px',
-                background: '#FFF3DD',
+            {/* Kolom 2: Keahlian Perangkat Lunak / Software yang Digunakan */}
+            <div className="hero-software-col" style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-start',
+              width: '100%'
+            }}>
+              <h2 style={{
+                fontSize: 'clamp(1.35rem, 2.6vw, 1.95rem)',
+                fontWeight: 500,
                 color: '#005BAB',
-                marginBottom: '0.6rem',
-                border: '2px solid #FFF3DD'
+                margin: '0 0 1.5rem 0',
+                letterSpacing: '-0.02em'
               }}>
-                <Code size={22} />
+                {lang === 'en' ? 'Software Skills & Tools' : 'Keahlian Perangkat Lunak'}
+              </h2>
+
+              {/* Software Icons Grid */}
+              <div className="hero-software-icons" style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                alignItems: 'center',
+                gap: '1.25rem'
+              }}>
+                {softwareSkills && softwareSkills.length > 0 ? (
+                  softwareSkills.map((sk, idx) => (
+                    <div
+                      key={sk.id || idx}
+                      style={{
+                        width: 'clamp(62px, 8.5vw, 84px)',
+                        height: 'clamp(62px, 8.5vw, 84px)',
+                        borderRadius: '22px',
+                        overflow: 'hidden',
+                        background: '#FFFFFF',
+                        border: '2px solid #005BAB',
+                        boxShadow: '0 6px 18px rgba(0, 91, 171, 0.12)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '10px',
+                        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                        cursor: 'default'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'translateY(-3px)';
+                        e.currentTarget.style.boxShadow = '0 10px 24px rgba(0, 91, 171, 0.2)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = '0 6px 18px rgba(0, 91, 171, 0.12)';
+                      }}
+                    >
+                      <img
+                        src={sk.image}
+                        alt={`Software Skill ${idx + 1}`}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'contain'
+                        }}
+                      />
+                    </div>
+                  ))
+                ) : (
+                  <div style={{
+                    padding: '1rem 1.5rem',
+                    background: '#FFF3DD',
+                    borderRadius: '16px',
+                    border: '1.5px solid #005BAB',
+                    color: '#005BAB',
+                    fontSize: '0.9rem',
+                    fontWeight: 700
+                  }}>
+                    {lang === 'en' ? 'Software list is being updated' : 'Keahlian software belum ditambahkan di Admin'}
+                  </div>
+                )}
               </div>
-              <h3 style={{ fontSize: '1.1rem', color: '#FFFFFF', marginBottom: '0.2rem' }}>{t('hero_cat_aplikasi')}</h3>
-              <p style={{ fontSize: '0.85rem', color: '#FFF3DD', fontWeight: 600 }}>{t('hero_cat_aplikasi_desc')}</p>
             </div>
           </div>
-          */}
         </div>
       </div>
 
       <style>{`
+        @media (max-width: 860px) {
+          .hero-metrics-software-section {
+            grid-template-columns: 1fr !important;
+            gap: 2.5rem !important;
+            padding-top: 2rem !important;
+            margin-top: 2rem !important;
+          }
+          .hero-metrics-grid {
+            max-width: 100% !important;
+            justify-content: center !important;
+          }
+          .hero-software-col {
+            align-items: flex-start !important;
+          }
+        }
+
         @media (max-width: 640px) {
+          .hero-metrics-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 1.5rem 1.25rem !important;
+            width: 100% !important;
+            max-width: 380px !important;
+            margin: 0 auto !important;
+            padding-left: 1.5rem !important;
+            padding-right: 0.5rem !important;
+          }
+          .hero-metric-item {
+            align-items: flex-start !important;
+            text-align: left !important;
+            padding-left: 0 !important;
+          }
+          .hero-metric-number {
+            font-size: 1.75rem !important;
+          }
+          .hero-metric-label {
+            font-size: 0.8rem !important;
+            line-height: 1.25 !important;
+          }
+          .hero-software-col {
+            align-items: center !important;
+            text-align: center !important;
+          }
+          .hero-software-icons {
+            justify-content: center !important;
+          }
+
           .hero-cta-container {
             display: flex !important;
             flex-direction: column !important;
@@ -440,47 +579,6 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
           }
           .hero-profile-text > div {
             justify-content: center !important;
-          }
-          .hero-stats-bar {
-            display: grid !important;
-            grid-template-columns: 1fr 1fr !important;
-            gap: 1.25rem 0.5rem !important;
-            padding: 1.25rem 1rem !important;
-            justify-items: center !important;
-            align-items: center !important;
-            border-radius: 32px !important;
-          }
-          .hero-stats-bar .stat-divider {
-            display: none !important;
-          }
-          .hero-stat-box {
-            width: 100% !important;
-            min-width: 0 !important;
-            text-align: center !important;
-          }
-          .hero-stat-hours {
-            order: 1 !important;
-          }
-          .hero-stat-exp {
-            order: 2 !important;
-            grid-column: auto !important;
-            width: 100% !important;
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            justify-content: center !important;
-            text-align: center !important;
-          }
-          .hero-stat-completed {
-            order: 3 !important;
-            grid-column: 1 / -1 !important;
-            width: 100% !important;
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            justify-content: center !important;
-            text-align: center !important;
-            margin-top: 0.25rem !important;
           }
           .hero-subtext-br {
             display: block !important;

@@ -384,7 +384,7 @@ function AppContent({ karyaId, docId }) {
         <div style={{ position: 'relative', zIndex: 5 }}>
           <Hero
             onExploreClick={scrollToGallery}
-            totalItems={filteredItems.length}
+            totalItems={allItems.length > 0 ? allItems.length : filteredItems.length}
             onOpenContact={() => setActiveNavModal('kontak')}
           />
         </div>

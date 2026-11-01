@@ -1223,7 +1223,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
   const getSubcategoriesByCategory = (cat) => {
     switch (cat) {
       case 'desain-grafis':
-        return ['Desain Logo', 'Desain Banner', 'Desain Poster', 'Desain Kemasan', 'Desain Lainnya'];
+        return ['Desain Logo', 'Desain Banner', 'Desain Poster', 'Desain Kemasan', 'Desain Feed', 'Desain Lainnya'];
       case 'multimedia':
         return ['Fotografi', 'Videografi', 'Motion Graphic', 'Film'];
       case 'aplikasi':
@@ -1714,7 +1714,6 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
             justifyContent: 'space-between',
             padding: '0.85rem 1.1rem',
             background: '#FFFFFF',
-            borderBottom: '2.5px solid #005BAB',
             position: 'sticky',
             top: 0,
             zIndex: 100,
@@ -1763,7 +1762,6 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
           {mobileAdminNavOpen && (
             <div className="admin-mobile-drawer" style={{
               background: '#FFFFFF',
-              borderBottom: '2.5px solid #005BAB',
               padding: '1rem',
               display: 'flex',
               flexDirection: 'column',
@@ -1853,8 +1851,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                 alignItems: 'center',
                 gap: '0.85rem',
                 marginBottom: '1.75rem',
-                paddingBottom: '1.25rem',
-                borderBottom: '2.5px solid #005BAB'
+                paddingBottom: '0.5rem'
               }}>
                 <img
                   src="/logoblue.png"
@@ -1922,7 +1919,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
             </div>
 
             {/* Sidebar Bottom Action Buttons */}
-            <div style={{ paddingTop: '1.25rem', borderTop: '2px solid #005BAB', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+            <div style={{ paddingTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
               <button
                 onClick={onClose}
                 className="btn-primary"
@@ -1952,8 +1949,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
               alignItems: 'center',
               justifyContent: 'space-between',
               marginBottom: '1.5rem',
-              paddingBottom: '1.15rem',
-              borderBottom: '2.5px solid #005BAB',
+              paddingBottom: '0.5rem',
               flexWrap: 'wrap',
               gap: '1rem'
             }}>
@@ -2211,7 +2207,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                           return (
                             <>
                               {pagedKarya.map((karya, idx) => (
-                                <div key={karya.id || idx} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', paddingBottom: '0.55rem', borderBottom: '1px solid rgba(0,91,171,0.15)' }}>
+                                <div key={karya.id || idx} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', paddingBottom: '0.55rem' }}>
                                   <span style={{ fontSize: '0.85rem', fontWeight: 900, color: '#005BAB', width: '20px' }}>#{(safePage - 1) * TOP_PER_PAGE + idx + 1}</span>
                                   {karya.cover_image && (
                                     <img src={karya.cover_image} alt="" style={{ width: '38px', height: '38px', borderRadius: '8px', objectFit: 'cover', border: '1.5px solid #005BAB' }} />
@@ -2369,28 +2365,28 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                       <span>Status & Data Portofolio</span>
                     </h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', borderBottom: '1px solid rgba(0,91,171,0.15)', fontSize: '0.9rem', fontWeight: 700, color: '#005BAB' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 700, color: '#005BAB' }}>
                         <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                           <Star size={16} color="#005BAB" />
                           <span>Karya Unggulan</span>
                         </span>
                         <span style={{ fontWeight: 800 }}>{effectiveItems.filter(i => i.featured).length} Karya</span>
                       </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', borderBottom: '1px solid rgba(0,91,171,0.15)', fontSize: '0.9rem', fontWeight: 700, color: '#005BAB' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 700, color: '#005BAB' }}>
                         <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                           <Briefcase size={16} color="#005BAB" />
                           <span>Pengalaman</span>
                         </span>
                         <span style={{ fontWeight: 800 }}>{experiences.length} Entri</span>
                       </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', borderBottom: '1px solid rgba(0,91,171,0.15)', fontSize: '0.9rem', fontWeight: 700, color: '#005BAB' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 700, color: '#005BAB' }}>
                         <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                           <FileText size={16} color="#005BAB" />
                           <span>Dokumen</span>
                         </span>
                         <span style={{ fontWeight: 800 }}>{documents.length} Dokumen</span>
                       </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', borderBottom: '1px solid rgba(0,91,171,0.15)', fontSize: '0.9rem', fontWeight: 700, color: '#005BAB' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 700, color: '#005BAB' }}>
                         <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                           <Award size={16} color="#005BAB" />
                           <span>Sertifikat</span>
@@ -2432,7 +2428,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                       </p>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '0.75rem', borderTop: '1.5px solid rgba(0,91,171,0.15)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '0.75rem' }}>
                       <span style={{ fontSize: '0.88rem', fontWeight: 800, color: '#005BAB' }}>
                         Status Watermark Gambar
                       </span>
@@ -2507,7 +2503,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                       </p>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '0.75rem', borderTop: '1.5px solid rgba(0,91,171,0.15)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '0.75rem' }}>
                       <span style={{ fontSize: '0.88rem', fontWeight: 800, color: '#005BAB' }}>
                         Status Mode Maintenance
                       </span>
@@ -2639,7 +2635,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                       </div>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '0.75rem', borderTop: '1.5px solid rgba(0,91,171,0.15)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '0.75rem' }}>
                       <span style={{ fontSize: '0.88rem', fontWeight: 800, color: '#005BAB' }}>
                         Status Modal Pemberitahuan
                       </span>
@@ -2766,30 +2762,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                         </div>
                       </div>
 
-                      <div className="form-group">
-                        <label>Kategori Utama *</label>
-                        <select
-                          value={formData.category}
-                          onChange={(e) => {
-                            const newCat = e.target.value;
-                            const subcats = getSubcategoriesByCategory(newCat);
-                            setFormData({
-                              ...formData,
-                              category: newCat,
-                              subcategory: subcats[0]
-                            });
-                          }}
-                          className="form-select"
-                        >
-                          {formData.persona === 'mgd' ? (
-                            <option value="desain-grafis">Desain Grafis</option>
-                          ) : formData.persona === 'ms' ? (
-                            <option value="multimedia">Multimedia</option>
-                          ) : (
-                            <option value="aplikasi">Aplikasi</option>
-                          )}
-                        </select>
-                      </div>
+
 
                       <div className="form-group">
                         <label>Subkategori *</label>
@@ -2826,7 +2799,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                         >
                           <option value="Freelance">Freelance</option>
                           <option value="Pekerjaan">Pekerjaan</option>
-                          <option value="Iseng">Iseng</option>
+                          <option value="Personal">Personal</option>
                           <option value="Lomba">Lomba</option>
                         </select>
                       </div>
@@ -3908,7 +3881,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
 
                 {/* BAGIAN 1: GRAPHIC DESIGNER */}
                 <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF', borderRadius: '24px', border: '2.5px solid #005BAB' }}>
-                  <div style={{ paddingBottom: '1rem', marginBottom: '1.25rem', borderBottom: '2px dashed #005BAB', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
+                  <div style={{ paddingBottom: '0.5rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
                     <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#005BAB', display: 'flex', alignItems: 'center', gap: '0.6rem', margin: 0 }}>
                       <Palette size={20} />
                       <span>Bagian Dokumen Graphic Designer</span>
@@ -4129,7 +4102,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
 
                 {/* BAGIAN 2: MULTIMEDIA SPECIALIST */}
                 <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF', borderRadius: '24px', border: '2.5px solid #005BAB' }}>
-                  <div style={{ paddingBottom: '1rem', marginBottom: '1.25rem', borderBottom: '2px dashed #005BAB', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
+                  <div style={{ paddingBottom: '0.5rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
                     <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#005BAB', display: 'flex', alignItems: 'center', gap: '0.6rem', margin: 0 }}>
                       <Video size={20} />
                       <span>Bagian Dokumen Multimedia Specialist</span>
@@ -4350,7 +4323,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
 
                 {/* BAGIAN 2: DIGITAL PRODUCT DESIGNER */}
                 <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF', borderRadius: '24px', border: '2.5px solid #005BAB' }}>
-                  <div style={{ paddingBottom: '1rem', marginBottom: '1.25rem', borderBottom: '2px dashed #005BAB', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
+                  <div style={{ paddingBottom: '0.5rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
                     <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#005BAB', display: 'flex', alignItems: 'center', gap: '0.6rem', margin: 0 }}>
                       <Monitor size={20} />
                       <span>Bagian Dokumen Digital Product Designer</span>

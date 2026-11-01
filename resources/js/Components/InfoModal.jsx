@@ -492,7 +492,7 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
         {/* --- DOKUMEN HAMDANI --- */}
         {activeType === 'dokumen' && (
           <div>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', borderBottom: isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #005BAB', paddingBottom: '1rem', paddingRight: '3.6rem' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', paddingBottom: '0.5rem', paddingRight: '3.6rem' }}>
               <div style={{ padding: '0.6rem', borderRadius: '14px', background: isMgd ? '#FFF3DD' : '#005BAB', color: isMgd ? '#005BAB' : '#FFFFFF', border: isMgd ? '2px solid #FFF3DD' : '2px solid #005BAB', flexShrink: 0 }}>
                 <FileText size={28} />
               </div>
@@ -599,7 +599,7 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
         {/* --- PROFIL HAMDANI --- */}
         {activeType === 'profil' && (
           <div>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', borderBottom: isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #005BAB', paddingBottom: '1rem', paddingRight: '3.6rem' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', paddingBottom: '0.5rem', paddingRight: '3.6rem' }}>
               <div style={{ padding: '0.6rem', borderRadius: '14px', background: isMgd ? '#FFF3DD' : '#005BAB', color: isMgd ? '#005BAB' : '#FFFFFF', border: isMgd ? '2px solid #FFF3DD' : '2px solid #005BAB', flexShrink: 0 }}>
                 <User size={28} />
               </div>
@@ -752,7 +752,7 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
         {/* --- PENGALAMAN KERJA --- */}
         {activeType === 'pengalaman' && (
           <div>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', borderBottom: isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #005BAB', paddingBottom: '1rem', paddingRight: '3.6rem' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', paddingBottom: '0.5rem', paddingRight: '3.6rem' }}>
               <div style={{ padding: '0.6rem', borderRadius: '14px', background: isMgd ? '#FFF3DD' : '#005BAB', color: isMgd ? '#005BAB' : '#FFFFFF', border: isMgd ? '2px solid #FFF3DD' : '2px solid #005BAB', flexShrink: 0 }}>
                 <Briefcase size={28} />
               </div>
@@ -844,7 +844,7 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
         {/* --- KONTAK --- */}
         {activeType === 'kontak' && (
           <div>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', borderBottom: isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #005BAB', paddingBottom: '1rem', paddingRight: '3.6rem' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', paddingBottom: '0.5rem', paddingRight: '3.6rem' }}>
               <div style={{ padding: '0.6rem', borderRadius: '14px', background: isMgd ? '#FFF3DD' : '#005BAB', color: isMgd ? '#005BAB' : '#FFFFFF', border: isMgd ? '2px solid #FFF3DD' : '2px solid #005BAB', flexShrink: 0 }}>
                 <Mail size={28} />
               </div>
@@ -947,7 +947,7 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
         {/* --- SERTIFIKAT --- */}
         {activeType === 'sertifikat' && (
           <div>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', borderBottom: isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #005BAB', paddingBottom: '1rem', paddingRight: '3.6rem' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', paddingBottom: '0.5rem', paddingRight: '3.6rem' }}>
               <div style={{ padding: '0.6rem', borderRadius: '14px', background: isMgd ? '#FFF3DD' : '#005BAB', color: isMgd ? '#005BAB' : '#FFFFFF', border: isMgd ? '2px solid #FFF3DD' : '2px solid #005BAB', flexShrink: 0 }}>
                 <Award size={28} />
               </div>
@@ -1098,7 +1098,7 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
         )}
 
         {/* Modal Footer Button */}
-        <div style={{ marginTop: '1.75rem', paddingTop: '1rem', borderTop: isMgd ? '2px solid #FFF3DD' : '2px solid #005BAB', display: 'flex', justifyContent: 'flex-end' }}>
+        <div style={{ marginTop: '1.75rem', paddingTop: '0.5rem', display: 'flex', justifyContent: 'flex-end' }}>
           <button
             onClick={onClose}
             className="btn-primary"

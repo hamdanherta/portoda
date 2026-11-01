@@ -140,8 +140,7 @@ export default function PortfolioGrid({
           alignItems: 'center',
           justifyContent: 'space-between',
           marginTop: '2.5rem',
-          paddingTop: '1.25rem',
-          borderTop: '2.5px solid #005BAB',
+          paddingTop: '0.75rem',
           flexWrap: 'wrap',
           gap: '1rem'
         }}>

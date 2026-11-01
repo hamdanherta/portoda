@@ -188,6 +188,7 @@ function AppContent({ karyaId, docId }) {
         if ((reqSub.includes('poster')) && (itemSub.includes('poster') || itemSubEn.includes('poster'))) return true;
         if ((reqSub.includes('banner')) && (itemSub.includes('banner') || itemSubEn.includes('banner'))) return true;
         if ((reqSub.includes('kemasan') || reqSub.includes('packag')) && (itemSub.includes('kemasan') || itemSubEn.includes('packag'))) return true;
+        if ((reqSub.includes('feed')) && (itemSub.includes('feed') || itemSubEn.includes('feed'))) return true;
         if ((reqSub.includes('lain') || reqSub.includes('other')) && (itemSub.includes('lain') || itemSubEn.includes('other'))) return true;
         if ((reqSub.includes('foto') || reqSub.includes('photo')) && (itemSub.includes('foto') || itemSubEn.includes('photo'))) return true;
         if ((reqSub.includes('video') || reqSub.includes('videogr')) && (itemSub.includes('video') || itemSubEn.includes('video'))) return true;

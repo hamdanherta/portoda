@@ -33,8 +33,8 @@ export default function CategoryFilter({ activeCategory, setActiveCategory, acti
 
   const subcategoryMap = {
     'desain-grafis': lang === 'en' 
-      ? ['All Subcategories', 'Logo Design', 'Poster', 'Banner', 'Packaging', 'Others'] 
-      : ['Semua', 'Desain Logo', 'Poster', 'Banner', 'Kemasan', 'Lainnya'],
+      ? ['All Subcategories', 'Logo', 'Poster', 'Banner', 'Packaging', 'Feed', 'Others'] 
+      : ['Semua', 'Logo', 'Poster', 'Banner', 'Kemasan', 'Feed', 'Lainnya'],
     'multimedia': lang === 'en' 
       ? ['All Subcategories', 'Photography', 'Videography', 'Motion Graphic', 'Film'] 
       : ['Semua', 'Fotografi', 'Videografi', 'Motion Graphic', 'Film'],

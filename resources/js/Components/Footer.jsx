@@ -106,7 +106,6 @@ export default function Footer({ onCategoryClick, onOpenAdmin, isLoggedIn }) {
           {/* Bottom Bar */}
           <div style={{
             paddingTop: '1.25rem',
-            borderTop: isMs ? '2px solid rgba(0, 91, 171, 0.2)' : '2px solid rgba(255, 243, 221, 0.25)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',

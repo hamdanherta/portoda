@@ -243,7 +243,6 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
             zIndex: 20,
             padding: '0.85rem 1.25rem',
             background: '#005BAB',
-            borderBottom: '2.5px solid #003d80',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -296,7 +295,7 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
         </div>
 
         {/* Media Header (Video Embed or Image Carousel) */}
-        <div style={{ position: 'relative', width: '100%', backgroundColor: '#FFFFFF', borderBottom: '2.5px solid #005BAB' }}>
+        <div style={{ position: 'relative', width: '100%', backgroundColor: '#FFFFFF' }}>
           {videoEmbedUrl ? (
             <div
               className={`video-embed-container ${(videoEmbedUrl.includes('drive.google.com') || videoEmbedUrl.includes('docs.google.com')) ? 'is-gdrive' : ''}`}
@@ -638,7 +637,7 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
                   if (t.includes('lomba') || t.includes('contest') || t.includes('competition')) return <Award size={15} />;
                   return <FolderKanban size={15} />;
                 })(item.project_type)}
-                <span>{lang === 'en' ? 'Project Type' : 'Jenis Proyek'}: {item.project_type}</span>
+                <span>{lang === 'en' ? 'Project Type' : 'Jenis Proyek'}: {item.project_type === 'Iseng' ? 'Personal' : item.project_type}</span>
               </span>
             )}
             {(isMobileApp || isWebApp) && item.development_method && (
@@ -797,7 +796,7 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
           )}
 
           {/* Bottom Actions */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', paddingTop: '1rem', borderTop: '2px solid #005BAB' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', paddingTop: '0.75rem' }}>
 
             {appOrProjLink && !isVideografi && (
               <a
@@ -851,8 +850,7 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
             <div style={{
               marginTop: '1.75rem',
               marginBottom: '1.5rem',
-              paddingTop: '1.25rem',
-              borderTop: '2px solid #005BAB',
+              paddingTop: '0.75rem',
               width: '100%',
               boxSizing: 'border-box'
             }}>

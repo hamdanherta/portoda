@@ -226,7 +226,7 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
           maxHeight: '92vh',
           overflowY: 'auto',
           borderRadius: 'var(--radius-lg)',
-          background: '#FFF3DD',
+          background: '#FFFFFF',
           border: '2.5px solid #005BAB',
           position: 'relative',
           padding: 0,
@@ -242,12 +242,13 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
             top: 0,
             zIndex: 20,
             padding: '0.85rem 1.25rem',
-            background: '#005BAB',
+            background: '#FFFFFF',
+            borderBottom: '2px solid #005BAB',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: '0.75rem',
-            boxShadow: '0 4px 16px rgba(0,0,0,0.25)'
+            boxShadow: '0 4px 16px rgba(0,91,171,0.08)'
           }}
         >
           {/* Header left: Tahun saja */}
@@ -263,7 +264,7 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.35rem',
-                border: '1.5px solid #FFFFFF'
+                border: '1.5px solid #005BAB'
               }}>
                 <Calendar size={14} />
                 {t('detail_year')}: {item.year}
@@ -278,7 +279,7 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
               flexShrink: 0,
               background: '#FFFFFF',
               color: '#005BAB',
-              border: '2.5px solid #FFFFFF',
+              border: '2px solid #005BAB',
               width: '38px',
               height: '38px',
               borderRadius: '999px',
@@ -510,7 +511,7 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
               gap: '0.5rem',
               justifyContent: 'center',
               padding: '0.65rem',
-              background: '#FFF3DD',
+              background: '#FFFFFF',
               borderTop: '1.5px solid #005BAB',
               overflowX: 'auto'
             }}>
@@ -580,7 +581,7 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
                 fontSize: '0.82rem',
                 fontWeight: 800,
                 color: '#005BAB',
-                background: '#FFF3DD',
+                background: '#FFFFFF',
                 padding: '0.4rem 0.95rem',
                 borderRadius: '999px',
                 display: 'inline-flex',
@@ -620,7 +621,7 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
                   fontSize: '0.82rem',
                   fontWeight: 800,
                   color: '#005BAB',
-                  background: '#FFF3DD',
+                  background: '#FFFFFF',
                   padding: '0.4rem 0.95rem',
                   borderRadius: '999px',
                   display: 'inline-flex',
@@ -667,7 +668,7 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
                   fontSize: '0.82rem',
                   fontWeight: 800,
                   color: '#005BAB',
-                  background: '#FFF3DD',
+                  background: '#FFFFFF',
                   padding: '0.4rem 0.95rem',
                   borderRadius: '999px',
                   display: 'inline-flex',
@@ -687,7 +688,7 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
                   fontSize: '0.82rem',
                   fontWeight: 800,
                   color: '#005BAB',
-                  background: '#FFF3DD',
+                  background: '#FFFFFF',
                   padding: '0.4rem 0.95rem',
                   borderRadius: '999px',
                   display: 'inline-flex',
@@ -827,7 +828,7 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '0.45rem',
-                  background: copied ? '#005BAB' : '#FFF3DD',
+                  background: copied ? '#005BAB' : '#FFFFFF',
                   color: copied ? '#FFFFFF' : '#005BAB',
                   border: '2px solid #005BAB',
                   transition: 'all 0.2s ease',
@@ -896,9 +897,9 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
                     fontWeight: 800,
                     padding: '0.4rem 0.85rem',
                     gap: '0.4rem',
-                    background: '#FFF3DD',
+                    background: '#FFFFFF',
                     color: '#005BAB',
-                    border: isMGD ? '2px solid #FFF3DD' : '2px solid #005BAB'
+                    border: '2px solid #005BAB'
                   }}
                 >
                   <span>{lang === 'en' ? 'View All Works' : 'Lihat Selengkapnya'}</span>
@@ -997,7 +998,7 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
                               alignItems: 'center',
                               justifyContent: 'center',
                               color: '#005BAB',
-                              background: '#FFF3DD',
+                              background: '#FFFFFF',
                               fontSize: '0.72rem',
                               fontWeight: 800
                             }}>
@@ -1071,9 +1072,9 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
                     fontSize: '0.88rem',
                     fontWeight: 800,
                     gap: '0.5rem',
-                    background: '#FFF3DD',
+                    background: '#FFFFFF',
                     color: '#005BAB',
-                    border: isMGD ? '2px solid #FFF3DD' : '2px solid #005BAB'
+                    border: '2px solid #005BAB'
                   }}
                 >
                   <span>{lang === 'en' ? 'View All Works' : 'Lihat Selengkapnya Karya'}</span>

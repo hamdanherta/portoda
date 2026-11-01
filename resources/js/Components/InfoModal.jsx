@@ -32,7 +32,7 @@ function VisitorEmptyState({
           width: '64px',
           height: '64px',
           borderRadius: '999px',
-          background: '#FFF3DD',
+          background: '#FFFFFF',
           color: '#005BAB',
           border: '2.5px solid #005BAB',
           display: 'flex',
@@ -211,7 +211,7 @@ function ExpMediaCarousel({ mediaList, title }) {
           display: 'flex',
           gap: '0.4rem',
           padding: '0.5rem',
-          background: '#FFF3DD',
+          background: '#FFFFFF',
           borderTop: '1.5px solid #005BAB',
           overflowX: 'auto'
         }}>
@@ -408,9 +408,9 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
 
   if (!activeType) return null;
 
-  const modalBg = isMgd ? '#005BAB' : isMs ? '#FFFFFF' : '#FFF3DD';
-  const modalColor = isMgd ? '#FFFFFF' : '#005BAB';
-  const modalBorder = isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #005BAB';
+  const modalBg = '#FFFFFF';
+  const modalColor = '#005BAB';
+  const modalBorder = '2.5px solid #005BAB';
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -440,9 +440,9 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
             top: '1rem',
             right: '1rem',
             zIndex: 20,
-            background: isMgd ? '#FFF3DD' : '#005BAB',
-            color: isMgd ? '#005BAB' : '#FFFFFF',
-            border: isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #FFFFFF',
+            background: '#FFFFFF',
+            color: '#005BAB',
+            border: '2px solid #005BAB',
             width: '40px',
             height: '40px',
             borderRadius: '999px',
@@ -470,13 +470,13 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
               width: '56px',
               height: '56px',
               borderRadius: '999px',
-              background: isMgd ? '#FFF3DD' : '#005BAB',
-              border: isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #FFFFFF',
+              background: '#FFFFFF',
+              border: '2.5px solid #005BAB',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
             }}>
-              <Loader2 size={30} color={isMgd ? '#005BAB' : '#FFFFFF'} className="animate-spin" />
+              <Loader2 size={30} color="#005BAB" className="animate-spin" />
             </div>
             <div style={{ textAlign: 'center' }}>
               <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: modalColor, margin: 0 }}>
@@ -493,18 +493,13 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
         {activeType === 'dokumen' && (
           <div>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', paddingBottom: '0.5rem', paddingRight: '3.6rem' }}>
-              <div style={{ padding: '0.6rem', borderRadius: '14px', background: isMgd ? '#FFF3DD' : '#005BAB', color: isMgd ? '#005BAB' : '#FFFFFF', border: isMgd ? '2px solid #FFF3DD' : '2px solid #005BAB', flexShrink: 0 }}>
+              <div style={{ padding: '0.6rem', borderRadius: '14px', background: '#FFFFFF', color: '#005BAB', border: '2px solid #005BAB', flexShrink: 0 }}>
                 <FileText size={28} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: modalColor, lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>{t('doc_title')}</h2>
-                <p style={{ fontSize: '0.88rem', color: isMgd ? '#FFF3DD' : '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
-                  {isMgd
-                    ? (lang === 'en' ? 'Please download Hamdani CV if needed' : 'Silahkan Unduh Berkas CV Hamdani Jika Diperlukan')
-                    : isMs
-                    ? (lang === 'en' ? 'Please download Hamdani CV if needed' : 'Silahkan Unduh Berkas CV Hamdani Jika Diperlukan')
-                    : (lang === 'en' ? 'Please download Hamdani CV if needed' : 'Silahkan Unduh Berkas CV Hamdani Jika Diperlukan')
-                  }
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>{t('doc_title')}</h2>
+                <p style={{ fontSize: '0.88rem', color: '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
+                  {lang === 'en' ? 'Please download Hamdani CV if needed' : 'Silahkan Unduh Berkas CV Hamdani Jika Diperlukan'}
                 </p>
               </div>
             </div>
@@ -534,7 +529,7 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                   const isCopied = copiedDocId === doc.id;
 
                   return (
-                    <div key={doc.id} className="herta-card" style={{ padding: '1.35rem', background: '#FFFFFF', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative', minWidth: 0 }}>
+                    <div key={doc.id} className="herta-card" style={{ padding: '1.35rem', background: '#FFFFFF', border: '2px solid #005BAB', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative', minWidth: 0 }}>
                       <span style={{
                         position: 'absolute',
                         top: '1rem',
@@ -552,7 +547,7 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                       </span>
                       <div>
                         <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.85rem', marginBottom: '0.85rem', paddingRight: '5.5rem' }}>
-                          <div style={{ padding: '0.5rem', borderRadius: '10px', background: '#FFF3DD', color: '#005BAB', border: '1.5px solid #005BAB', flexShrink: 0 }}>
+                          <div style={{ padding: '0.5rem', borderRadius: '10px', background: '#FFFFFF', color: '#005BAB', border: '1.5px solid #005BAB', flexShrink: 0 }}>
                             <FileText size={20} />
                           </div>
                           <div>
@@ -600,19 +595,19 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
         {activeType === 'profil' && (
           <div>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', paddingBottom: '0.5rem', paddingRight: '3.6rem' }}>
-              <div style={{ padding: '0.6rem', borderRadius: '14px', background: isMgd ? '#FFF3DD' : '#005BAB', color: isMgd ? '#005BAB' : '#FFFFFF', border: isMgd ? '2px solid #FFF3DD' : '2px solid #005BAB', flexShrink: 0 }}>
+              <div style={{ padding: '0.6rem', borderRadius: '14px', background: '#FFFFFF', color: '#005BAB', border: '2px solid #005BAB', flexShrink: 0 }}>
                 <User size={28} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: modalColor, lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>{t('profile_title')} — {profileData.name || 'Hamdani'}</h2>
-                <p style={{ fontSize: '0.88rem', color: isMgd ? '#FFF3DD' : '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>{t('profile_title')} — {profileData.name || 'Hamdani'}</h2>
+                <p style={{ fontSize: '0.88rem', color: '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
                   {currentTagline}
                 </p>
               </div>
             </div>
 
             {/* Bio Card */}
-            <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF', marginBottom: '1.5rem' }}>
+            <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF', border: '2px solid #005BAB', marginBottom: '1.5rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem', gap: '0.5rem' }}>
                 <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#005BAB', margin: 0 }}>
                   {lang === 'en' ? `About ${profileData.name || 'Hamdani'}` : `Tentang ${profileData.name || 'Hamdani'}`}
@@ -625,13 +620,13 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
             </div>
 
             {/* Domisili & Data Diri Card */}
-            <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF', marginBottom: '1.5rem' }}>
+            <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF', border: '2px solid #005BAB', marginBottom: '1.5rem' }}>
               <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#005BAB', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <MapPin size={20} style={{ flexShrink: 0 }} />
                 <span>{t('profile_domisili_heading')}</span>
               </h3>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
-                <div style={{ background: '#FFF3DD', padding: '1.1rem 1rem', borderRadius: '14px', border: '1.5px solid #005BAB', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '0.6rem' }}>
+                <div style={{ background: '#FFFFFF', padding: '1.1rem 1rem', borderRadius: '14px', border: '1.5px solid #005BAB', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '0.6rem' }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontWeight: 800, color: '#005BAB', fontSize: '0.85rem' }}>
                       <MapPin size={16} style={{ flexShrink: 0 }} />
@@ -644,7 +639,7 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                   </div>
                 </div>
 
-                <div style={{ background: '#FFF3DD', padding: '1.1rem 1rem', borderRadius: '14px', border: '1.5px solid #005BAB', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '0.6rem' }}>
+                <div style={{ background: '#FFFFFF', padding: '1.1rem 1rem', borderRadius: '14px', border: '1.5px solid #005BAB', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '0.6rem' }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontWeight: 800, color: '#005BAB', fontSize: '0.85rem', flex: 1, minWidth: 0 }}>
                       <Home size={16} style={{ flexShrink: 0 }} />
@@ -657,7 +652,7 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                   </div>
                 </div>
 
-                <div style={{ background: '#FFF3DD', padding: '1.1rem 1rem', borderRadius: '14px', border: '1.5px solid #005BAB', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '0.6rem' }}>
+                <div style={{ background: '#FFFFFF', padding: '1.1rem 1rem', borderRadius: '14px', border: '1.5px solid #005BAB', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '0.6rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontWeight: 800, color: '#005BAB', fontSize: '0.85rem' }}>
                     <Calendar size={16} style={{ flexShrink: 0 }} />
                     <span style={{ lineHeight: 1.3 }}>{t('profile_ttl')}</span>
@@ -671,13 +666,13 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
 
             {/* Keahlian & Spesialisasi */}
             {profileData.skills && profileData.skills.length > 0 && (
-              <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF' }}>
+              <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF', border: '2px solid #005BAB' }}>
                 <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#005BAB', marginBottom: '1rem' }}>
                   {t('profile_skills_heading')}
                 </h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
                   {profileData.skills.map((skill, index) => (
-                    <div key={skill.id || index} style={{ background: '#FFF3DD', padding: '1rem', borderRadius: '12px', border: '1.5px solid #005BAB' }}>
+                    <div key={skill.id || index} style={{ background: '#FFFFFF', padding: '1rem', borderRadius: '12px', border: '1.5px solid #005BAB' }}>
                       <div style={{ marginBottom: '0.45rem' }}>
                         <span style={{
                           fontSize: '0.7rem',
@@ -704,43 +699,53 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
 
             {/* Keahlian Perangkat Lunak (Software Skills - 1:1 Ratio Images Only) */}
             {softwareSkillsList && softwareSkillsList.length > 0 && (
-              <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF', marginTop: '1.5rem' }}>
+              <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF', border: '2px solid #005BAB', marginTop: '1.5rem' }}>
                 <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#005BAB', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
                   <Laptop size={20} style={{ flexShrink: 0 }} />
                   <span>{lang === 'en' ? 'Software Skills & Tools' : 'Keahlian Perangkat Lunak'}</span>
                 </h3>
                 <div style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(6, 1fr)',
-                  gap: '0.85rem',
-                  alignItems: 'center'
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))',
+                  gap: '1rem'
                 }} className="software-skills-grid">
-                  {softwareSkillsList.map((skill) => (
+                  {softwareSkillsList.map((skill, idx) => (
                     <div
-                      key={skill.id}
+                      key={skill.id || idx}
                       style={{
-                        position: 'relative',
-                        width: '100%',
-                        paddingTop: '100%',
+                        background: '#FFFFFF',
+                        border: '2px solid #005BAB',
                         borderRadius: '16px',
-                        border: '2.5px solid #005BAB',
-                        overflow: 'hidden',
-                        background: '#FFF3DD',
-                        boxShadow: '0 4px 12px rgba(0, 91, 171, 0.12)'
+                        padding: '0.75rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 2px 8px rgba(0, 91, 171, 0.08)'
                       }}
                     >
-                      <WatermarkedImage
-                        src={skill.image}
-                        alt="Keahlian Perangkat Lunak"
-                        objectFit="cover"
-                        style={{
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          width: '100%',
-                          height: '100%'
-                        }}
-                      />
+                      <div style={{
+                        width: '100%',
+                        aspectRatio: '1 / 1',
+                        borderRadius: '12px',
+                        overflow: 'hidden',
+                        background: '#FFFFFF',
+                        border: '1.5px solid #FFFFFF',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '6px'
+                      }}>
+                        <img
+                          src={skill.image}
+                          alt={`Software Skill ${idx + 1}`}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'contain'
+                          }}
+                        />
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -753,12 +758,12 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
         {activeType === 'pengalaman' && (
           <div>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', paddingBottom: '0.5rem', paddingRight: '3.6rem' }}>
-              <div style={{ padding: '0.6rem', borderRadius: '14px', background: isMgd ? '#FFF3DD' : '#005BAB', color: isMgd ? '#005BAB' : '#FFFFFF', border: isMgd ? '2px solid #FFF3DD' : '2px solid #005BAB', flexShrink: 0 }}>
+              <div style={{ padding: '0.6rem', borderRadius: '14px', background: '#FFFFFF', color: '#005BAB', border: '2px solid #005BAB', flexShrink: 0 }}>
                 <Briefcase size={28} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: modalColor, lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>{t('exp_title')}</h2>
-                <p style={{ fontSize: '0.88rem', color: isMgd ? '#FFF3DD' : '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>{t('exp_title')}</h2>
+                <p style={{ fontSize: '0.88rem', color: '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
                   {lang === 'en' ? 'Professional Track Record & Creative Career' : 'Rekam Jejak Profesional & Karir Kreatif'}
                 </p>
               </div>
@@ -779,7 +784,7 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                     : (Array.isArray(exp.images) && exp.images.length > 0 ? exp.images : []);
 
                   return (
-                    <div key={exp.id} className="herta-card" style={{ padding: '1.35rem', background: '#FFFFFF' }}>
+                    <div key={exp.id} className="herta-card" style={{ padding: '1.35rem', background: '#FFFFFF', border: '2px solid #005BAB' }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.4rem' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap', flex: 1, minWidth: 0 }}>
                           <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#005BAB', margin: 0 }}>
@@ -803,7 +808,7 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
 
                           {/* Tipe Pekerjaan Sub-Badge (Khusus Tipe Kerja) */}
                           {(exp.experience_type === 'Kerja' || !exp.experience_type) && exp.employment_type && (
-                            <span style={{ fontSize: '0.72rem', fontWeight: 800, background: '#FFF3DD', color: '#005BAB', border: '1.5px solid #005BAB', padding: '0.15rem 0.55rem', borderRadius: '999px' }}>
+                            <span style={{ fontSize: '0.72rem', fontWeight: 800, background: '#FFFFFF', color: '#005BAB', border: '1.5px solid #005BAB', padding: '0.15rem 0.55rem', borderRadius: '999px' }}>
                               {exp.employment_type}
                             </span>
                           )}
@@ -845,12 +850,12 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
         {activeType === 'kontak' && (
           <div>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', paddingBottom: '0.5rem', paddingRight: '3.6rem' }}>
-              <div style={{ padding: '0.6rem', borderRadius: '14px', background: isMgd ? '#FFF3DD' : '#005BAB', color: isMgd ? '#005BAB' : '#FFFFFF', border: isMgd ? '2px solid #FFF3DD' : '2px solid #005BAB', flexShrink: 0 }}>
+              <div style={{ padding: '0.6rem', borderRadius: '14px', background: '#FFFFFF', color: '#005BAB', border: '2px solid #005BAB', flexShrink: 0 }}>
                 <Mail size={28} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: modalColor, lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>{t('contact_title')}</h2>
-                <p style={{ fontSize: '0.88rem', color: isMgd ? '#FFF3DD' : '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>{t('contact_title')}</h2>
+                <p style={{ fontSize: '0.88rem', color: '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
                   {t('contact_sub')}
                 </p>
               </div>
@@ -886,7 +891,7 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                       }}
                     >
                       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.85rem' }}>
-                        <div style={{ padding: '0.65rem', borderRadius: '12px', background: '#FFF3DD', color: '#005BAB', border: '1.5px solid #005BAB', flexShrink: 0 }}>
+                        <div style={{ padding: '0.65rem', borderRadius: '12px', background: '#FFFFFF', color: '#005BAB', border: '1.5px solid #005BAB', flexShrink: 0 }}>
                           {c.type === 'email' ? <Mail size={24} /> : c.type === 'social' ? <Globe size={24} /> : <MessageSquare size={24} />}
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
@@ -948,12 +953,12 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
         {activeType === 'sertifikat' && (
           <div>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', paddingBottom: '0.5rem', paddingRight: '3.6rem' }}>
-              <div style={{ padding: '0.6rem', borderRadius: '14px', background: isMgd ? '#FFF3DD' : '#005BAB', color: isMgd ? '#005BAB' : '#FFFFFF', border: isMgd ? '2px solid #FFF3DD' : '2px solid #005BAB', flexShrink: 0 }}>
+              <div style={{ padding: '0.6rem', borderRadius: '14px', background: '#FFFFFF', color: '#005BAB', border: '2px solid #005BAB', flexShrink: 0 }}>
                 <Award size={28} />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: modalColor, lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>Sertifikat & Penghargaan</h2>
-                <p style={{ fontSize: '0.88rem', color: isMgd ? '#FFF3DD' : '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>Sertifikat & Penghargaan</h2>
+                <p style={{ fontSize: '0.88rem', color: '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
                   Daftar sertifikat keahlian, penghargaan visual, dan lisensi pelatihan resmi Hamdani.
                 </p>
               </div>
@@ -1047,7 +1052,7 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                           {cert.category || 'Sertifikasi'}
                         </span>
                         {cert.year && (
-                          <span style={{ fontSize: '0.72rem', fontWeight: 800, background: '#FFF3DD', color: '#005BAB', padding: '0.15rem 0.55rem', borderRadius: '999px', border: '1px solid #005BAB' }}>
+                          <span style={{ fontSize: '0.72rem', fontWeight: 800, background: '#FFFFFF', color: '#005BAB', padding: '0.15rem 0.55rem', borderRadius: '999px', border: '1px solid #005BAB' }}>
                             {cert.year}
                           </span>
                         )}
@@ -1102,7 +1107,6 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
           <button
             onClick={onClose}
             className="btn-primary"
-            style={isMgd ? { background: '#FFF3DD', color: '#005BAB', border: '2px solid #FFF3DD' } : {}}
           >
             <span>{t('detail_close')}</span>
           </button>

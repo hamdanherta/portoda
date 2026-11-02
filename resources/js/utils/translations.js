@@ -10,7 +10,7 @@ export const translations = {
     nav_mobile_title: 'Menu Utama & Dokumen',
 
     // Hero
-    hero_welcome: 'Welcome to My Portfolio',
+    hero_welcome: 'Welcome to My Portfolio!',
     hero_location: 'Jambi, Indonesia',
     hero_title: 'Desainer Grafis, Multimedia & Web App Developer',
     hero_bio: 'Selamat datang di ruang pameran digital karya saya. Berfokus pada perancangan identitas visual brand, sinematografi, animasi motion graphic, serta pengembangan aplikasi web dan seluler modern dengan performa tinggi.',

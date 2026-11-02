@@ -140,10 +140,27 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, ch
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            gap: '0.85rem',
+            gap: '0.65rem',
             textAlign: 'center',
             width: '100%'
           }}>
+            {/* Heading: Welcome to My Portfolio (Gradient atas ke bawah #317AFC -> #9EC1FF) */}
+            <h2 style={{
+              fontSize: 'clamp(2.5rem, 5.2vw, 3.25rem)',
+              fontWeight: 900,
+              background: 'linear-gradient(180deg, #005BAB 0%, #0049B1 100%)',  
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent', 
+              backgroundClip: 'text',
+              color: 'transparent',
+              display: 'inline-block',
+              margin: '8px 0',
+              letterSpacing: '-0.02em',
+              lineHeight: 1.25
+            }}>
+              {t('hero_welcome')}
+            </h2>
+
             {/* Explanation Text */}
             <p style={{
               fontSize: 'clamp(0.78rem, 1.5vw, 1.00rem)',
@@ -301,27 +318,8 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, ch
               />
             </div>
 
-            {/* Di Samping Foto: Welcome, Title, Stat Bar, Deskripsi & Lokasi Jambi */}
+            {/* Di Samping Foto: Title, Stat Bar, Deskripsi & Lokasi Jambi */}
             <div style={{ flex: 1, minWidth: '280px', textAlign: 'left' }} className="hero-profile-text">
-              {/* Row 1: Badge Welcome */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap', marginBottom: '0.85rem' }}>
-                <span style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.4rem',
-                  padding: '0.45rem 1.15rem',
-                  borderRadius: '999px',
-                  background: '#FFF3DD',
-                  border: '2px solid #005BAB',
-                  color: '#005BAB',
-                  fontSize: '1.03rem',
-                  fontWeight: 800
-                }}>
-                  <Sparkles size={19} />
-                  <span>{t('hero_welcome')}</span>
-                </span>
-              </div>
-
               {/* Title Utama */}
               <h1 style={{
                 fontSize: 'clamp(1.65rem, 3.2vw, 2.4rem)',
@@ -354,7 +352,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, ch
               {/* Badge Lokasi & CTA Action Buttons Container */}
               <div className="hero-cta-container">
                 {/* Badge Lokasi */}
-                <div className="hero-cta-badge">
+                <div className="hero-cta-badge" style={{ width: 'fit-content' }}>
                   <span style={{
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -365,7 +363,9 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, ch
                     color: '#FFFFFF',
                     fontSize: '0.92rem',
                     fontWeight: 400,
-                    border: '2.5px solid #005BAB' 
+                    border: '2.5px solid #005BAB',
+                    width: 'fit-content',
+                    whiteSpace: 'nowrap'
                   }}>
                     <MapPin size={17} style={{ flexShrink: 0 }} />
                     <span style={{ fontWeight: 400 }}>
@@ -895,7 +895,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, ch
             gap: 0.85rem !important;
           }
           .hero-cta-badge {
-            width: 100% !important;
+            width: fit-content !important;
             margin-bottom: 0.25rem !important;
             order: 1 !important;
           }

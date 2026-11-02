@@ -120,11 +120,11 @@ export default function PortfolioGrid({
               fontSize: '1.05rem',
               fontWeight: 800,
               borderRadius: '999px',
-              boxShadow: isMGD ? '0 8px 24px rgba(255, 243, 221, 0.35)' : '0 8px 24px rgba(0, 91, 171, 0.25)',
+              boxShadow: '0 8px 24px rgba(0, 91, 171, 0.3)',
               gap: '0.65rem',
-              background: isMGD ? '#FFF3DD' : undefined,
-              color: isMGD ? '#005BAB' : undefined,
-              border: isMGD ? '2px solid #FFF3DD' : undefined
+              background: '#005BAB',
+              color: '#FFFFFF',
+              border: 'none'
             }}
           >
             <span>{lang === 'en' ? 'View More' : 'Lihat Selengkapnya'}</span> 

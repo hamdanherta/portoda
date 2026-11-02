@@ -234,36 +234,6 @@ export default function PortfolioCard({ item, onClick }) {
             {descText}
           </p>
         </div>
-
-        {/* Tags Footer */}
-        {Array.isArray(item.tags) && item.tags.length > 0 && (
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.35rem',
-            flexWrap: 'wrap',
-            paddingTop: '0.5rem'
-          }}>
-            {item.tags.slice(0, 3).map((tag, idx) => (
-              <span key={idx} style={{
-                fontSize: '0.72rem',
-                color: '#005BAB',
-                background: '#FFF3DD',
-                padding: '0.2rem 0.55rem',
-                borderRadius: '999px',
-                fontWeight: 800,
-                border: '1.5px solid #005BAB'
-              }}>
-                #{tag}
-              </span>
-            ))}
-            {item.tags.length > 3 && (
-              <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#005BAB' }}>
-                +{item.tags.length - 3}
-              </span>
-            )}
-          </div>
-        )}
       </div>
 
       <style>{`

@@ -789,18 +789,20 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                         </h4>
                         <MetadataCopyBtn text={exp.company} label="Lokasi" />
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem' }}>
+
+                      {/* Media Dokumentasi Pengalaman Kerja (Ditukar di atas deskripsi) */}
+                      {expMedia.length > 0 && (
+                        <ExpMediaCarousel mediaList={expMedia} title={getLocalizedField(exp, 'title')} />
+                      )}
+
+                      {/* Deskripsi Pengalaman Kerja (Ditukar di bawah gambar) */}
+                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem', marginTop: expMedia.length > 0 ? '0.6rem' : '0' }}>
                         <p style={{ fontSize: '0.88rem', color: '#005BAB', fontWeight: 400, lineHeight: 1.6, whiteSpace: 'pre-line', margin: 0, flex: 1 }}>
                           {getLocalizedField(exp, 'description')}
                         </p>
                         <MetadataCopyBtn text={getLocalizedField(exp, 'description')} label="Deskripsi" />
                       </div>
                       </div>
-
-                      {/* Media Dokumentasi Pengalaman Kerja */}
-                      {expMedia.length > 0 && (
-                        <ExpMediaCarousel mediaList={expMedia} title={getLocalizedField(exp, 'title')} />
-                      )}
                     </div>
                   );
                 })}

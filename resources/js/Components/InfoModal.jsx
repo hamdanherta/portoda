@@ -58,7 +58,7 @@ function ExpMediaCarousel({ mediaList, title }) {
   if (!mediaList || mediaList.length === 0) return null;
 
   return (
-    <div style={{ marginTop: '0.85rem', marginBottom: '0.85rem', borderRadius: '14px', overflow: 'hidden', border: '2px solid #005BAB', position: 'relative' }}>
+    <div style={{ marginTop: '0.85rem', marginBottom: '0.85rem', borderRadius: '14px', overflow: 'hidden', border: '1.5px solid #E5E7EB', position: 'relative' }}>
       {/* 16:9 Landscape Aspect Ratio with Blurred Backdrop & Contain Foreground */}
       <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%', overflow: 'hidden', background: '#111827' }}>
         {/* Sliding Track for Smooth Carousel Slide Animation */}
@@ -419,7 +419,7 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
         className="herta-card animate-fade-in modal-no-scrollbar"
         style={{
           width: '100%',
-          maxWidth: '820px',
+          maxWidth: activeType === 'pengalaman' ? '980px' : '840px',
           maxHeight: '90vh',
           overflowY: 'auto',
           borderRadius: 'var(--radius-lg)',
@@ -715,7 +715,7 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
               </div>
             </div>
 
-            {/* Timeline Experience List Dynamic */}
+            {/* Timeline Experience List Dynamic (2 columns desktop, 1 column mobile) */}
             {experiences.length === 0 ? (
               <VisitorEmptyState
                 icon={SearchX}
@@ -723,45 +723,61 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                 description={lang === 'en' ? 'Experience track record will appear here.' : 'Daftar rekam jejak karir dan pengalaman profesional Hamdani akan tampil di sini.'}
               />
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div className="experience-grid">
                 {experiences.map((exp) => {
                   const expMedia = Array.isArray(exp.media) && exp.media.length > 0
                     ? exp.media
                     : (Array.isArray(exp.images) && exp.images.length > 0 ? exp.images : []);
 
                   return (
-                    <div key={exp.id} className="herta-card" style={{ padding: '1.35rem', background: '#FFFFFF', border: '2px solid #005BAB' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.4rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap', flex: 1, minWidth: 0 }}>
-                          <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#005BAB', margin: 0 }}>
+                    <div
+                      key={exp.id}
+                      className="herta-card experience-card"
+                      style={{
+                        padding: '1.35rem',
+                        background: '#FFFFFF',
+                        border: '2px solid #005BAB',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        minWidth: 0
+                      }}
+                    >
+                      <div>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.4rem' }}>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#005BAB', margin: 0, lineHeight: 1.35, wordBreak: 'break-word' }}>
                             {getLocalizedField(exp, 'title')}
                           </h3>
 
-                          {/* Tipe Pengalaman Badge (Hijau = Kerja, Biru = Magang, Kuning = Organisasi, Ungu = Freelance) */}
-                          {(() => {
-                            const type = exp.experience_type || 'Kerja';
-                            let bg = '#DCFCE7', color = '#15803D', border = '#16A34A';
-                            if (type === 'Magang') { bg = '#E0F2FE'; color = '#0284C7'; border = '#0284C7'; }
-                            else if (type === 'Organisasi') { bg = '#FEF3C7'; color = '#D97706'; border = '#D97706'; }
-                            else if (type === 'Freelance') { bg = '#F3E8FF'; color = '#7E22CE'; border = '#A855F7'; }
+                          {/* Tipe Pengalaman & Sub-Badge */}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap', marginTop: '0.35rem' }}>
+                            {(() => {
+                              const type = exp.experience_type || 'Kerja';
+                              let bg = '#DCFCE7', color = '#15803D', border = '#16A34A';
+                              if (type === 'Magang') { bg = '#E0F2FE'; color = '#0284C7'; border = '#0284C7'; }
+                              else if (type === 'Organisasi') { bg = '#FEF3C7'; color = '#D97706'; border = '#D97706'; }
+                              else if (type === 'Freelance') { bg = '#F3E8FF'; color = '#7E22CE'; border = '#A855F7'; }
 
-                            return (
-                              <span style={{ fontSize: '0.72rem', fontWeight: 800, background: bg, color: color, border: `1.5px solid ${border}`, padding: '0.15rem 0.55rem', borderRadius: '999px' }}>
-                                {type}
+                              return (
+                                <span style={{ fontSize: '0.72rem', fontWeight: 800, background: bg, color: color, border: `1.5px solid ${border}`, padding: '0.15rem 0.55rem', borderRadius: '999px' }}>
+                                  {type}
+                                </span>
+                              );
+                            })()}
+
+                            {/* Tipe Pekerjaan Sub-Badge (Khusus Tipe Kerja) */}
+                            {(exp.experience_type === 'Kerja' || !exp.experience_type) && exp.employment_type && (
+                              <span style={{ fontSize: '0.72rem', fontWeight: 800, background: '#FFFFFF', color: '#005BAB', border: '1.5px solid #005BAB', padding: '0.15rem 0.55rem', borderRadius: '999px' }}>
+                                {exp.employment_type}
                               </span>
-                            );
-                          })()}
-
-                          {/* Tipe Pekerjaan Sub-Badge (Khusus Tipe Kerja) */}
-                          {(exp.experience_type === 'Kerja' || !exp.experience_type) && exp.employment_type && (
-                            <span style={{ fontSize: '0.72rem', fontWeight: 800, background: '#FFFFFF', color: '#005BAB', border: '1.5px solid #005BAB', padding: '0.15rem 0.55rem', borderRadius: '999px' }}>
-                              {exp.employment_type}
-                            </span>
-                          )}
+                            )}
+                          </div>
                         </div>
 
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                          <span style={{ fontSize: '0.78rem', fontWeight: 800, background: '#005BAB', color: '#FFFFFF', padding: '0.2rem 0.65rem', borderRadius: '999px' }}>
+                        {/* Tahun (Period) + Copy Button — Selalu Tetap di Atas Kanan */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0, marginTop: '0.1rem' }}>
+                          <span style={{ fontSize: '0.78rem', fontWeight: 800, background: '#005BAB', color: '#FFFFFF', padding: '0.2rem 0.65rem', borderRadius: '999px', whiteSpace: 'nowrap' }}>
                             {getLocalizedField(exp, 'period')}
                           </span>
                           <MetadataCopyBtn text={getLocalizedField(exp, 'title')} label="Judul" />
@@ -778,6 +794,7 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                           {getLocalizedField(exp, 'description')}
                         </p>
                         <MetadataCopyBtn text={getLocalizedField(exp, 'description')} label="Deskripsi" />
+                      </div>
                       </div>
 
                       {/* Media Dokumentasi Pengalaman Kerja */}
@@ -952,7 +969,7 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                             paddingTop: '56.25%',
                             borderRadius: '14px',
                             overflow: 'hidden',
-                            border: '1.5px solid #005BAB',
+                            border: 'none',
                             marginBottom: '0.85rem',
                             backgroundColor: '#111827'
                           }}>
@@ -1061,6 +1078,12 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
           @media (max-width: 600px) {
             .docs-grid {
               grid-template-columns: 1fr !important;
+            }
+          }
+          @media (max-width: 680px) {
+            .experience-card {
+              padding-top: 1.75rem !important;
+              padding-bottom: 1.75rem !important;
             }
           }
         `}</style>

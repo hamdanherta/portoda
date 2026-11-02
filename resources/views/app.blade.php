@@ -7,7 +7,7 @@
 
     @php
         $og = $page['props']['ogData'] ?? null;
-        $ogTitle = $og['title'] ?? 'Portoda - Aplikasi Portofolio Karya Hamdani';
+        $ogTitle = $og['title'] ?? 'Portoda - Aplikasi Aplikasi Portofolio Hamdani';
         $ogDesc = $og['description'] ?? 'Portofolio Resmi Hamdani - Desain Grafis, Multimedia & Pengembang Aplikasi.';
         $ogImage = $og['image'] ?? 'https://www.portoda.my.id/displaypaste.webp';
         $ogUrl = $og['url'] ?? 'https://www.portoda.my.id';

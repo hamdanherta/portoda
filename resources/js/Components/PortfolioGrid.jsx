@@ -22,7 +22,7 @@ export default function PortfolioGrid({
 
   if (loading) {
     return (
-      <div className="container" style={{ paddingBottom: '4rem' }}>
+      <div style={{ width: '100%', paddingBottom: '2rem' }}>
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
@@ -42,7 +42,7 @@ export default function PortfolioGrid({
 
   if (items.length === 0) {
     return (
-      <div className="container" style={{ padding: '3rem 1.25rem', textAlign: 'center' }}>
+      <div style={{ width: '100%', padding: '2rem 1.25rem', textAlign: 'center' }}>
         <div className="herta-card" style={{
           maxWidth: '460px',
           margin: '0 auto',
@@ -91,7 +91,7 @@ export default function PortfolioGrid({
   const totalPages = Math.ceil(items.length / ITEMS_PER_PAGE);
 
   return (
-    <div className="container" style={{ paddingBottom: '4rem', position: 'relative', zIndex: 10 }}>
+    <div style={{ width: '100%', position: 'relative', zIndex: 10 }}>
       {/* Portfolio Items Grid */}
       <div style={{
         display: 'grid',

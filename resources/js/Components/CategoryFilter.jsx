@@ -47,52 +47,57 @@ export default function CategoryFilter({ activeCategory, setActiveCategory, acti
   const availableSubcategories = subcategoryMap[currentCategory] || [defaultSubAll];
 
   return (
-    <div className="container reveal-on-scroll" id="gallery-section" style={{ paddingBottom: '1.5rem', paddingTop: '1rem', position: 'relative', zIndex: 10 }}>
-      {/* Search Input Bar */}
-      <div style={{ position: 'relative', marginBottom: '1.5rem' }}>
-        <Search size={20} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#005BAB' }} />
-        <input
-          type="text"
-          placeholder={t('filter_search_placeholder')}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery && setSearchQuery(e.target.value)}
-          className="form-input"
-          style={{
-            paddingLeft: '3rem',
-            paddingRight: searchQuery ? '3rem' : '1rem',
-            height: '52px',
-            fontSize: '1rem',
-            borderRadius: 'var(--radius-pill)',
-            background: isMgd ? '#FFF3DD' : '#FFFFFF',
-            border: isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #005BAB',
-            color: '#005BAB',
-            fontWeight: 700
-          }}
-        />
-        {searchQuery && (
-          <button
-            onClick={() => setSearchQuery && setSearchQuery('')}
+    <div className="reveal-on-scroll" id="gallery-section" style={{ width: '100%', marginBottom: '1.75rem', position: 'relative', zIndex: 10 }}>
+      {/* Search Input Bar (Secukupnya, centered with maxWidth 480px) */}
+      <div style={{ display: 'flex', justifyContent: 'center', width: '100%', marginBottom: '1.5rem' }}>
+        <div style={{ position: 'relative', width: '100%', maxWidth: '480px' }}>
+          <Search size={20} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#005BAB' }} />
+          <input
+            type="text"
+            placeholder={t('filter_search_placeholder')}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery && setSearchQuery(e.target.value)}
+            className="form-input"
             style={{
-              position: 'absolute',
-              right: '16px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              background: '#FFF3DD',
-              border: '1.5px solid #005BAB',
-              borderRadius: '999px',
-              width: '28px',
-              height: '28px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              paddingLeft: '3rem',
+              paddingRight: searchQuery ? '3rem' : '1rem',
+              height: '50px',
+              fontSize: '0.96rem',
+              borderRadius: 'var(--radius-pill)',
+              background: '#FFFFFF',
+              border: '2.5px solid #005BAB',
               color: '#005BAB',
-              cursor: 'pointer'
+              fontWeight: 700,
+              width: '100%',
+              boxSizing: 'border-box',
+              boxShadow: '0 4px 14px rgba(0, 91, 171, 0.08)'
             }}
-            title="Hapus kata kunci pencarian"
-          >
-            <X size={16} />
-          </button>
-        )}
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery && setSearchQuery('')}
+              style={{
+                position: 'absolute',
+                right: '14px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: '#FFF3DD',
+                border: '1.5px solid #005BAB',
+                borderRadius: '999px',
+                width: '28px',
+                height: '28px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#005BAB',
+                cursor: 'pointer'
+              }}
+              title="Hapus kata kunci pencarian"
+            >
+              <X size={16} />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Main Section Heading */}
@@ -106,7 +111,7 @@ export default function CategoryFilter({ activeCategory, setActiveCategory, acti
         textAlign: 'center'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
-          <h2 style={{ fontSize: '1.7rem', fontWeight: 800, color: isMgd ? '#FFF3DD' : '#005BAB', textAlign: 'center', letterSpacing: '-0.02em' }}>
+          <h2 style={{ fontSize: '1.7rem', fontWeight: 800, color: '#005BAB', textAlign: 'center', letterSpacing: '-0.02em' }}>
             {t('filter_heading')}
           </h2>
         </div>
@@ -137,8 +142,8 @@ export default function CategoryFilter({ activeCategory, setActiveCategory, acti
                   fontWeight: 800,
                   whiteSpace: 'nowrap',
                   color: isSubActive ? '#FFFFFF' : '#005BAB',
-                  background: isSubActive ? '#005BAB' : (isMgd ? '#FFF3DD' : '#FFFFFF'),
-                  border: isMgd ? '2.5px solid #FFF3DD' : '2.5px solid #005BAB',
+                  background: isSubActive ? '#005BAB' : '#FFFFFF',
+                  border: '2.5px solid #005BAB',
                   boxShadow: isSubActive ? '0 4px 12px rgba(0, 91, 171, 0.25)' : 'none',
                   transition: 'all 0.2s ease',
                   cursor: 'pointer'

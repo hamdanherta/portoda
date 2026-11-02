@@ -6,7 +6,7 @@ export const translations = {
     nav_certificates: 'Sertifikat',
     nav_contact: 'Kontak',
     nav_profile: 'Profil',
-    nav_subtitle: 'Portofolio Karya Hamdani',
+    nav_subtitle: 'Aplikasi Portofolio Hamdani',
     nav_mobile_title: 'Menu Utama & Dokumen',
 
     // Hero
@@ -65,8 +65,8 @@ export const translations = {
     profile_title: 'Profil & Bio',
     profile_skills_heading: 'Spesialisasi & Keahlian Utama',
     profile_domisili_heading: 'Domisili & Data Diri',
-    profile_domisili: 'Domisili',
-    profile_residence: 'Alamat',
+    profile_domisili: 'Domisili Sekarang',
+    profile_residence: 'Asal',
     profile_ttl: 'Tempat, Tanggal Lahir',
 
     // Info Modal - Experiences

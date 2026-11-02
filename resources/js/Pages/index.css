@@ -555,6 +555,10 @@ img, video, iframe, canvas {
   .herta-card {
     padding: 1rem !important;
   }
+  /* Khusus Container Utama Hero: Padding atas dan bawah lebih lapang di mobile */
+  .hero-main-card {
+    padding: 2.5rem 1.15rem 2.75rem !important;
+  }
   .btn-primary, .btn-secondary, .btn-white, .btn-danger {
     padding: 0.5rem 1rem !important;
     font-size: 0.85rem !important;
@@ -588,6 +592,21 @@ img, video, iframe, canvas {
 @media (max-width: 480px) {
   .software-skills-grid {
     grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+/* Experience & Documents Grid in InfoModal: 2 columns on desktop, 1 column on mobile */
+.experience-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.15rem;
+  align-items: stretch;
+}
+
+@media (max-width: 768px) {
+  .experience-grid,
+  .docs-grid {
+    grid-template-columns: 1fr !important;
   }
 }
 

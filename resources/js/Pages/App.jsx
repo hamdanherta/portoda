@@ -361,7 +361,25 @@ function AppContent({ karyaId, docId }) {
     }, 100);
   };
 
-  const appBg = persona === 'mgd' ? '#005BAB' : persona === 'ms' ? '#FFFFFF' : '#FFF3DD';
+  // Background paling belakang per persona:
+  // - Graphic Design (MGD): gradient #005BAB ke #0088FF
+  // - Digital Product Design (DPD): gradient #FFE0AA ke #FFF3DD
+  // - Multimedia (MS): #FFFFFF (putih bersih)
+  const appBg = persona === 'mgd'
+    ? 'linear-gradient(135deg, #005BAB 0%, #0088FF 100%)'
+    : persona === 'dpd'
+    ? 'linear-gradient(135deg, #FFE0AA 0%, #FFF3DD 100%)'
+    : '#FFFFFF';
+
+  // Warna pattern per persona (Option 3: Tech Dots & Isometric Grid)
+  const patternColor = persona === 'mgd'
+    ? 'rgba(255, 255, 255, 0.22)'
+    : persona === 'dpd'
+    ? 'rgba(0, 91, 171, 0.18)'
+    : 'rgba(0, 91, 171, 0.12)';
+
+  // SVG Option 3: Tech Matrix Dots + Isometric Geometric Grid
+  const patternSvg = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><g fill="${encodeURIComponent(patternColor)}" stroke="${encodeURIComponent(patternColor)}" stroke-width="1.2"><circle cx="30" cy="30" r="2.2" stroke="none"/><circle cx="0" cy="0" r="2" stroke="none"/><circle cx="60" cy="0" r="2" stroke="none"/><circle cx="0" cy="60" r="2" stroke="none"/><circle cx="60" cy="60" r="2" stroke="none"/><path d="M30 0 L60 17.32 L60 51.96 L30 60 L0 51.96 L0 17.32 Z" fill="none" opacity="0.6"/><path d="M30 0 L30 60 M0 17.32 L60 51.96 M0 51.96 L60 17.32" fill="none" opacity="0.3"/></g></svg>`;
 
   return (
     <div className="app-container" style={{
@@ -370,76 +388,131 @@ function AppContent({ karyaId, docId }) {
       flexDirection: 'column',
       position: 'relative',
       overflowX: 'hidden',
-      backgroundColor: appBg,
-      transition: 'background-color 0.4s ease'
+      background: appBg,
+      transition: 'background 0.4s ease'
     }}>
+      {/* Option 3: Tech Dots & Isometric Grid Pattern Overlay */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundImage: `url('${patternSvg}')`,
+          backgroundRepeat: 'repeat',
+          backgroundSize: '60px 60px',
+          pointerEvents: 'none',
+          zIndex: 1,
+          opacity: 0.95,
+          transition: 'all 0.4s ease'
+        }}
+      />
 
-      <div style={{ position: 'relative', zIndex: 5 }}>
+      <div style={{ position: 'relative', zIndex: 10 }}>
         <Navbar
           onOpenNavModal={(navType) => setActiveNavModal(navType)}
         />
       </div>
 
       {!isFullGallery && (
-        <div style={{ position: 'relative', zIndex: 5 }}>
+        <div style={{ position: 'relative', zIndex: 20 }}>
           <Hero
             onExploreClick={scrollToGallery}
             totalItems={allItems.length > 0 ? allItems.length : filteredItems.length}
             onOpenContact={() => setActiveNavModal('kontak')}
-          />
+          >
+            <CategoryFilter
+              activeCategory={activeCategory}
+              setActiveCategory={setActiveCategory}
+              activeSubcategory={activeSubcategory}
+              setActiveSubcategory={setActiveSubcategory}
+              searchQuery={searchQuery}
+              setSearchQuery={(q) => {
+                setSearchQuery(q);
+                if (q.trim()) {
+                  setIsFullGallery(true);
+                }
+              }}
+              itemCount={filteredItems.length}
+            />
+
+            <main style={{ flex: 1, position: 'relative', zIndex: 5, width: '100%' }}>
+              <PortfolioGrid
+                items={filteredItems}
+                loading={loading}
+                onItemClick={(item) => setSelectedItem(item)}
+                onResetFilter={handleResetFilter}
+                isFullGallery={isFullGallery}
+                isExpanded={isExpandedBeranda}
+                currentPage={currentPage}
+                onPageChange={(page) => {
+                  setCurrentPage(page);
+                  scrollToGallery();
+                }}
+                onViewMore={handleViewMoreWorks}
+              />
+            </main>
+          </Hero>
         </div>
       )}
 
       {isFullGallery && (
-        <div style={{ position: 'relative', zIndex: 6, paddingTop: '1.5rem' }}>
-          <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '1rem', flexWrap: 'wrap' }}>
-            <button
-              onClick={handleBackToHome}
-              className="btn-secondary"
-              style={{ padding: '0.6rem 1.25rem', fontSize: '0.9rem', fontWeight: 800, gap: '0.5rem' }}
-            >
-              <ArrowLeft size={18} />
-              <span>Kembali ke Beranda</span>
-            </button>
+        <div style={{ position: 'relative', zIndex: 6, paddingTop: '1.5rem', width: '100%' }}>
+          <div style={{ width: '100%', padding: '0 clamp(1rem, 3.5vw, 2.5rem)', boxSizing: 'border-box' }}>
+            <div className="herta-card" style={{
+              width: '100%',
+              padding: 'clamp(2rem, 4vw, 3.25rem) clamp(1.5rem, 4vw, 3.5rem)',
+              background: '#FFFFFF',
+              borderRadius: '44px',
+              position: 'relative',
+              overflow: 'hidden',
+              boxSizing: 'border-box'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.75rem' }}>
+                <button
+                  onClick={handleBackToHome}
+                  className="btn-secondary"
+                  style={{ padding: '0.6rem 1.25rem', fontSize: '0.9rem', fontWeight: 800, gap: '0.5rem' }}
+                >
+                  <ArrowLeft size={18} />
+                  <span>Kembali ke Beranda</span>
+                </button>
+              </div>
+
+              <CategoryFilter
+                activeCategory={activeCategory}
+                setActiveCategory={setActiveCategory}
+                activeSubcategory={activeSubcategory}
+                setActiveSubcategory={setActiveSubcategory}
+                searchQuery={searchQuery}
+                setSearchQuery={(q) => {
+                  setSearchQuery(q);
+                  if (q.trim()) {
+                    setIsFullGallery(true);
+                  }
+                }}
+                itemCount={filteredItems.length}
+              />
+
+              <main style={{ flex: 1, position: 'relative', zIndex: 5, width: '100%' }}>
+                <PortfolioGrid
+                  items={filteredItems}
+                  loading={loading}
+                  onItemClick={(item) => setSelectedItem(item)}
+                  onResetFilter={handleResetFilter}
+                  isFullGallery={isFullGallery}
+                  isExpanded={isExpandedBeranda}
+                  currentPage={currentPage}
+                  onPageChange={(page) => {
+                    setCurrentPage(page);
+                    scrollToGallery();
+                  }}
+                  onViewMore={handleViewMoreWorks}
+                />
+              </main>
+            </div>
           </div>
         </div>
       )}
-
-      <div id="gallery-section" style={{ position: 'relative', zIndex: 5 }}>
-        <CategoryFilter
-          activeCategory={activeCategory}
-          setActiveCategory={setActiveCategory}
-          activeSubcategory={activeSubcategory}
-          setActiveSubcategory={setActiveSubcategory}
-          searchQuery={searchQuery}
-          setSearchQuery={(q) => {
-            setSearchQuery(q);
-            if (q.trim()) {
-              setIsFullGallery(true);
-            }
-          }}
-          itemCount={filteredItems.length}
-        />
-      </div>
-
-      <main style={{ flex: 1, position: 'relative', zIndex: 5 }}>
-        <PortfolioGrid
-          items={filteredItems}
-          loading={loading}
-          onItemClick={(item) => setSelectedItem(item)}
-          onResetFilter={handleResetFilter}
-          isFullGallery={isFullGallery}
-          isExpanded={isExpandedBeranda}
-          currentPage={currentPage}
-          onPageChange={(page) => {
-            setCurrentPage(page);
-            scrollToGallery();
-          }}
-          onViewMore={handleViewMoreWorks}
-        />
-
-        <ClientShowcase clients={clients} />
-      </main>
 
       <InfoModal
         activeType={activeNavModal}
@@ -496,7 +569,7 @@ export default function App(props) {
   return (
     <LanguageProvider>
       <PersonaProvider>
-        <Head title="Portoda - Aplikasi Portofolio Karya Hamdani" />
+        <Head title="Portoda - Aplikasi Aplikasi Portofolio Hamdani" />
         <AppContent {...props} />
       </PersonaProvider>
     </LanguageProvider>

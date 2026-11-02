@@ -1,8 +1,9 @@
 import React from 'react';
-import { Sparkles, Palette, Video, Code, ArrowRight, MapPin, Mail, MessageSquare, Clock, Briefcase, Award, Building2 } from 'lucide-react';
+import { Sparkles, Palette, Video, Code, ArrowRight, MapPin, Mail, MessageSquare, Clock, Briefcase, Award, Building2, Paintbrush, Monitor } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { usePersona } from '../context/PersonaContext';
 import { infoService } from '../services/infoService';
+import WatermarkedImage from './WatermarkedImage';
 
 function AnimatedCounter({ end, duration = 1800 }) {
   const [count, setCount] = React.useState(0);
@@ -36,9 +37,9 @@ function AnimatedCounter({ end, duration = 1800 }) {
   return <span>{count}</span>;
 }
 
-export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) {
+export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, children }) {
   const { lang, t } = useLanguage();
-  const { persona } = usePersona();
+  const { persona, setPersona } = usePersona();
   const [profile, setProfile] = React.useState({});
   const [experiences, setExperiences] = React.useState([]);
   const [softwareSkills, setSoftwareSkills] = React.useState([]);
@@ -111,15 +112,159 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
   const expStats = getExperienceStats();
 
   return (
-    <section style={{ padding: '1.5rem 0 1.5rem' }}>
-      <div className="container">
-        {/* Main Herta Card Hero & Welcome Container */}
-        <div className="herta-card" style={{
-          padding: '2.25rem 2rem',
+    <section className="hero-section-wrapper" style={{ padding: '0', marginTop: '-280px', width: '100%', position: 'relative', zIndex: 10 }}>
+      <div style={{
+        width: '100%',
+        padding: '0 clamp(1rem, 3.5vw, 2.5rem)',
+        boxSizing: 'border-box'
+      }}>
+        {/* Main Herta Card Hero & Welcome Container (Overlaps on top of Navbar with premium shadow & no border) */}
+        <div className="herta-card hero-main-card" style={{
+          width: '100%',
+          padding: 'clamp(2rem, 4vw, 3.25rem) clamp(1.5rem, 4vw, 3.5rem)',
           background: '#FFFFFF',
+          borderRadius: '44px',
+          border: 'none',
           position: 'relative',
-          overflow: 'hidden'
+          zIndex: 10,
+          boxShadow: '0 -10px 30px rgba(0, 0, 0, 0.08), 0 20px 45px rgba(0, 0, 0, 0.08)',
+          overflow: 'hidden',
+          boxSizing: 'border-box'
         }}>
+          {/* PERSONA SWITCHER SECTION (Didalam Container Utama) */}
+          <div style={{
+            marginBottom: '2rem',
+            paddingBottom: '1.75rem',
+            borderBottom: '2px solid rgba(0, 91, 171, 0.12)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '0.85rem',
+            textAlign: 'center',
+            width: '100%'
+          }}>
+            {/* Explanation Text */}
+            <p style={{
+              fontSize: 'clamp(0.78rem, 1.5vw, 1.00rem)',
+              fontWeight: 600,
+              color: '#005BAB',
+              margin: 0,
+              lineHeight: 1.45,
+              maxWidth: '850px',
+              opacity: 0.95
+            }}>
+              {lang === 'en'
+                ? 'Hamdani has three types of portfolios. Please select a category below to view the respective works.'
+                : 'Hamdani Memiliki Tiga Jenis Portofolio. Silakan Pilih Kategori Di Bawah Ini Untuk Melihat Masing-Masing Karya'}
+            </p>
+
+            {/* Persona Switch Track */}
+            <div
+              className="persona-switch-track"
+              style={{
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                background: '#FFFFFF',
+                borderRadius: '999px',
+                padding: '6px',
+                border: '2.5px solid #005BAB',
+                boxShadow: '0 8px 24px rgba(0, 91, 171, 0.12)',
+                width: '100%',
+                maxWidth: '780px',
+                transition: 'all 0.3s ease'
+              }}
+            >
+              {/* Option 1: Graphic Design (MGD) */}
+              <button
+                type="button"
+                onClick={() => setPersona('mgd')}
+                style={{
+                  flex: 1,
+                  position: 'relative',
+                  zIndex: 2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.45rem',
+                  padding: '0.65rem 0.85rem',
+                  borderRadius: '999px',
+                  fontSize: '0.88rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  transition: 'all 0.25s ease',
+                  textAlign: 'center',
+                  background: persona === 'mgd' ? '#005BAB' : 'transparent',
+                  color: persona === 'mgd' ? '#FFFFFF' : '#005BAB',
+                  border: persona === 'mgd' ? '2.5px solid #005BAB' : '2.5px solid transparent',
+                  boxShadow: persona === 'mgd' ? '0 4px 14px rgba(0, 91, 171, 0.25)' : 'none'
+                }}
+              >
+                <Paintbrush size={16} style={{ flexShrink: 0 }} />
+                <span>Graphic Design</span>
+              </button>
+
+              {/* Option 2: Multimedia (MS) */}
+              <button
+                type="button"
+                onClick={() => setPersona('ms')}
+                style={{
+                  flex: 1,
+                  position: 'relative',
+                  zIndex: 2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.45rem',
+                  padding: '0.65rem 0.85rem',
+                  borderRadius: '999px',
+                  fontSize: '0.88rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  transition: 'all 0.25s ease',
+                  textAlign: 'center',
+                  background: persona === 'ms' ? '#005BAB' : 'transparent',
+                  color: persona === 'ms' ? '#FFFFFF' : '#005BAB',
+                  border: persona === 'ms' ? '2.5px solid #005BAB' : '2.5px solid transparent',
+                  boxShadow: persona === 'ms' ? '0 4px 14px rgba(0, 91, 171, 0.25)' : 'none'
+                }}
+              >
+                <Video size={16} style={{ flexShrink: 0 }} />
+                <span>Multimedia</span>
+              </button>
+
+              {/* Option 3: Digital Product Design (DPD) */}
+              <button
+                type="button"
+                onClick={() => setPersona('dpd')}
+                style={{
+                  flex: 1,
+                  position: 'relative',
+                  zIndex: 2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.45rem',
+                  padding: '0.65rem 0.85rem',
+                  borderRadius: '999px',
+                  fontSize: '0.88rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  transition: 'all 0.25s ease',
+                  textAlign: 'center',
+                  background: persona === 'dpd' ? '#005BAB' : 'transparent',
+                  color: persona === 'dpd' ? '#FFFFFF' : '#005BAB',
+                  border: persona === 'dpd' ? '2.5px solid #005BAB' : '2.5px solid transparent',
+                  boxShadow: persona === 'dpd' ? '0 4px 14px rgba(0, 91, 171, 0.25)' : 'none'
+                }}
+              >
+                <Monitor size={16} style={{ flexShrink: 0 }} />
+                <span>Digital Product Design</span>
+              </button>
+            </div>
+          </div>
+
           {/* TOP WELCOME SECTION: Foto Muka & Bio Info */}
           <div style={{
             display: 'flex',
@@ -293,10 +438,10 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
               display: 'grid',
               gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
               gap: 'clamp(1.5rem, 3vw, 2.5rem) clamp(1.5rem, 3.5vw, 3rem)',
-              justifySelf: 'center',
+              justifySelf: 'stretch',
               width: '100%',
-              maxWidth: '520px',
-              paddingLeft: 'clamp(2.5rem, 5.5vw, 5rem)',
+              maxWidth: '100%',
+              paddingLeft: 'clamp(1rem, 2.5vw, 2rem)',
               paddingRight: 'clamp(0.5rem, 1.5vw, 1.5rem)',
               boxSizing: 'border-box'
             }}>
@@ -487,6 +632,164 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact }) 
               </div>
             </div>
           </div>
+
+          {/* KLIEN HAMDANI SECTION (Didalam Container Utama) */}
+          {clients && clients.length > 0 && (
+            <div id="klien-hamdani" style={{
+              marginTop: '2.5rem',
+              paddingTop: '2rem',
+              borderTop: '2px solid rgba(0, 91, 171, 0.15)',
+              position: 'relative',
+              zIndex: 1
+            }}>
+              {/* Header Klien */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '0.75rem',
+                marginBottom: '1.25rem'
+              }}>
+                <div style={{
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '999px',
+                  background: '#FFF3DD',
+                  color: '#005BAB',
+                  border: '2px solid #005BAB',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  marginTop: '2px'
+                }}>
+                  <Building2 size={22} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <h3 style={{
+                    fontSize: '1.4rem',
+                    fontWeight: 800,
+                    color: '#005BAB',
+                    margin: 0,
+                    lineHeight: 1.25
+                  }}>
+                    {lang === 'en' ? "Hamdani's Clients" : 'Klien Hamdani'}
+                  </h3>
+                  <p style={{
+                    margin: '0.25rem 0 0 0',
+                    fontSize: '0.88rem',
+                    fontWeight: 600,
+                    color: '#005BAB',
+                    opacity: 0.9,
+                    lineHeight: 1.45
+                  }}>
+                    {lang === 'en'
+                      ? 'The following are some of the brands, companies, and organizations that have been part of Hamdanis professional journey, whether through freelance projects or corporate employment.'
+                      : 'Berikut adalah beberapa brand, perusahaan, dan instansi yang pernah menjadi bagian dari perjalanan profesional Hamdani, baik melalui proyek freelance maupun pengalaman bekerja di perusahaan.'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Grid Logo Klien */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))',
+                gap: '1rem',
+                maxWidth: '100%'
+              }}>
+                {clients.map((client) => {
+                  const hasName = Boolean(client.name && client.name.trim());
+                  return (
+                    <div
+                      key={client.id || client.name || Math.random()}
+                      className="herta-card"
+                      title={hasName ? client.name : 'Logo Klien'}
+                      style={{
+                        aspectRatio: '1 / 1',
+                        borderRadius: '28px',
+                        background: '#FFFFFF',
+                        border: '2.5px solid #005BAB',
+                        padding: hasName ? '0.6rem 0.5rem 0.5rem' : '0.6rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+                        boxShadow: '0 4px 12px rgba(0, 91, 171, 0.06)'
+                      }}
+                    >
+                      {client.logo ? (
+                        <div style={{
+                          width: '100%',
+                          height: hasName ? 'calc(100% - 1.2rem)' : '100%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          overflow: 'hidden'
+                        }}>
+                          <WatermarkedImage
+                            src={client.logo}
+                            alt={hasName ? client.name : 'Client Logo'}
+                            objectFit="contain"
+                            style={{ width: '100%', height: '100%', borderRadius: '18px' }}
+                          />
+                        </div>
+                      ) : (
+                        <div style={{
+                          width: '100%',
+                          height: '100%',
+                          borderRadius: '18px',
+                          background: '#FFF3DD',
+                          color: '#005BAB',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontWeight: 800,
+                          fontSize: '0.82rem',
+                          textAlign: 'center',
+                          padding: '0.25rem',
+                          wordBreak: 'break-word'
+                        }}>
+                          {hasName ? client.name : 'Klien'}
+                        </div>
+                      )}
+
+                      {hasName && (
+                        <div style={{
+                          marginTop: '0.25rem',
+                          fontSize: '0.72rem',
+                          fontWeight: 800,
+                          color: '#005BAB',
+                          textAlign: 'center',
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          width: '100%'
+                        }}>
+                          {client.name}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* GALLERY & WORKS (Dimasukkan langsung ke dalam Container Utama) */}
+          {children && (
+            <div id="gallery-section" style={{
+              marginTop: '2.5rem',
+              paddingTop: '2.25rem',
+              borderTop: '2px solid rgba(0, 91, 171, 0.15)',
+              position: 'relative',
+              zIndex: 1,
+              width: '100%'
+            }}>
+              {children}
+            </div>
+          )}
         </div>
       </div>
 

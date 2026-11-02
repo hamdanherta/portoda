@@ -114,7 +114,7 @@ export default function CertificateSection({ onSelectCertificate }) {
                     paddingTop: '56.25%',
                     borderRadius: '16px',
                     overflow: 'hidden',
-                    border: '2px solid #005BAB',
+                    border: 'none',
                     marginBottom: '1rem',
                     backgroundColor: '#111827'
                   }}>

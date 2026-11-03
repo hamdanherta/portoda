@@ -1245,6 +1245,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
     if (s.includes('banner')) return { maxCover: 1, maxGallery: 1, hasVideo: false, hasPrototype: false };
     if (s.includes('poster')) return { maxCover: 1, maxGallery: 1, hasVideo: false, hasPrototype: false };
     if (s.includes('kemasan') || s.includes('packaging')) return { maxCover: 1, maxGallery: 3, hasVideo: false, hasPrototype: false };
+    if (s.includes('feed')) return { maxCover: 1, maxGallery: 9, hasVideo: false, hasPrototype: false };
     if (s.includes('lain')) return { maxCover: 1, maxGallery: 1, hasVideo: false, hasPrototype: false };
 
     // MULTIMEDIA
@@ -1357,12 +1358,21 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
   // Filter Items by Admin Category, Subcategory, and Search Query (100% Mandiri tanpa terpengaruh beranda)
   const filteredKaryaItems = effectiveItems.filter((item) => {
     // 1. Filter Kategori Internal Admin
-    if (adminKaryaCategory !== 'all' && item.category !== adminKaryaCategory) {
-      return false;
+    if (adminKaryaCategory !== 'all') {
+      const isMgdMatch = adminKaryaCategory === 'desain-grafis' && (item.category === 'desain-grafis' || (item.subcategory && item.subcategory.toLowerCase().includes('feed')));
+      if (!isMgdMatch && item.category !== adminKaryaCategory) {
+        return false;
+      }
     }
     // 2. Filter Subkategori Internal Admin
-    if (adminKaryaSubcategory !== 'all' && item.subcategory !== adminKaryaSubcategory) {
-      return false;
+    if (adminKaryaSubcategory !== 'all') {
+      const isSubFeed = adminKaryaSubcategory.toLowerCase().includes('feed');
+      const isItemFeed = (item.subcategory || '').toLowerCase().includes('feed');
+      if (isSubFeed) {
+        if (!isItemFeed) return false;
+      } else if (item.subcategory !== adminKaryaSubcategory) {
+        return false;
+      }
     }
     // 3. Pencarian Kata Kunci Admin
     if (!adminSearchQuery.trim()) return true;
@@ -2317,10 +2327,10 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                       </div>
                     </div>
                     <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.1 }}>
-                      {effectiveItems.filter(i => i.category === 'desain-grafis').length}
+                      {effectiveItems.filter(i => i.category === 'desain-grafis' || (i.subcategory && i.subcategory.toLowerCase().includes('feed'))).length}
                     </div>
                     <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#005BAB', opacity: 0.85, marginTop: '0.25rem' }}>
-                      Logo, Banner, Poster, Kemasan
+                      Logo, Banner, Poster, Kemasan, Feed
                     </div>
                   </div>
 
@@ -3288,7 +3298,10 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                       const isActive = adminKaryaCategory === cat.id;
                       const count = cat.id === 'all'
                         ? effectiveItems.length
-                        : effectiveItems.filter(i => i.category === cat.id).length;
+                        : effectiveItems.filter(i => cat.id === 'desain-grafis'
+                            ? (i.category === 'desain-grafis' || (i.subcategory && i.subcategory.toLowerCase().includes('feed')))
+                            : i.category === cat.id
+                          ).length;
                       return (
                         <button
                           key={cat.id}
@@ -3329,9 +3342,18 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                       {['all', ...getSubcategoriesByCategory(adminKaryaCategory)].map((sub) => {
                         const isSubAll = sub === 'all';
                         const isSubActive = adminKaryaSubcategory === sub;
+                        const isFeedSub = sub.toLowerCase().includes('feed');
                         const subCount = isSubAll
-                          ? effectiveItems.filter(i => i.category === adminKaryaCategory).length
-                          : effectiveItems.filter(i => i.category === adminKaryaCategory && i.subcategory === sub).length;
+                          ? effectiveItems.filter(i => adminKaryaCategory === 'desain-grafis'
+                              ? (i.category === 'desain-grafis' || (i.subcategory && i.subcategory.toLowerCase().includes('feed')))
+                              : i.category === adminKaryaCategory
+                            ).length
+                          : effectiveItems.filter(i => {
+                              if (isFeedSub) {
+                                return (i.subcategory && i.subcategory.toLowerCase().includes('feed'));
+                              }
+                              return i.category === adminKaryaCategory && i.subcategory === sub;
+                            }).length;
                         return (
                           <button
                             key={sub}

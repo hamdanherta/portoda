@@ -167,7 +167,15 @@ function AppContent({ karyaId, docId }) {
 
     // Filter by Active Persona (MGD vs MS vs DPD)
     if (persona === 'mgd') {
-      result = result.filter(i => i.persona === 'mgd' || (!i.persona && i.category === 'desain-grafis'));
+      result = result.filter(i => {
+        if (i.persona === 'mgd') return true;
+        // Fallback legacy: tanpa persona + category desain-grafis
+        if (!i.persona && i.category === 'desain-grafis') return true;
+        // Feed Design juga masuk Graphic Design
+        const sub = (i.subcategory || '').toLowerCase();
+        if (sub.includes('feed') && i.persona !== 'ms' && i.persona !== 'dpd') return true;
+        return false;
+      });
     } else if (persona === 'ms') {
       result = result.filter(i => i.persona === 'ms' || (!i.persona && i.category === 'multimedia'));
     } else if (persona === 'dpd') {

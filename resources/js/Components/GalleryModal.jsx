@@ -29,15 +29,15 @@ function isAllowedSubcategory(subcategory) {
   return ALLOWED_SUBCATEGORY_KEYWORDS.some((k) => key.includes(k));
 }
 const SUBCATEGORY_META = {
-  'logo':       { id: 'Logo Design',       en: 'Logo Design',        desc_id: 'Karya desain logo brand dan identitas visual.', desc_en: 'Brand logo and visual identity design works.' },
-  'poster':     { id: 'Poster Design',     en: 'Poster Design',      desc_id: 'Desain poster untuk berbagai kebutuhan promosi & acara.', desc_en: 'Poster designs for promotions & events.' },
-  'banner':     { id: 'Banner & Iklan',    en: 'Banner & Ads',       desc_id: 'Karya banner digital maupun cetak untuk kebutuhan iklan.', desc_en: 'Digital and print banner works for advertising.' },
-  'kemasan':    { id: 'Kemasan Produk',    en: 'Product Packaging',  desc_id: 'Desain kemasan produk yang menarik dan fungsional.', desc_en: 'Attractive and functional product packaging designs.' },
-  'feed':       { id: 'Feed Media Sosial', en: 'Social Media Feed',  desc_id: 'Konten visual untuk platform media sosial.', desc_en: 'Visual content for social media platforms.' },
+  'logo':       { id: 'Desain Logo',       en: 'Logo Design',        desc_id: 'Karya desain logo brand dan identitas visual.', desc_en: 'Brand logo and visual identity design works.' },
+  'poster':     { id: 'Desain Poster',     en: 'Poster Design',      desc_id: 'Desain poster untuk berbagai kebutuhan promosi & acara.', desc_en: 'Poster designs for promotions & events.' },
+  'banner':     { id: 'Desain Banner',     en: 'Banner & Ads',       desc_id: 'Karya banner digital maupun cetak untuk kebutuhan iklan.', desc_en: 'Digital and print banner works for advertising.' },
+  'kemasan':    { id: 'Desain Kemasan',    en: 'Product Packaging',  desc_id: 'Desain kemasan produk yang menarik dan fungsional.', desc_en: 'Attractive and functional product packaging designs.' },
+  'feed':       { id: 'Desain Feed',       en: 'Feed Design',        desc_id: 'Konten visual untuk platform media sosial.', desc_en: 'Visual content for social media platforms.' },
   'infografis': { id: 'Infografis',        en: 'Infographic',        desc_id: 'Penyampaian informasi secara visual dan informatif.', desc_en: 'Visually informative graphic data presentations.' },
   'editorial':  { id: 'Editorial & Layout',en: 'Editorial & Layout', desc_id: 'Desain tata letak untuk buku, majalah, dan publikasi.', desc_en: 'Layout design for books, magazines, and publications.' },
   'stationery': { id: 'Stationery & Brand',en: 'Stationery & Brand', desc_id: 'Kartu nama, kop surat, dan identitas merek lengkap.', desc_en: 'Business cards, letterheads, and full brand identity.' },
-  'lain':       { id: 'Karya Lainnya',     en: 'Other Works',        desc_id: 'Karya desain grafis lainnya di luar kategori di atas.', desc_en: 'Other graphic design works outside the above categories.' },
+  'lain':       { id: 'Desain Lainnya',    en: 'Other Works',        desc_id: 'Karya desain grafis lainnya di luar kategori di atas.', desc_en: 'Other graphic design works outside the above categories.' },
 };
 
 /** Resolve subcategory string ke meta label + desc. */
@@ -52,20 +52,33 @@ function resolveMeta(subcategory, lang) {
     }
   }
   return {
-    label: subcategory || (lang === 'en' ? 'Other' : 'Lainnya'),
+    label: subcategory || (lang === 'en' ? 'Other' : 'Desain Lainnya'),
     desc:  '',
   };
 }
 
-/** Group items by subcategory, preserve insertion order. */
+function getCanonicalSubcategoryKey(subcategory) {
+  const s = (subcategory || '').toLowerCase().trim();
+  if (s.includes('logo')) return 'logo';
+  if (s.includes('banner') || s.includes('iklan')) return 'banner';
+  if (s.includes('poster')) return 'poster';
+  if (s.includes('kemasan') || s.includes('packaging')) return 'kemasan';
+  if (s.includes('feed')) return 'feed';
+  if (s.includes('infografis') || s.includes('infographic')) return 'infografis';
+  if (s.includes('editorial')) return 'editorial';
+  if (s.includes('stationery') || s.includes('brand')) return 'stationery';
+  return 'lain';
+}
+
+/** Group items by canonical subcategory, preserve order. */
 function groupBySubcategory(items) {
   const map = new Map();
   items.forEach((item) => {
-    const key = (item.subcategory || '').trim() || 'Lainnya';
+    const key = getCanonicalSubcategoryKey(item.subcategory);
     if (!map.has(key)) map.set(key, []);
     map.get(key).push(item);
   });
-  return Array.from(map.entries()).map(([subcategory, grpItems]) => ({ subcategory, items: grpItems }));
+  return Array.from(map.entries()).map(([subcategoryKey, grpItems]) => ({ subcategory: subcategoryKey, items: grpItems }));
 }
 
 // ── Single Image Card — rasio mengikuti gambar asli, no fixed aspect-ratio ──
@@ -203,12 +216,22 @@ export default function GalleryModal({ items = [], onClose, onExploreClick }) {
   }, [onClose]);
 
   // Filter STRICT:
-  // 1. persona HARUS 'mgd'
+  // 1. Khusus Graphic Design: persona 'mgd' ATAU category 'desain-grafis' ATAU subkategori Feed
+  //    (selama bukan persona ms atau dpd)
   // 2. subcategory HARUS masuk whitelist (Logo, Banner, Poster, Kemasan, Feed, Lainnya)
   //    → Fotografi, Motion Graphic, Videografi, Film, Mobile, Web, UI/UX = DIEKSKLUSI
   const mgdItems = items.filter((i) => {
-    const isPersonaMgd = (i.persona || '').trim().toLowerCase() === 'mgd';
-    if (!isPersonaMgd) return false;
+    const p = (i.persona || '').trim().toLowerCase();
+    const cat = (i.category || '').trim().toLowerCase();
+    const sub = (i.subcategory || '').trim().toLowerCase();
+
+    // Jangan masukkan karya persona Multimedia (ms) atau Digital Product Design (dpd)
+    if (p === 'ms' || p === 'dpd') return false;
+
+    // Harus persona mgd, atau category desain-grafis, atau subkategori feed
+    const isMgd = p === 'mgd' || cat === 'desain-grafis' || sub.includes('feed');
+    if (!isMgd) return false;
+
     return isAllowedSubcategory(i.subcategory);
   });
   const groups = groupBySubcategory(mgdItems);

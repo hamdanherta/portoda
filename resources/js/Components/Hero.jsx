@@ -318,7 +318,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
               </div>
 
               <img
-                src="/profile/Group 820.png"
+                src="/profile/Group 820.webp"
                 alt="Foto Hamdani"
                 style={{
                   width: '300px',
@@ -418,14 +418,16 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
 
                 
 
-                {/* Button Explore (Jelajahi Karya) */}
-                <button onClick={onExploreClick} className="btn-green hero-cta-explore" style={{ padding: '0.65rem 1.4rem', fontSize: '0.92rem' }}>
-                  <span>{t('hero_btn_explore')}</span>
-                  <ArrowRight size={16} />
-                </button>
+                {/* Button Explore (Jelajahi Karya) — sembunyikan di persona MGD */}
+                {persona !== 'mgd' && (
+                  <button onClick={onExploreClick} className="btn-green hero-cta-explore" style={{ padding: '0.65rem 1.4rem', fontSize: '0.92rem' }}>
+                    <span>{t('hero_btn_explore')}</span>
+                    <ArrowRight size={16} />
+                  </button>
+                )}
 
-                {/* Button Lihat Semua Karya Graphic Design */}
-                {onOpenGallery && (
+                {/* Button Lihat Semua Karya Graphic Design — HANYA muncul di MGD, warna hijau */}
+                {persona === 'mgd' && onOpenGallery && (
                   <button
                     onClick={onOpenGallery}
                     className="hero-cta-gallery"
@@ -434,27 +436,27 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
                       fontSize: '0.92rem',
                       fontWeight: 800,
                       borderRadius: '999px',
-                      background: '#005BAB',
+                      background: '#16A34A',
                       color: '#FFFFFF',
-                      border: '2.5px solid #005BAB',
+                      border: '2.5px solid #16A34A',
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: '0.5rem',
                       cursor: 'pointer',
-                      boxShadow: '0 4px 14px rgba(0, 91, 171, 0.25)',
+                      boxShadow: '0 4px 14px rgba(22, 163, 74, 0.25)',
                       transition: 'all 0.2s ease',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.background = '#004A8F';
-                      e.currentTarget.style.borderColor = '#004A8F';
+                      e.currentTarget.style.background = '#15803D';
+                      e.currentTarget.style.borderColor = '#15803D';
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.background = '#005BAB';
-                      e.currentTarget.style.borderColor = '#005BAB';
+                      e.currentTarget.style.background = '#16A34A';
+                      e.currentTarget.style.borderColor = '#16A34A';
                     }}
                   >
                     <Images size={17} style={{ flexShrink: 0 }} />
-                    <span>{lang === 'en' ? 'All Works' : 'Semua Karya'}</span>
+                    <span>{lang === 'en' ? 'All Design Works' : 'Lihat Semua Karya'}</span>
                   </button>
                 )}
 

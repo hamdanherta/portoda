@@ -81,32 +81,42 @@ function groupBySubcategory(items) {
   return Array.from(map.entries()).map(([subcategoryKey, grpItems]) => ({ subcategory: subcategoryKey, items: grpItems }));
 }
 
-// ── Single Image Card — rasio mengikuti gambar asli, no fixed aspect-ratio ──
+// ── Single Image Card — Ringan, hardware accelerated, rasio gambar asli ──
 function GalleryImageCard({ item }) {
+  const [loaded, setLoaded] = React.useState(false);
+
   return (
     <div
       style={{
-        breakInside: 'avoid',          /* jangan potong di tengah kolom */
+        breakInside: 'avoid',
         marginBottom: '0.55rem',
         borderRadius: '10px',
         overflow: 'hidden',
-        background: '#EEF2F8',
+        background: loaded ? 'transparent' : '#E8EEF8',
         boxShadow: '0 2px 6px rgba(0, 91, 171, 0.08)',
         cursor: 'default',
         userSelect: 'none',
-        padding: '3px',                /* padding tipis di sekeliling gambar */
+        padding: '3px',
+        contain: 'paint layout',
+        minHeight: loaded ? 'auto' : '110px',
+        transition: 'background 0.3s ease',
       }}
     >
-      <WatermarkedImage
+      <img
         src={item.image_url}
         alt={item.title || 'Karya Graphic Design'}
-        objectFit="cover"
+        loading="lazy"
+        decoding="async"
+        onLoad={() => setLoaded(true)}
         style={{
           width: '100%',
-          height: 'auto',              /* ikuti rasio asli gambar */
+          height: 'auto',
           display: 'block',
           borderRadius: '8px',
           pointerEvents: 'none',
+          opacity: loaded ? 1 : 0.85,
+          transition: 'opacity 0.25s ease',
+          contentVisibility: 'auto',
         }}
       />
     </div>
@@ -248,28 +258,28 @@ export default function GalleryModal({ items = [], onClose, onExploreClick }) {
           background: 'rgba(0, 20, 60, 0.72)',
           zIndex: 9000,
           display: 'flex',
-          alignItems: 'flex-start',
+          alignItems: 'center',
           justifyContent: 'center',
           padding: 'clamp(0.5rem, 2vw, 1.5rem)',
-          overflowY: 'auto',
+          overflow: 'hidden',
           backdropFilter: 'blur(4px)',
           WebkitBackdropFilter: 'blur(4px)',
         }}
       >
-        {/* Modal Panel */}
+        {/* Modal Panel — Single unified container dengan maxHeight dan scroll internal */}
         <div
           style={{
             width: '100%',
             maxWidth: '1100px',
+            maxHeight: '92vh',
             background: '#FFFFFF',
             borderRadius: '32px',
             boxShadow: '0 24px 80px rgba(0, 36, 100, 0.28)',
-            overflow: 'hidden',
             display: 'flex',
             flexDirection: 'column',
-            marginTop: 'clamp(0.5rem, 2vw, 1rem)',
-            marginBottom: 'clamp(0.5rem, 2vw, 2rem)',
-            animation: 'galleryModalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+            overflow: 'hidden',
+            position: 'relative',
+            animation: 'galleryModalIn 0.28s cubic-bezier(0.16, 1, 0.3, 1)',
           }}
         >
           {/* ── Header sticky ── */}
@@ -419,12 +429,18 @@ export default function GalleryModal({ items = [], onClose, onExploreClick }) {
             </div>
           </div>
 
-          {/* ── Body (Scrollable) ── */}
-          <div style={{
-            overflowY: 'auto',
-            padding: 'clamp(1.25rem, 3vw, 1.75rem) clamp(1.25rem, 3vw, 2rem)',
-            flex: 1,
-          }}>
+          {/* ── Body (Scrollable dengan Momentum & GPU Acceleration) ── */}
+          <div
+            className="gallery-modal-body"
+            style={{
+              overflowY: 'auto',
+              WebkitOverflowScrolling: 'touch',
+              overscrollBehavior: 'contain',
+              padding: 'clamp(1rem, 2.5vw, 1.5rem) clamp(1.25rem, 3vw, 2rem)',
+              flex: 1,
+              willChange: 'scroll-position',
+            }}
+          >
             {mgdItems.length === 0 ? (
               <div style={{
                 textAlign: 'center',
@@ -446,53 +462,37 @@ export default function GalleryModal({ items = [], onClose, onExploreClick }) {
               ))
             )}
           </div>
-
-          {/* ── Footer ── */}
-          <div style={{
-            borderTop: '2px solid rgba(0, 91, 171, 0.1)',
-            padding: '0.9rem clamp(1.25rem, 3vw, 2rem)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-            background: '#F8FAFF',
-          }}>
-            <button
-              onClick={onClose}
-              style={{
-                padding: '0.5rem 1.3rem',
-                fontSize: '0.85rem',
-                fontWeight: 800,
-                borderRadius: '999px',
-                background: '#005BAB',
-                color: '#FFFFFF',
-                border: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-                transition: 'opacity 0.18s ease',
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.opacity = '0.85'}
-              onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
-            >
-              <X size={15} />
-              {lang === 'en' ? 'Close Gallery' : 'Tutup Galeri'}
-            </button>
-          </div>
         </div>
       </div>
 
       {/* ── Styles ── */}
       <style>{`
         @keyframes galleryModalIn {
-          from { opacity: 0; transform: translateY(28px) scale(0.97); }
-          to   { opacity: 1; transform: translateY(0)    scale(1);    }
+          from { opacity: 0; transform: translateY(20px) scale(0.98); }
+          to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Smooth scrollbar styling untuk modal body */
+        .gallery-modal-body::-webkit-scrollbar {
+          width: 8px;
+        }
+        .gallery-modal-body::-webkit-scrollbar-track {
+          background: #F1F5F9;
+          border-radius: 999px;
+        }
+        .gallery-modal-body::-webkit-scrollbar-thumb {
+          background: #C4D3EA;
+          border-radius: 999px;
+        }
+        .gallery-modal-body::-webkit-scrollbar-thumb:hover {
+          background: #005BAB;
         }
 
         /* CSS Columns masonry — gambar ikuti rasio asli, tidak ada ruang kosong */
         .gallery-modal-grid {
           column-count: 5;
           column-gap: 0.55rem;
+          contain: layout;
         }
 
         /* Tablet: 4 kolom */

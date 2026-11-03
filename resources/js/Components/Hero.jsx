@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Palette, Video, Code, ArrowRight, MapPin, Mail, MessageSquare, Clock, Briefcase, Award, Building2, Paintbrush, Monitor } from 'lucide-react';
+import { Sparkles, Palette, Video, Code, ArrowRight, MapPin, Mail, MessageSquare, Clock, Briefcase, Award, Building2, Paintbrush, Monitor, Images } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { usePersona } from '../context/PersonaContext';
 import { infoService } from '../services/infoService';
@@ -37,7 +37,7 @@ function AnimatedCounter({ end, duration = 1800 }) {
   return <span>{count}</span>;
 }
 
-export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, children }) {
+export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, onOpenGallery, children }) {
   const { lang, t } = useLanguage();
   const { persona, setPersona } = usePersona();
   const [profile, setProfile] = React.useState({});
@@ -302,18 +302,33 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, ch
               margin: '0 auto',
               position: 'relative'
             }} className="hero-photo-wrapper">
+              {/* Floating Figma Icon (Atas Sebelah Kanan) */}
+              <div className="floating-figma-badge">
+                <img
+                  src="/profile/figma.png"
+                  alt="Figma Logo"
+                  style={{
+                    width: '70px',
+                    height: 'auto',
+                    objectFit: 'contain',
+                    transform: 'rotate(1deg)',
+                    filter: 'drop-shadow(0 10px 20px rgba(0, 91, 171, 0.3))'
+                  }}
+                />
+              </div>
+
               <img
-                src="/hamdani.webp"
+                src="/profile/Group 820.png"
                 alt="Foto Hamdani"
                 style={{
-                  width: '260px',
-                  height: '310px',
+                  width: '300px',
+                  height: 'auto',
                   maxHeight: '320px',
-                  objectFit: 'cover',
-                  borderRadius: '32px',
-                  border: '3px solid #005BAB',
-                  boxShadow: '0 8px 24px rgba(0, 91, 171, 0.15)',
-                  display: 'block'
+                  objectFit: 'contain',
+                  borderRadius: '0',
+                  display: 'block',
+                  position: 'relative',
+                  zIndex: 2
                 }}
               />
             </div>
@@ -330,9 +345,9 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, ch
                 letterSpacing: '-0.02em'
               }}>
                 <span className="hero-title-name">{profile?.name || 'Hamdani'}</span>
-                <span className="hero-title-sep"> — </span>
+                <span className="hero-title-sep" style={{ fontSize: '0.55em', display: 'inline-block', transform: 'translateY(-85%)', opacity: 1 }}>  •  </span>
                 <br className="hero-title-br" />
-                <span className="hero-title-tagline" style={{ fontWeight: 400 }}>
+                <span className="hero-title-tagline" style={{ fontWeight: 300 }}>
                   {currentTagline}
                 </span>
               </h1>
@@ -359,8 +374,8 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, ch
                     gap: '0.5rem',
                     padding: '0.65rem 1.4rem',
                     borderRadius: '999px',
-                    background: '#005BAB',
-                    color: '#FFFFFF',
+                    background: '#FFFFFF',
+                    color: '#005BAB',
                     fontSize: '0.92rem',
                     fontWeight: 400,
                     border: '2.5px solid #005BAB',
@@ -409,9 +424,43 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, ch
                   <ArrowRight size={16} />
                 </button>
 
+                {/* Button Lihat Semua Karya Graphic Design */}
+                {onOpenGallery && (
+                  <button
+                    onClick={onOpenGallery}
+                    className="hero-cta-gallery"
+                    style={{
+                      padding: '0.65rem 1.4rem',
+                      fontSize: '0.92rem',
+                      fontWeight: 800,
+                      borderRadius: '999px',
+                      background: '#005BAB',
+                      color: '#FFFFFF',
+                      border: '2.5px solid #005BAB',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 14px rgba(0, 91, 171, 0.25)',
+                      transition: 'all 0.2s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = '#004A8F';
+                      e.currentTarget.style.borderColor = '#004A8F';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = '#005BAB';
+                      e.currentTarget.style.borderColor = '#005BAB';
+                    }}
+                  >
+                    <Images size={17} style={{ flexShrink: 0 }} />
+                    <span>{lang === 'en' ? 'All Works' : 'Semua Karya'}</span>
+                  </button>
+                )}
+
                 {/* Button Contact */}
                 {onOpenContact && (
-                  <button onClick={onOpenContact} className="btn-secondary hero-cta-contact" style={{ padding: '0.65rem 1.4rem', fontSize: '0.92rem' }}>
+                  <button onClick={onOpenContact} className="btn-primary hero-cta-contact" style={{ padding: '0.65rem 1.4rem', fontSize: '0.92rem' }}>
                     <MessageSquare size={16} />
                     <span>{t('hero_btn_contact')}</span>
                   </button>
@@ -860,8 +909,11 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, ch
           .hero-cta-explore {
             order: 3 !important;
           }
-          .hero-cta-contact {
+          .hero-cta-gallery {
             order: 4 !important;
+          }
+          .hero-cta-contact {
+            order: 5 !important;
           }
 
           .hero-title-br {
@@ -905,8 +957,11 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, ch
           .hero-cta-explore {
             order: 3 !important;
           }
-          .hero-cta-contact {
+          .hero-cta-gallery {
             order: 4 !important;
+          }
+          .hero-cta-contact {
+            order: 5 !important;
           }
 
           .hero-title-br {
@@ -917,6 +972,26 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, ch
           }
           .hero-subtext-br {
             display: none !important;
+          }
+        }
+
+        /* ── Floating Figma Badge (Melayang Halus di Atas Kanan Foto) ── */
+        .floating-figma-badge {
+          position: absolute;
+          top: 70px;
+          right: 1px;
+          z-index: 5;
+          pointer-events: none;
+          animation: floatFigma 2.5s ease-in-out infinite;
+          will-change: transform;
+        }
+
+        @keyframes floatFigma {
+          0%, 100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-12px);
           }
         }
       `}</style>

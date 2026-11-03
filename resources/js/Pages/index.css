@@ -548,9 +548,11 @@ img, video, iframe, canvas {
   .herta-card,
   .herta-card-cream,
   .hero-stats-bar,
-  .hero-photo-wrapper img,
   .mobile-drawer .herta-card {
     border-radius: 32px !important;
+  }
+  .hero-photo-wrapper img {
+    border-radius: 0 !important;
   }
   .herta-card {
     padding: 1rem !important;

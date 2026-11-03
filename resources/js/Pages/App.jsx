@@ -10,6 +10,7 @@ import Footer from '../Components/Footer';
 import MaintenanceModal from '../Components/MaintenanceModal';
 import ContentNoticeModal from '../Components/ContentNoticeModal';
 import ClientShowcase from '../Components/ClientShowcase';
+import GalleryModal from '../Components/GalleryModal';
 import { portfolioService } from '../services/portfolioService';
 import { infoService } from '../services/infoService';
 import { LanguageProvider } from '../context/LanguageContext';
@@ -36,6 +37,9 @@ function AppContent({ karyaId, docId }) {
   const [isFullGallery, setIsFullGallery] = useState(false);
   const [isExpandedBeranda, setIsExpandedBeranda] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Modal Seluruh Karya Graphic Design (MGD)
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
 
   // Admin Auth & Maintenance Mode State
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(() => {
@@ -419,6 +423,7 @@ function AppContent({ karyaId, docId }) {
             onExploreClick={scrollToGallery}
             totalItems={allItems.length > 0 ? allItems.length : filteredItems.length}
             onOpenContact={() => setActiveNavModal('kontak')}
+            onOpenGallery={() => setIsGalleryOpen(true)}
           >
             <CategoryFilter
               activeCategory={activeCategory}
@@ -519,6 +524,18 @@ function AppContent({ karyaId, docId }) {
         onClose={() => setActiveNavModal(null)}
         onSelectCertificate={(cert) => setSelectedItem(cert)}
       />
+
+      {/* Modal Seluruh Karya Graphic Design — display only, no detail click */}
+      {isGalleryOpen && (
+        <GalleryModal
+          items={allItems}
+          onClose={() => setIsGalleryOpen(false)}
+          onExploreClick={() => {
+            setIsGalleryOpen(false);
+            scrollToGallery();
+          }}
+        />
+      )}
 
       <DetailModal
         item={selectedItem}

@@ -283,64 +283,68 @@ export default function GalleryModal({ items = [], onClose, onExploreClick }) {
           }}
         >
           {/* ── Header sticky ── */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1rem',
-            padding: 'clamp(1.1rem, 2.5vw, 1.75rem) clamp(1.25rem, 3vw, 2rem)',
-            borderBottom: '2px solid rgba(0, 91, 171, 0.12)',
-            position: 'sticky',
-            top: 0,
-            background: '#FFFFFF',
-            zIndex: 10,
-          }}>
-            {/* Icon */}
-            <div style={{
-              width: '46px',
-              height: '46px',
-              borderRadius: '14px',
-              background: '#005BAB',
+          <div
+            className="gallery-modal-header"
+            style={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-            }}>
-              <Images size={22} color="#FFFFFF" />
-            </div>
+              justifyContent: 'space-between',
+              gap: '0.75rem',
+              padding: 'clamp(0.9rem, 2.5vw, 1.4rem) clamp(1rem, 3vw, 2rem)',
+              borderBottom: '2px solid rgba(0, 91, 171, 0.12)',
+              position: 'sticky',
+              top: 0,
+              background: '#FFFFFF',
+              zIndex: 10,
+              flexWrap: 'wrap',
+            }}
+          >
+            {/* Left: Icon & Judul */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', minWidth: 0, flex: '1 1 auto' }}>
+              <div style={{
+                width: '42px',
+                height: '42px',
+                borderRadius: '12px',
+                background: '#005BAB',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}>
+                <Images size={20} color="#FFFFFF" />
+              </div>
 
-            {/* Judul */}
-            <div style={{ flex: 1, minWidth: 0 }}>
               <h2 style={{
                 margin: 0,
-                fontSize: 'clamp(1rem, 2.5vw, 1.5rem)',
+                fontSize: 'clamp(0.95rem, 2.2vw, 1.4rem)',
                 fontWeight: 900,
                 color: '#005BAB',
-                lineHeight: 1.2,
+                lineHeight: 1.25,
                 letterSpacing: '-0.02em',
+                wordBreak: 'break-word',
               }}>
                 {lang === 'en'
                   ? "All Graphic Design Works"
                   : 'Seluruh Karya Graphic Design'}
               </h2>
-              {/* <p style={{
-                margin: '0.2rem 0 0 0',
-                fontSize: '0.78rem',
-                fontWeight: 500,
-                color: '#4B6B9A',
-              }}>
-                {mgdItems.length} {lang === 'en' ? 'works in' : 'karya dalam'} {groups.length} {lang === 'en' ? 'categories' : 'subkategori'}
-              </p> */}
             </div>
 
-            {/* Actions: Tombol Jelajahi Karya + Tombol Close */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexShrink: 0 }}>
+            {/* Right Actions: Tombol Jelajahi Karya + Tombol Close */}
+            <div className="gallery-header-actions" style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              flexWrap: 'wrap',
+              justifyContent: 'flex-end',
+            }}>
               {onExploreClick && (
                 <button
                   type="button"
                   onClick={() => { onClose(); onExploreClick(); }}
+                  className="gallery-explore-btn"
                   style={{
-                    padding: '0.55rem 1.15rem',
-                    fontSize: '0.84rem',
+                    padding: '0.5rem 1rem',
+                    fontSize: '0.8rem',
                     fontWeight: 800,
                     borderRadius: '999px',
                     background: '#16A34A',
@@ -348,19 +352,21 @@ export default function GalleryModal({ items = [], onClose, onExploreClick }) {
                     border: '2px solid #16A34A',
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '0.45rem',
+                    justifyContent: 'center',
+                    gap: '0.4rem',
                     cursor: 'pointer',
-                    boxShadow: '0 4px 12px rgba(0, 91, 171, 0.2)',
+                    boxShadow: '0 4px 12px rgba(22, 163, 74, 0.25)',
                     transition: 'all 0.2s ease',
-                    whiteSpace: 'nowrap'
+                    textAlign: 'center',
+                    lineHeight: 1.3,
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background = '#004A8F';
-                    e.currentTarget.style.borderColor = '#004A8F';
+                    e.currentTarget.style.background = '#15803D';
+                    e.currentTarget.style.borderColor = '#15803D';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.background = '#005BAB';
-                    e.currentTarget.style.borderColor = '#005BAB';
+                    e.currentTarget.style.background = '#16A34A';
+                    e.currentTarget.style.borderColor = '#16A34A';
                   }}
                 >
                   <span>{lang === 'en' ? 'Explore Works & Info' : 'Jelajahi Karya Beserta Informasi nya'}</span>
@@ -372,8 +378,8 @@ export default function GalleryModal({ items = [], onClose, onExploreClick }) {
                 onClick={onClose}
                 aria-label="Tutup modal"
                 style={{
-                  width: '40px',
-                  height: '40px',
+                  width: '38px',
+                  height: '38px',
                   borderRadius: '999px',
                   border: '2px solid #005BAB',
                   background: '#FFFFFF',
@@ -394,7 +400,7 @@ export default function GalleryModal({ items = [], onClose, onExploreClick }) {
                   e.currentTarget.style.color = '#005BAB';
                 }}
               >
-                <X size={19} />
+                <X size={18} />
               </button>
             </div>
           </div>
@@ -469,6 +475,26 @@ export default function GalleryModal({ items = [], onClose, onExploreClick }) {
         @media (max-width: 900px) {
           .gallery-modal-grid {
             column-count: 4;
+          }
+        }
+
+        /* Mobile Header Responsive: wrap action button & allow flexible text */
+        @media (max-width: 650px) {
+          .gallery-modal-header {
+            padding: 0.85rem 1rem !important;
+            gap: 0.6rem !important;
+          }
+          .gallery-header-actions {
+            width: 100% !important;
+            justify-content: space-between !important;
+            order: 3 !important;
+            margin-top: 0.25rem !important;
+          }
+          .gallery-explore-btn {
+            flex: 1 1 auto !important;
+            font-size: 0.76rem !important;
+            padding: 0.45rem 0.85rem !important;
+            white-space: normal !important;
           }
         }
 

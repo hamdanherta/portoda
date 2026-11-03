@@ -319,8 +319,8 @@ export default function GalleryModal({ items = [], onClose, onExploreClick }) {
                 letterSpacing: '-0.02em',
               }}>
                 {lang === 'en'
-                  ? "Hamdani's Graphic Design Works"
-                  : 'Seluruh Karya Graphic Design Hamdani'}
+                  ? "All Graphic Design Works"
+                  : 'Seluruh Karya Graphic Design'}
               </h2>
               {/* <p style={{
                 margin: '0.2rem 0 0 0',
@@ -332,99 +332,69 @@ export default function GalleryModal({ items = [], onClose, onExploreClick }) {
               </p> */}
             </div>
 
-            {/* Tombol Close */}
-            <button
-              onClick={onClose}
-              aria-label="Tutup modal"
-              style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '999px',
-                border: '2px solid #005BAB',
-                background: '#FFFFFF',
-                color: '#005BAB',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                flexShrink: 0,
-                transition: 'background 0.18s ease, color 0.18s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#005BAB';
-                e.currentTarget.style.color = '#FFFFFF';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = '#FFFFFF';
-                e.currentTarget.style.color = '#005BAB';
-              }}
-            >
-              <X size={19} />
-            </button>
-          </div>
+            {/* Actions: Tombol Jelajahi Karya + Tombol Close */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexShrink: 0 }}>
+              {onExploreClick && (
+                <button
+                  type="button"
+                  onClick={() => { onClose(); onExploreClick(); }}
+                  style={{
+                    padding: '0.55rem 1.15rem',
+                    fontSize: '0.84rem',
+                    fontWeight: 800,
+                    borderRadius: '999px',
+                    background: '#16A34A',
+                    color: '#FFFFFF',
+                    border: '2px solid #16A34A',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.45rem',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 12px rgba(0, 91, 171, 0.2)',
+                    transition: 'all 0.2s ease',
+                    whiteSpace: 'nowrap'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = '#004A8F';
+                    e.currentTarget.style.borderColor = '#004A8F';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = '#005BAB';
+                    e.currentTarget.style.borderColor = '#005BAB';
+                  }}
+                >
+                  <span>{lang === 'en' ? 'Explore Works & Info' : 'Jelajahi Karya Beserta Informasi nya'}</span>
+                </button>
+              )}
 
-          {/* ── Banner Penjelasan ── */}
-          <div style={{
-            margin: 'clamp(1rem, 2.5vw, 1.5rem) clamp(1.25rem, 3vw, 2rem) 0',
-            padding: 'clamp(0.85rem, 2vw, 1.2rem) clamp(1rem, 2.5vw, 1.5rem)',
-            background: 'linear-gradient(135deg, #EBF2FF 0%, #F0F6FF 100%)',
-            borderRadius: '18px',
-            border: '1.5px solid rgba(0, 91, 171, 0.2)',
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: '0.85rem',
-          }}>
-            {/* Info icon */}
-            <div style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '10px',
-              background: '#005BAB',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-              marginTop: '1px',
-            }}>
-              <Info size={18} color="#FFFFFF" />
-            </div>
-
-            <div style={{ flex: 1 }}>
-              <p style={{
-                margin: 0,
-                fontSize: 'clamp(0.78rem, 1.5vw, 0.88rem)',
-                fontWeight: 600,
-                color: '#005BAB',
-                lineHeight: 1.6,
-              }}>
-                {lang === 'en'
-                  ? 'This is a quick display of all Hamdani\'s Graphic Design works. There is no detail information for each work here. If you want to see the complete information for each work, visit:'
-                  : 'Ini Merupakan Display Cepat Seluruh Karya Graphic Design Hamdani. Tidak ada Informasi tentang Setiap Karya di sini. Jika Anda ingin melihat Informasi Lengkap setiap Karya, Kunjungi:'}
-              </p>
-
-              {/* Tombol Jelajahi Karya */}
+              {/* Tombol Close */}
               <button
-                onClick={() => { onClose(); if (onExploreClick) onExploreClick(); }}
+                onClick={onClose}
+                aria-label="Tutup modal"
                 style={{
-                  marginTop: '0.65rem',
-                  padding: '0.45rem 1.1rem',
-                  fontSize: '0.82rem',
-                  fontWeight: 800,
+                  width: '40px',
+                  height: '40px',
                   borderRadius: '999px',
-                  background: '#005BAB',
-                  color: '#FFFFFF',
-                  border: 'none',
-                  display: 'inline-flex',
+                  border: '2px solid #005BAB',
+                  background: '#FFFFFF',
+                  color: '#005BAB',
+                  display: 'flex',
                   alignItems: 'center',
-                  gap: '0.4rem',
+                  justifyContent: 'center',
                   cursor: 'pointer',
-                  transition: 'opacity 0.18s ease',
+                  flexShrink: 0,
+                  transition: 'background 0.18s ease, color 0.18s ease',
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.opacity = '0.85'}
-                onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#005BAB';
+                  e.currentTarget.style.color = '#FFFFFF';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = '#FFFFFF';
+                  e.currentTarget.style.color = '#005BAB';
+                }}
               >
-                <ArrowRight size={15} />
-                {lang === 'en' ? 'Explore Works' : 'Jelajahi Karya'}
+                <X size={19} />
               </button>
             </div>
           </div>

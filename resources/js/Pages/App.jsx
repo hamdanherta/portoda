@@ -403,7 +403,7 @@ function AppContent({ karyaId, docId }) {
       background: appBg,
       transition: 'background 0.4s ease'
     }}>
-      {/* Option 3: Tech Dots & Isometric Grid Pattern Overlay */}
+      {/* Option 3: Tech Dots & Isometric Grid Pattern Overlay (Hardware Composited) */}
       <div
         aria-hidden="true"
         style={{
@@ -415,7 +415,10 @@ function AppContent({ karyaId, docId }) {
           pointerEvents: 'none',
           zIndex: 1,
           opacity: 0.95,
-          transition: 'all 0.4s ease'
+          transform: 'translateZ(0)',
+          willChange: 'transform',
+          contain: 'strict',
+          transition: 'opacity 0.4s ease'
         }}
       />
 

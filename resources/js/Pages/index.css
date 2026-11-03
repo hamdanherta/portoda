@@ -510,18 +510,20 @@ body.admin-open *::-webkit-scrollbar-corner,
   height: 0;
 }
 
-/* Scroll Reveal Animation (Hanya saat Scroll Kebawah, Keatas Tanpa Animasi / Tetap Muncul) */
+/* Scroll Reveal Animation — Ringan & Responsif (0.35s GPU accelerated) */
 .reveal-on-scroll {
   opacity: 0;
-  transform: translateY(32px);
-  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(18px) translateZ(0);
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, transform;
+  contain: layout style;
 }
 
 .reveal-on-scroll.reveal-visible {
   opacity: 1 !important;
   transform: translateY(0) translateZ(0) !important;
   backface-visibility: hidden;
+  will-change: auto;
 }
 
 /* Global Mobile Responsiveness & Anti-Overflow Rules */

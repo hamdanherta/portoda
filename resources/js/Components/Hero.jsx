@@ -158,7 +158,9 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
               letterSpacing: '-0.02em',
               lineHeight: 1.25
             }}>
-              {t('hero_welcome')}
+              <span>Welcome to </span>
+              <br className="hero-welcome-br" />
+              <span>My Portfolio!</span>
             </h2>
 
             {/* Explanation Text */}
@@ -915,6 +917,10 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
             order: 4 !important;
           }
 
+          .hero-welcome-br {
+            display: block !important;
+          }
+
           .hero-title-br {
             display: block !important;
           }
@@ -959,6 +965,10 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
           }
           .hero-cta-contact {
             order: 4 !important;
+          }
+
+          .hero-welcome-br {
+            display: none !important;
           }
 
           .hero-title-br {

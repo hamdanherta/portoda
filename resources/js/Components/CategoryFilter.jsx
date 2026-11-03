@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
-import { Check, Search, X, Layers } from 'lucide-react';
+import { Check, Search, X, Layers, Images } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { usePersona } from '../context/PersonaContext';
 
-export default function CategoryFilter({ activeCategory, setActiveCategory, activeSubcategory, setActiveSubcategory, searchQuery = '', setSearchQuery, itemCount }) {
+export default function CategoryFilter({ activeCategory, setActiveCategory, activeSubcategory, setActiveSubcategory, searchQuery = '', setSearchQuery, itemCount, onOpenGallery }) {
   const { lang, t } = useLanguage();
   const { persona } = usePersona();
 
@@ -116,6 +116,82 @@ export default function CategoryFilter({ activeCategory, setActiveCategory, acti
           </h2>
         </div>
 
+        {/* Khusus Persona Graphic Design: Button Akses Cepat Seluruh Galeri + Teks Penjelasan Perbedaan */}
+        {persona === 'mgd' && onOpenGallery && (
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.75rem',
+            width: '100%',
+            padding: '0.9rem 1.4rem',
+            borderRadius: '24px',
+            boxShadow: '0 4px 14px rgba(22, 163, 74, 0.08)',
+            marginBottom: '0.4rem',
+            boxSizing: 'border-box'
+          }}>
+            <button
+              type="button"
+              onClick={onOpenGallery}
+              style={{
+                padding: '0.6rem 1.45rem',
+                fontSize: '0.9rem',
+                fontWeight: 800,
+                borderRadius: '999px',
+                background: '#16A34A',
+                color: '#FFFFFF',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                cursor: 'pointer',
+                animation: 'pulseGreenFilter 3s ease-in-out infinite',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.animationPlayState = 'paused';
+                e.currentTarget.style.background = '#15803D';
+                e.currentTarget.style.borderColor = '#15803D';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.animationPlayState = 'running';
+                e.currentTarget.style.background = '#16A34A';
+                e.currentTarget.style.borderColor = '#16A34A';
+              }}
+            >
+              <Images size={17} style={{ flexShrink: 0 }} />
+              <span>{lang === 'en' ? 'View All Design Works' : 'Lihat Semua Karya Desain'}</span>
+            </button>
+
+            <p style={{
+              margin: 8,
+              fontSize: '0.9rem',
+              fontWeight: 600,
+              color: '#005BAB',
+              lineHeight: 1.5,
+              textAlign: 'center',
+              opacity: 0.95
+            }}>
+              {lang === 'en' ? (
+                <>
+                  <span style={{ fontWeight: 600, color: '#005BAB' }}>"View All Design Works"</span>{' '}
+                  opens an instant, compact visual gallery of all graphics without text.{' '}
+                  <span style={{ fontWeight: 600, color: '#005BAB' }}>"Explore Works"</span>{' '}
+                  below lets you filter by category and read detailed case studies, tools, and project stories.
+                </>
+              ) : (
+                <>
+                  
+                  Tombol <span style={{ fontWeight: 600, color: '#005BAB' }}>"Lihat Semua Karya Desain"</span>{' '}
+                  menampilkan display visual cepat seluruh karya dalam bentuk galeri gambar tanpa teks.{' '}
+                  Sedangkan daftar <span style={{ fontWeight: 600, color: '#005BAB' }}>"Jelajahi Portofolio"</span>{' '}
+                  di bawah ini menampilkan informasi lengkap setiap karya seperti tools, tahun, klien, dan deskripsi detail.
+                </>
+              )}
+            </p>
+          </div>
+        )}
+
         {/* Directly Render Subcategory Pills for Active Persona */}
         <div style={{
           display: 'flex',
@@ -156,6 +232,23 @@ export default function CategoryFilter({ activeCategory, setActiveCategory, acti
           })}
         </div>
       </div>
+
+      <style>{`
+        @keyframes pulseGreenFilter {
+          0%, 100% {
+            background-color: #16A34A;
+            border-color: #16A34A;
+            box-shadow: 0 4px 14px rgba(22, 163, 74, 0.28);
+            transform: translateY(0) scale(1);
+          }
+          50% {
+            background-color: #22C55E;
+            border-color: #16A34A;
+            box-shadow: 0 8px 22px rgba(34, 197, 94, 0.45);
+            transform: translateY(-2px) scale(1.02);
+          }
+        }
+      `}</style>
     </div>
   );
 }

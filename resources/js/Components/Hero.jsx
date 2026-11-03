@@ -391,6 +391,49 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
                   </span>
                 </div>
 
+                {/* Button Explore (Jelajahi Karya) — sembunyikan di persona MGD */}
+                {persona !== 'mgd' && (
+                  <button onClick={onExploreClick} className="btn-green hero-cta-explore" style={{ padding: '0.65rem 1.4rem', fontSize: '0.92rem' }}>
+                    <span>{t('hero_btn_explore')}</span>
+                    <ArrowRight size={16} />
+                  </button>
+                )}
+
+                {/* Button Lihat Semua Karya Graphic Design — HANYA muncul di MGD, warna hijau */}
+                {persona === 'mgd' && onOpenGallery && (
+                  <button
+                    onClick={onOpenGallery}
+                    className="hero-cta-gallery"
+                    style={{
+                      padding: '0.65rem 1.4rem',
+                      fontSize: '0.92rem',
+                      fontWeight: 800,
+                      borderRadius: '999px',
+                      background: '#16A34A',
+                      color: '#FFFFFF',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      cursor: 'pointer',
+                      animation: 'pulseGreenHero 3s ease-in-out infinite',
+                      transition: 'all 0.2s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.animationPlayState = 'paused';
+                      e.currentTarget.style.background = '#15803D';
+                      e.currentTarget.style.borderColor = '#15803D';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.animationPlayState = 'running';
+                      e.currentTarget.style.background = '#16A34A';
+                      e.currentTarget.style.borderColor = '#16A34A';
+                    }}
+                  >
+                    <Images size={17} style={{ flexShrink: 0 }} />
+                    <span>{lang === 'en' ? 'View All Design Works' : 'Lihat Semua Karya Desain'}</span>
+                  </button>
+                )}
+
                 {/* Button Klien Saya (Kuning Soft) */}
                 <button
                   onClick={handleScrollToClients}
@@ -412,53 +455,9 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
                   }}
                 >
                   <Building2 size={16} />
-                  <span>{lang === 'en' ? 'My Clients' : 'Lihat Klien Saya'}</span>
+                  <span>{lang === 'en' ? 'My Clients' : 'Klien Saya'}</span> 
                   <ArrowRight size={16} />
-                </button>
-
-                
-
-                {/* Button Explore (Jelajahi Karya) — sembunyikan di persona MGD */}
-                {persona !== 'mgd' && (
-                  <button onClick={onExploreClick} className="btn-green hero-cta-explore" style={{ padding: '0.65rem 1.4rem', fontSize: '0.92rem' }}>
-                    <span>{t('hero_btn_explore')}</span>
-                    <ArrowRight size={16} />
-                  </button>
-                )}
-
-                {/* Button Lihat Semua Karya Graphic Design — HANYA muncul di MGD, warna hijau */}
-                {persona === 'mgd' && onOpenGallery && (
-                  <button
-                    onClick={onOpenGallery}
-                    className="hero-cta-gallery"
-                    style={{
-                      padding: '0.65rem 1.4rem',
-                      fontSize: '0.92rem',
-                      fontWeight: 800,
-                      borderRadius: '999px',
-                      background: '#16A34A',
-                      color: '#FFFFFF',
-                      border: '2.5px solid #16A34A',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '0.5rem',
-                      cursor: 'pointer',
-                      boxShadow: '0 4px 14px rgba(22, 163, 74, 0.25)',
-                      transition: 'all 0.2s ease',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = '#15803D';
-                      e.currentTarget.style.borderColor = '#15803D';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = '#16A34A';
-                      e.currentTarget.style.borderColor = '#16A34A';
-                    }}
-                  >
-                    <Images size={17} style={{ flexShrink: 0 }} />
-                    <span>{lang === 'en' ? 'All Design Works' : 'Lihat Semua Karya'}</span>
-                  </button>
-                )}
+                </button> 
 
                 {/* Button Contact */}
                 {onOpenContact && (
@@ -905,17 +904,15 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
             display: flex !important;
             justify-content: center !important;
           }
-          .hero-cta-clients {
+          .hero-cta-explore,
+          .hero-cta-gallery {
             order: 2 !important;
           }
-          .hero-cta-explore {
+          .hero-cta-clients {
             order: 3 !important;
           }
-          .hero-cta-gallery {
-            order: 4 !important;
-          }
           .hero-cta-contact {
-            order: 5 !important;
+            order: 4 !important;
           }
 
           .hero-title-br {
@@ -953,17 +950,15 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
             margin-bottom: 0.25rem !important;
             order: 1 !important;
           }
-          .hero-cta-clients {
+          .hero-cta-explore,
+          .hero-cta-gallery {
             order: 2 !important;
           }
-          .hero-cta-explore {
+          .hero-cta-clients {
             order: 3 !important;
           }
-          .hero-cta-gallery {
-            order: 4 !important;
-          }
           .hero-cta-contact {
-            order: 5 !important;
+            order: 4 !important;
           }
 
           .hero-title-br {
@@ -994,6 +989,22 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
           }
           50% {
             transform: translateY(-12px);
+          }
+        }
+
+        /* ── Animasi Button Lihat Semua Karya (Pulsing Hijau & Micro Motion) ── */
+        @keyframes pulseGreenHero {
+          0%, 100% {
+            background-color: #16A34A;
+            border-color: #16A34A;
+            box-shadow: 0 4px 14px rgba(22, 163, 74, 0.28);
+            transform: translateY(0) scale(1);
+          }
+          50% {
+            background-color: #22C55E;
+            border-color: #16A34A;
+            box-shadow: 0 8px 22px rgba(34, 197, 94, 0.45);
+            transform: translateY(-2px) scale(1.02);
           }
         }
       `}</style>

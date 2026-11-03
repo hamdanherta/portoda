@@ -446,6 +446,7 @@ function AppContent({ karyaId, docId }) {
                 }
               }}
               itemCount={filteredItems.length}
+              onOpenGallery={() => setIsGalleryOpen(true)}
             />
 
             <main style={{ flex: 1, position: 'relative', zIndex: 5, width: '100%' }}>
@@ -504,6 +505,7 @@ function AppContent({ karyaId, docId }) {
                   }
                 }}
                 itemCount={filteredItems.length}
+                onOpenGallery={() => setIsGalleryOpen(true)}
               />
 
               <main style={{ flex: 1, position: 'relative', zIndex: 5, width: '100%' }}>

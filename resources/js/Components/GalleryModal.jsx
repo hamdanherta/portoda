@@ -312,14 +312,14 @@ export default function GalleryModal({ items = [], onClose, onExploreClick }) {
                   ? "Hamdani's Graphic Design Works"
                   : 'Seluruh Karya Graphic Design Hamdani'}
               </h2>
-              <p style={{
+              {/* <p style={{
                 margin: '0.2rem 0 0 0',
                 fontSize: '0.78rem',
                 fontWeight: 500,
                 color: '#4B6B9A',
               }}>
                 {mgdItems.length} {lang === 'en' ? 'works in' : 'karya dalam'} {groups.length} {lang === 'en' ? 'categories' : 'subkategori'}
-              </p>
+              </p> */}
             </div>
 
             {/* Tombol Close */}

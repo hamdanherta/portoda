@@ -3,6 +3,7 @@ import { X, ExternalLink, Calendar, User, Tag, Play, ChevronLeft, ChevronRight, 
 import { useLanguage } from '../context/LanguageContext';
 import { usePersona } from '../context/PersonaContext';
 import WatermarkedImage from './WatermarkedImage';
+import PortfolioCard from './PortfolioCard';
 import MetadataCopyBtn from './MetadataCopyBtn';
 
 export default function DetailModal({ item, allItems = [], onClose, onSelectWork, onViewAllWorks }) {
@@ -70,7 +71,7 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
     if (!item || item.isCertificate || !Array.isArray(allItems)) return [];
     return allItems
       .filter((other) => !other.isCertificate && String(other.id) !== String(item.id))
-      .slice(0, 5);
+      .slice(0, 4);
   }, [item, allItems]);
 
   useEffect(() => {
@@ -215,177 +216,1008 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
   const appOrProjLink = item.prototype_url || item.project_url || item.app_url || item.demo_url || item.link || item.url;
 
   return (
-    <div className="modal-overlay" onClick={onClose} style={{ zIndex: 1100 }}>
+    <div className="modal-overlay detail-modal-overlay-wrap" onClick={onClose} style={{ zIndex: 10000, padding: 'clamp(0.75rem, 2vw, 1.75rem)' }}>
       <div 
         onClick={(e) => e.stopPropagation()}
         ref={modalRef}
-        className="herta-card animate-fade-in detail-modal-scroll"
+        className="herta-card animate-fade-in detail-modal-scroll detail-modal-inner-card"
         style={{
           width: '100%',
-          maxWidth: '880px',
-          maxHeight: '92vh',
+          maxWidth: videoEmbedUrl ? '880px' : '960px',
+          maxHeight: '94vh',
           overflowY: 'auto',
-          borderRadius: 'var(--radius-lg)',
+          borderRadius: '32px',
           background: '#FFFFFF',
-          border: '2.5px solid #005BAB',
+          border: '2px solid rgba(0, 91, 171, 0.18)',
+          boxShadow: '0 20px 60px rgba(0, 40, 110, 0.2)',
           position: 'relative',
           padding: 0,
           scrollbarWidth: 'none',
           msOverflowStyle: 'none'
         }}
       >
-        {/* ─── TAHUN HEADER — STICKY ─── */}
-        <div
-          className="detail-modal-header"
-          style={{
-            position: 'sticky',
-            top: 0,
-            zIndex: 20,
-            padding: '0.85rem 1.25rem',
-            background: '#FFFFFF',
-            borderBottom: '2px solid #005BAB',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '0.75rem',
-            boxShadow: '0 4px 16px rgba(0,91,171,0.08)'
-          }}
-        >
-          {/* Header left: Tahun saja */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', flex: 1, minWidth: 0 }}>
-            {item?.year && (
-              <span style={{
-                fontSize: '0.78rem',
+        {/* ========================================================= */}
+        {/* CASE 1: JIKA ADA VIDEO EMBED (TETAP SEPERTI SEMULA)       */}
+        {/* ========================================================= */}
+        {videoEmbedUrl ? (
+          <>
+            {/* Header Sticky Video */}
+            <div
+              className="detail-modal-header"
+              style={{
+                position: 'sticky',
+                top: 0,
+                zIndex: 20,
+                padding: '0.85rem 1.25rem',
+                background: '#FFFFFF',
+                borderBottom: '2px solid #005BAB',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '0.75rem',
+                boxShadow: '0 4px 16px rgba(0,91,171,0.08)'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', flex: 1, minWidth: 0 }}>
+                {item?.year && (
+                  <span style={{
+                    fontSize: '0.78rem',
+                    fontWeight: 800,
+                    color: '#005BAB',
+                    background: '#FFFFFF',
+                    padding: '0.35rem 0.85rem',
+                    borderRadius: '999px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                    border: '1.5px solid #005BAB'
+                  }}>
+                    <Calendar size={14} />
+                    {t('detail_year')}: {item.year}
+                  </span>
+                )}
+              </div>
+
+              <button
+                onClick={onClose}
+                style={{
+                  flexShrink: 0,
+                  background: '#FFFFFF',
+                  color: '#005BAB',
+                  border: '2px solid #005BAB',
+                  width: '38px',
+                  height: '38px',
+                  borderRadius: '999px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+                title="Tutup (ESC)"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Video Container */}
+            <div style={{ position: 'relative', width: '100%', backgroundColor: '#FFFFFF' }}>
+              <div
+                className={`video-embed-container ${isGdriveVideo ? 'is-gdrive' : ''}`}
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  backgroundColor: videoEmbedUrl.includes('instagram.com') ? '#FFFFFF' : '#000000',
+                  ...(videoEmbedUrl.includes('instagram.com')
+                    ? { height: '520px', maxHeight: '75vh' }
+                    : { paddingTop: '56.25%' })
+                }}
+              >
+                <iframe
+                  src={videoEmbedUrl}
+                  title={titleText}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    border: 'none'
+                  }}
+                />
+
+                {isGdriveVideo && (
+                  <div className="gdrive-mobile-hint">
+                    <p className="gdrive-hint-text">
+                      💡 Tonton dalam fullscreen untuk <br></br> pengalaman yang lebih baik
+                    </p>
+                    <button
+                      className="gdrive-hint-btn"
+                      onClick={() => setIsVideoFullscreen(true)}
+                    >
+                      <Maximize2 size={15} />
+                      <span>Tonton Fullscreen</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Body Video Mode */}
+            <div className="detail-modal-body" style={{ padding: '1.5rem' }}>
+              <h2 style={{
+                fontSize: '1.35rem',
                 fontWeight: 800,
                 color: '#005BAB',
-                background: '#FFFFFF',
-                padding: '0.35rem 0.85rem',
-                borderRadius: '999px',
-                display: 'inline-flex',
+                margin: '0 0 1.15rem 0',
+                lineHeight: 1.3,
+                wordBreak: 'break-word',
+                display: 'flex',
                 alignItems: 'center',
-                gap: '0.35rem',
-                border: '1.5px solid #005BAB'
+                flexWrap: 'wrap'
               }}>
-                <Calendar size={14} />
-                {t('detail_year')}: {item.year}
-              </span>
+                <span>{titleText}</span>
+                <MetadataCopyBtn text={titleText} label="Judul" />
+              </h2>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem 0.65rem', flexWrap: 'wrap', marginBottom: '1.35rem' }}>
+                <span className={`badge badge-${item.category}`} style={{ border: '1.5px solid #005BAB', padding: '0.4rem 0.95rem', borderRadius: '999px', fontSize: '0.82rem', fontWeight: 800 }}>
+                  {item.category === 'desain-grafis' ? t('cat_grafis') :
+                   item.category === 'multimedia' ? t('cat_multimedia') :
+                   item.category === 'aplikasi' ? t('cat_aplikasi') : item.category}
+                </span>
+                {subcatText && (
+                  <span style={{
+                    fontSize: '0.82rem',
+                    fontWeight: 800,
+                    color: '#005BAB',
+                    background: '#FFFFFF',
+                    padding: '0.4rem 0.95rem',
+                    borderRadius: '999px',
+                    border: '1.5px solid #005BAB'
+                  }}>
+                    {subcatText}
+                  </span>
+                )}
+                {item.institution && (
+                  <span style={{
+                    fontSize: '0.82rem',
+                    fontWeight: 800,
+                    color: '#005BAB',
+                    background: '#FFFFFF',
+                    padding: '0.4rem 0.95rem',
+                    borderRadius: '999px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.45rem',
+                    border: '1.5px solid #005BAB'
+                  }}>
+                    <Award size={15} />
+                    <span>{item.institution}</span>
+                    <MetadataCopyBtn text={item.institution} label="Instansi" />
+                  </span>
+                )}
+                {item.client && (
+                  <span
+                    className="detail-modal-client-badge"
+                    style={{
+                      fontSize: '0.82rem',
+                      fontWeight: 800,
+                      color: '#005BAB',
+                      background: '#FFFFFF',
+                      padding: '0.4rem 0.95rem',
+                      borderRadius: '999px',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.45rem',
+                      border: '1.5px solid #005BAB'
+                    }}
+                  >
+                    <User size={15} />
+                    {item.client}
+                  </span>
+                )}
+                {item.project_type && (
+                  <span
+                    className="detail-modal-project-type-badge"
+                    style={{
+                      fontSize: '0.82rem',
+                      fontWeight: 800,
+                      color: '#005BAB',
+                      background: '#FFFFFF',
+                      padding: '0.4rem 0.95rem',
+                      borderRadius: '999px',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.45rem',
+                      border: '1.5px solid #005BAB'
+                    }}
+                  >
+                    {((type) => {
+                      const t = (type || '').toLowerCase().trim();
+                      if (t.includes('freelance')) return <Briefcase size={15} />;
+                      if (t.includes('pekerjaan') || t.includes('work') || t.includes('job')) return <Building2 size={15} />;
+                      if (t.includes('iseng') || t.includes('pribadi') || t.includes('personal')) return <Sparkles size={15} />;
+                      if (t.includes('lomba') || t.includes('contest') || t.includes('competition')) return <Award size={15} />;
+                      return <FolderKanban size={15} />;
+                    })(item.project_type)}
+                    <span>{lang === 'en' ? 'Project Type' : 'Jenis Proyek'}: {item.project_type === 'Iseng' ? 'Personal' : item.project_type}</span>
+                  </span>
+                )}
+                {item.tools_used && (
+                  <span
+                    className="detail-modal-tools-badge"
+                    style={{
+                      fontSize: '0.82rem',
+                      fontWeight: 800,
+                      color: '#005BAB',
+                      background: '#FFFFFF',
+                      padding: '0.4rem 0.95rem',
+                      borderRadius: '999px',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.45rem',
+                      border: '1.5px solid #005BAB'
+                    }}
+                  >
+                    <Wrench size={15} />
+                    <span>{lang === 'en' ? 'Tools / Software' : 'Alat / Software'}: {item.tools_used}</span>
+                  </span>
+                )}
+              </div>
+
+              {descText && (
+                <div style={{
+                  fontSize: '0.92rem',
+                  color: '#005BAB',
+                  fontWeight: 400,
+                  lineHeight: 1.6,
+                  marginBottom: '1.5rem',
+                  whiteSpace: 'pre-line',
+                  background: '#FFFFFF',
+                  padding: '1.25rem',
+                  borderRadius: '20px',
+                  border: '2px solid #005BAB'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem' }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>{descText}</div>
+                    <MetadataCopyBtn text={descText} label="Deskripsi" />
+                  </div>
+                </div>
+              )}
+
+              {Array.isArray(item.tags) && item.tags.length > 0 && (
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <h4 style={{ fontSize: '0.85rem', color: '#005BAB', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem', fontWeight: 800 }}>
+                    {t('detail_tags')}:
+                  </h4>
+                  <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap' }}>
+                    {item.tags.map((tag, idx) => (
+                      <span key={idx} style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                        background: '#FFFFFF',
+                        color: '#005BAB',
+                        border: '1.5px solid #005BAB',
+                        padding: '0.35rem 0.8rem',
+                        borderRadius: '999px',
+                        fontSize: '0.82rem',
+                        fontWeight: 800
+                      }}>
+                        <Tag size={13} />
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Bottom Actions Video */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', paddingTop: '0.75rem' }}>
+                {item.category && (
+                  <button
+                    type="button"
+                    onClick={handleShare}
+                    className="btn-secondary"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.45rem',
+                      background: copied ? '#005BAB' : '#FFFFFF',
+                      color: copied ? '#FFFFFF' : '#005BAB',
+                      border: '2px solid #005BAB',
+                      transition: 'all 0.2s ease',
+                      fontWeight: 800
+                    }}
+                    title={lang === 'en' ? 'Share link to this portfolio item' : 'Bagikan link karya ini'}
+                  >
+                    {copied ? <Check size={16} /> : <Share2 size={16} />}
+                    <span>{copied ? (lang === 'en' ? 'Link Copied!' : 'Link Tersalin!') : (lang === 'en' ? 'Share' : 'Bagikan')}</span>
+                  </button>
+                )}
+                <button onClick={onClose} className="btn-secondary">
+                  <span>{t('detail_close')}</span>
+                </button>
+              </div>
+            </div>
+          </>
+        ) : (
+          /* ========================================================= */
+          /* CASE 2: DESAIN BARU 100% SESUAI GAMBAR LAMPIRAN           */
+          /* ========================================================= */
+          <>
+            {/* ═════════════════════════════════════════════════════════ */}
+            {/* DESKTOP DETAIL VIEW (Layar > 768px, Tetap Utuh 100%)    */}
+          {/* ═════════════════════════════════════════════════════════ */}
+          <div className="detail-modal-desktop-view">
+          <div style={{ padding: 'clamp(1.2rem, 3vw, 2.5rem)', boxSizing: 'border-box' }}>
+            {/* Top 2 Columns Grid */}
+            <div className="detail-two-col-grid" style={{
+              display: 'grid',
+              gridTemplateColumns: '1.1fr 1fr',
+              gap: 'clamp(1.25rem, 3vw, 2.5rem)',
+              alignItems: 'start'
+            }}>
+              
+              {/* ── KOLOM KIRI: Preview Gambar + Deskripsi + Tag ── */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                
+                {/* Frame Gambar Utama (Rasio Lama 16:9, Slide Animasi, Progress Bar, Blur Backdrop & Contain Image) */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                  <div
+                    style={{
+                      position: 'relative',
+                      width: '100%',
+                      paddingTop: '56.25%', // Rasio 16:9 seperti modal yang lama
+                      borderRadius: '26px',
+                      overflow: 'hidden',
+                      background: '#111827',
+                      boxShadow: '0 8px 24px rgba(0, 91, 171, 0.12)',
+                    }}
+                    onMouseEnter={() => setIsPaused(true)}
+                    onMouseLeave={() => setIsPaused(false)}
+                  >
+                    {/* Progress bar auto-slide — tampil jika > 1 gambar */}
+                    {imagesList.length > 1 && (
+                      <div style={{
+                        position: 'absolute',
+                        bottom: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '4px',
+                        background: 'rgba(255,255,255,0.2)',
+                        zIndex: 15
+                      }}>
+                        <div
+                          key={`${currentImageIndex}-${isPaused}`}
+                          style={{
+                            height: '100%',
+                            background: '#005BAB',
+                            boxShadow: '0 0 8px rgba(0, 91, 171, 0.8)',
+                            animation: isPaused ? 'none' : 'slideProgress 3.5s linear forwards',
+                            width: isPaused ? '0%' : undefined
+                          }}
+                        />
+                      </div>
+                    )}
+
+                    {/* Smooth Slide Track Container */}
+                    <div style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: `${Math.max(imagesList.length, 1) * 100}%`,
+                      height: '100%',
+                      display: 'flex',
+                      transform: `translateX(-${(currentImageIndex * 100) / Math.max(imagesList.length, 1)}%)`,
+                      transition: 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)',
+                      willChange: 'transform'
+                    }}>
+                      {(imagesList.length > 0 ? imagesList : [item.cover || item.image_url]).map((imgSrc, idx) => (
+                        <div
+                          key={idx}
+                          style={{
+                            position: 'relative',
+                            width: `${100 / Math.max(imagesList.length, 1)}%`,
+                            height: '100%',
+                            flexShrink: 0,
+                            overflow: 'hidden',
+                            background: '#111827'
+                          }}
+                        >
+                          {/* Layer 1: Blurred Backdrop (apapun rasionya, background blur mengisi penuh) */}
+                          <img
+                            src={imgSrc}
+                            alt=""
+                            aria-hidden="true"
+                            style={{
+                              position: 'absolute',
+                              top: '-10%',
+                              left: '-10%',
+                              width: '120%',
+                              height: '120%',
+                              objectFit: 'cover',
+                              filter: 'blur(20px) brightness(0.5) saturate(1.4)',
+                              transform: 'scale(1.05)',
+                              pointerEvents: 'none',
+                              zIndex: 1
+                            }}
+                          />
+                          {/* Layer 2: Main Contained Image (pas di dalam frame, contain, tidak kepotong/ketarik) */}
+                          <WatermarkedImage
+                            src={imgSrc}
+                            alt={`${titleText} - Foto ${idx + 1}`}
+                            objectFit="contain"
+                            objectPosition="center center"
+                            style={{
+                              position: 'absolute',
+                              top: 0,
+                              left: 0,
+                              width: '100%',
+                              height: '100%',
+                              zIndex: 2
+                            }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Tombol Close Merah Bulat di Pojok Kanan Atas Gambar */}
+                    {/* <button
+                      onClick={onClose}
+                      aria-label="Tutup modal"
+                      style={{
+                        position: 'absolute',
+                        top: '14px',
+                        right: '14px',
+                        width: '38px',
+                        height: '38px',
+                        borderRadius: '50%',
+                        background: '#EF4444',
+                        color: '#FFFFFF',
+                        border: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 12px rgba(239, 68, 68, 0.45)',
+                        transition: 'transform 0.18s ease, background 0.18s ease',
+                        zIndex: 16
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.08)'; e.currentTarget.style.background = '#DC2626'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = '#EF4444'; }}
+                    >
+                      <X size={20} strokeWidth={2.8} />
+                    </button> */}
+
+                    {/* Badge Indikator Foto jika > 1 gambar */}
+                    {imagesList.length > 1 && (
+                      <div style={{
+                        position: 'absolute',
+                        bottom: '12px',
+                        right: '12px',
+                        background: 'rgba(0, 0, 0, 0.65)',
+                        color: '#FFFFFF',
+                        padding: '0.2rem 0.6rem',
+                        borderRadius: '999px',
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        zIndex: 14,
+                        backdropFilter: 'blur(4px)'
+                      }}>
+                        {currentImageIndex + 1} / {imagesList.length}
+                      </div>
+                    )}
+
+                    {/* Tombol Slide Carousel Panah Kiri & Kanan (jika gambar > 1) */}
+                    {imagesList.length > 1 && (
+                      <>
+                        <button
+                          onClick={handlePrevImage}
+                          aria-label="Foto Sebelumnya"
+                          style={{
+                            position: 'absolute',
+                            left: '12px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            width: '38px',
+                            height: '38px',
+                            borderRadius: '50%',
+                            background: 'rgba(255, 255, 255, 0.9)',
+                            border: '1.5px solid rgba(0, 91, 171, 0.25)',
+                            color: '#005BAB',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer',
+                            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                            backdropFilter: 'blur(4px)',
+                            zIndex: 14,
+                            transition: 'all 0.18s ease'
+                          }}
+                        >
+                          <ChevronLeft size={22} strokeWidth={2.5} />
+                        </button>
+
+                        <button
+                          onClick={handleNextImage}
+                          aria-label="Foto Selanjutnya"
+                          style={{
+                            position: 'absolute',
+                            right: '12px',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            width: '38px',
+                            height: '38px',
+                            borderRadius: '50%',
+                            background: 'rgba(255, 255, 255, 0.9)',
+                            border: '1.5px solid rgba(0, 91, 171, 0.25)',
+                            color: '#005BAB',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer',
+                            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                            backdropFilter: 'blur(4px)',
+                            zIndex: 14,
+                            transition: 'all 0.18s ease'
+                          }}
+                        >
+                          <ChevronRight size={22} strokeWidth={2.5} />
+                        </button>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Thumbnail Strip Selector jika > 1 Gambar */}
+                  {imagesList.length > 1 && (
+                    <div style={{
+                      display: 'flex',
+                      gap: '0.45rem',
+                      justifyContent: 'flex-start',
+                      overflowX: 'auto',
+                      padding: '0.2rem 0',
+                      scrollbarWidth: 'none'
+                    }}>
+                      {imagesList.map((thumbSrc, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => {
+                            pauseAndResume();
+                            setCurrentImageIndex(idx);
+                          }}
+                          style={{
+                            width: '50px',
+                            height: '50px',
+                            flexShrink: 0,
+                            borderRadius: '12px',
+                            overflow: 'hidden',
+                            border: idx === currentImageIndex ? '2.5px solid #005BAB' : '1.5px solid rgba(0, 91, 171, 0.2)',
+                            opacity: idx === currentImageIndex ? 1 : 0.6,
+                            transform: idx === currentImageIndex ? 'scale(1.03)' : 'scale(1)',
+                            transition: 'all 0.2s ease',
+                            padding: 0,
+                            cursor: 'pointer',
+                            background: '#111827'
+                          }}
+                        >
+                          <WatermarkedImage src={thumbSrc} alt="" objectFit="cover" style={{ width: '100%', height: '100%' }} />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Deskripsi Karya */}{/* Deskripsi Karya */}
+                <div>
+                  <h3 style={{
+                    fontSize: '1.05rem',
+                    fontWeight: 800,
+                    color: '#005BAB',
+                    margin: '0 0 0.5rem 0',
+                    letterSpacing: '-0.01em'
+                  }}>
+                    {lang === 'en' ? 'Artwork Description' : 'Deskripsi Karya'}
+                  </h3>
+                  <p style={{
+                    fontSize: '0.92rem',
+                    lineHeight: 1.6,
+                    color: '#28588E',
+                    margin: 0,
+                    fontWeight: 500,
+                    whiteSpace: 'pre-line'
+                  }}>
+                    {descText || (lang === 'en' ? 'No description available for this project.' : 'Belum ada deskripsi untuk karya ini.')}
+                  </p>
+                </div>
+
+                {/* Tags */}
+                {Array.isArray(item.tags) && item.tags.length > 0 && (
+                  <div>
+                    <h4 style={{
+                      fontSize: '0.95rem',
+                      fontWeight: 800,
+                      color: '#005BAB',
+                      margin: '0 0 0.45rem 0'
+                    }}>
+                      Tag
+                    </h4>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem 0.65rem' }}>
+                      {item.tags.map((tag, idx) => (
+                        <span
+                          key={idx}
+                          style={{
+                            fontSize: '0.9rem',
+                            fontWeight: 700,
+                            color: '#005BAB'
+                          }}
+                        >
+                          {tag.startsWith('#') ? tag : `#${tag}`}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* ── KOLOM KANAN: Tahun + Bagikan/Close + Kategori Strip + Judul + Metadata ── */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.35rem' }}>
+                
+                {/* Baris Atas: Tahun (Kiri) & Tombol Bagikan + Close Merah (Kanan) */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '0.75rem'
+                }}>
+                  {/* Angka Tahun */}
+                  <span style={{
+                    fontSize: '1.2rem',
+                    fontWeight: 800,
+                    color: '#005BAB',
+                    letterSpacing: '-0.02em'
+                  }}>
+                    {item.year || '2026'}
+                  </span>
+
+                  {/* Action Buttons: Bagikan + Close */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                    <button
+                      type="button"
+                      onClick={handleShare}
+                      style={{
+                        padding: '0.45rem 1.45rem',
+                        borderRadius: '999px',
+                        background: copied ? '#16A34A' : '#005BAB',
+                        color: '#FFFFFF',
+                        border: 'none',
+                        fontSize: '0.92rem',
+                        fontWeight: 800,
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 14px rgba(0, 91, 171, 0.25)',
+                        transition: 'all 0.2s ease',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.4rem'
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; }}
+                    >
+                      {copied ? <Check size={16} /> : null}
+                      <span>{copied ? (lang === 'en' ? 'Copied!' : 'Tersalin!') : (lang === 'en' ? 'Share' : 'Bagikan')}</span>
+                    </button>
+
+                    <button
+                      onClick={onClose}
+                      aria-label="Tutup modal"
+                      style={{
+                        width: '36px',
+                        height: '36px',
+                        borderRadius: '50%',
+                        background: '#EF4444',
+                        color: '#FFFFFF',
+                        border: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 12px rgba(239, 68, 68, 0.4)',
+                        transition: 'transform 0.18s ease, background 0.18s ease'
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.08)'; e.currentTarget.style.background = '#DC2626'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = '#EF4444'; }}
+                    >
+                      <X size={20} strokeWidth={2.8} />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Strip Kategori ─────── Subkategori */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  width: '100%'
+                }}>
+                  <span style={{
+                    fontSize: '0.86rem',
+                    fontWeight: 700,
+                    color: '#005BAB',
+                    whiteSpace: 'nowrap'
+                  }}>
+                    {item.category === 'desain-grafis' ? 'Desain Grafis' :
+                     item.category === 'multimedia' ? 'Multimedia' :
+                     item.category === 'aplikasi' ? 'Aplikasi' : (item.category || 'Desain Grafis')}
+                  </span>
+
+                  {/* Garis Horizontal Pemisah Tipis */}
+                  <div style={{
+                    flex: 1,
+                    height: '1.5px',
+                    background: '#005BAB',
+                    opacity: 0.65
+                  }} />
+
+                  <span style={{
+                    fontSize: '0.86rem',
+                    fontWeight: 700,
+                    color: '#005BAB',
+                    whiteSpace: 'nowrap'
+                  }}>
+                    {subcatText || (lang === 'en' ? 'Design' : 'Desain')}
+                  </span>
+                </div>
+
+                {/* Judul Karya Besar */}
+                <h2 style={{
+                  margin: 0,
+                  fontSize: 'clamp(1.35rem, 2.5vw, 1.85rem)',
+                  fontWeight: 900,
+                  color: '#005BAB',
+                  lineHeight: 1.25,
+                  letterSpacing: '-0.02em',
+                  wordBreak: 'break-word'
+                }}>
+                  {titleText}
+                </h2>
+
+                {/* Metadata Fields: Klien, Alat/Software, Jenis Proyek */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.15rem' }}>
+                  
+                  {/* Klien */}
+                  <div>
+                    <span style={{
+                      display: 'block',
+                      fontSize: '0.82rem',
+                      fontWeight: 600,
+                      color: '#4B6B9A',
+                      marginBottom: '0.15rem'
+                    }}>
+                      {lang === 'en' ? 'Client' : 'Klien'}
+                    </span>
+                    <span style={{
+                      fontSize: '1.18rem',
+                      fontWeight: 800,
+                      color: '#005BAB'
+                    }}>
+                      {item.client || item.institution || '-'}
+                    </span>
+                  </div>
+
+                  {/* Alat / Software */}
+                  <div>
+                    <span style={{
+                      display: 'block',
+                      fontSize: '0.82rem',
+                      fontWeight: 600,
+                      color: '#4B6B9A',
+                      marginBottom: '0.15rem'
+                    }}>
+                      {lang === 'en' ? 'Tool / Software' : 'Alat/Software'}
+                    </span>
+                    <span style={{
+                      fontSize: '1.18rem',
+                      fontWeight: 800,
+                      color: '#005BAB'
+                    }}>
+                      {item.tools_used || item.framework || '-'}
+                    </span>
+                  </div>
+
+                  {/* Jenis Proyek */}
+                  <div>
+                    <span style={{
+                      display: 'block',
+                      fontSize: '0.82rem',
+                      fontWeight: 600,
+                      color: '#4B6B9A',
+                      marginBottom: '0.15rem'
+                    }}>
+                      {lang === 'en' ? 'Project Type' : 'Jenis Proyek'}
+                    </span>
+                    <span style={{
+                      fontSize: '1.18rem',
+                      fontWeight: 800,
+                      color: '#005BAB'
+                    }}>
+                      {item.project_type || 'Pekerjaan'}
+                    </span>
+                  </div>
+
+                  {/* Tombol External Link Proyek (jika ada) */}
+                  {appOrProjLink && !isVideografi && (
+                    <div style={{ marginTop: '0.35rem' }}>
+                      <a
+                        href={appOrProjLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-primary"
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.5rem',
+                          background: '#005BAB',
+                          color: '#FFFFFF',
+                          padding: '0.5rem 1.25rem',
+                          borderRadius: '999px',
+                          fontSize: '0.86rem',
+                          fontWeight: 800,
+                          textDecoration: 'none'
+                        }}
+                      >
+                        <span>
+                          {isUIUX
+                            ? t('detail_btn_prototype')
+                            : (isMobileApp || isWebApp || isAplikasiCategory)
+                              ? (lang === 'en' ? 'Try App' : 'Coba Aplikasi')
+                              : t('detail_btn_project')}
+                        </span>
+                        <ExternalLink size={15} />
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* ── BAGIAN BAWAH: Karya Lainnya + Button Selengkapnya ── */}
+            {otherWorks.length > 0 && (
+              <div style={{ marginTop: '2.5rem', borderTop: '1.5px solid rgba(0, 91, 171, 0.12)', paddingTop: '1.5rem' }}>
+                {/* Header: Karya Lainnya + Selengkapnya Button */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '0.75rem',
+                  marginBottom: '1.25rem'
+                }}>
+                  <h3 style={{
+                    fontSize: '1.25rem',
+                    fontWeight: 900,
+                    color: '#005BAB',
+                    margin: 0,
+                    letterSpacing: '-0.01em'
+                  }}>
+                    {lang === 'en' ? 'Other Works' : 'Karya Lainnya'}
+                  </h3>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (onViewAllWorks) {
+                        onViewAllWorks();
+                      } else {
+                        onClose();
+                      }
+                    }}
+                    style={{
+                      padding: '0.45rem 1.35rem',
+                      borderRadius: '999px',
+                      background: '#005BAB',
+                      color: '#FFFFFF',
+                      border: 'none',
+                      fontSize: '0.88rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 12px rgba(0, 91, 171, 0.22)',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; }}
+                  >
+                    {lang === 'en' ? 'See More' : 'Selengkapnya'}
+                  </button>
+                </div>
+
+                {/* Grid 4 Card Karya Lainnya Sesuai Desain Lampiran */}
+                <div className="detail-other-works-grid" style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(4, 1fr)',
+                  gap: '1rem',
+                  alignItems: 'stretch'
+                }}>
+                  {otherWorks.map((otherItem) => (
+                    <PortfolioCard
+                      key={otherItem.id}
+                      item={otherItem}
+                      onClick={onSelectWork}
+                      compact={true}
+                    />
+                  ))}
+                </div>
+              </div>
             )}
           </div>
+          </div>
 
-          {/* Tombol Tutup — di dalam header sticky */}
-          <button
-            onClick={onClose}
-            style={{
-              flexShrink: 0,
-              background: '#FFFFFF',
-              color: '#005BAB',
-              border: '2px solid #005BAB',
-              width: '38px',
-              height: '38px',
-              borderRadius: '999px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease'
-            }}
-            title="Tutup (ESC)"
-          >
-            <X size={20} />
-          </button>
-        </div>
 
-        {/* Media Header (Video Embed or Image Carousel) */}
-        <div style={{ position: 'relative', width: '100%', backgroundColor: '#FFFFFF' }}>
-          {videoEmbedUrl ? (
+          {/* ═════════════════════════════════════════════════════════ */}
+          {/* MOBILE DETAIL VIEW (Khusus Layar <= 768px, 100% Lampiran)  */}
+          {/* ═════════════════════════════════════════════════════════ */}
+          <div className="detail-modal-mobile-view" style={{ width: '100%' }}>
+            
+            {/* 1. Container Image Full Frame (w-full, no margin, no padding) */}
             <div
-              className={`video-embed-container ${(videoEmbedUrl.includes('drive.google.com') || videoEmbedUrl.includes('docs.google.com')) ? 'is-gdrive' : ''}`}
               style={{
                 position: 'relative',
                 width: '100%',
-                backgroundColor: videoEmbedUrl.includes('instagram.com') ? '#FFFFFF' : '#000000',
-                ...(videoEmbedUrl.includes('instagram.com')
-                  ? { height: '520px', maxHeight: '75vh' }
-                  : { paddingTop: '56.25%' })
+                paddingTop: '62%', // Rasio ideal mobile view
+                borderBottomLeftRadius: '26px',
+                borderBottomRightRadius: '26px',
+                overflow: 'hidden',
+                background: '#111827',
+                boxShadow: '0 8px 24px rgba(0, 20, 60, 0.16)',
+                zIndex: 10
               }}
-            >
-              <iframe
-                src={videoEmbedUrl}
-                title={titleText}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                  border: 'none'
-                }}
-              />
-
-              {/* Mobile-only fullscreen hint — hanya tampil di layar kecil untuk GDrive */}
-              {isGdriveVideo && (
-                <div className="gdrive-mobile-hint">
-                  <p className="gdrive-hint-text">
-                    💡 Tonton dalam fullscreen untuk <br></br> pengalaman yang lebih baik
-                  </p>
-                  <button
-                    className="gdrive-hint-btn"
-                    onClick={() => setIsVideoFullscreen(true)}
-                  >
-                    <Maximize2 size={15} />
-                    <span>Tonton Fullscreen</span>
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div
-              style={{ position: 'relative', background: '#111827', width: '100%', paddingTop: '56.25%', overflow: 'hidden' }}
               onMouseEnter={() => setIsPaused(true)}
               onMouseLeave={() => setIsPaused(false)}
             >
-              {/* Progress bar auto-slide — hanya tampil jika > 1 gambar & tidak paused */}
+              {/* Progress bar auto-slide */}
               {imagesList.length > 1 && (
                 <div style={{
                   position: 'absolute',
                   bottom: 0,
                   left: 0,
                   width: '100%',
-                  height: '3px',
+                  height: '4px',
                   background: 'rgba(255,255,255,0.2)',
-                  zIndex: 10
+                  zIndex: 15
                 }}>
                   <div
-                    key={`${currentImageIndex}-${isPaused}`}
+                    key={`mob-${currentImageIndex}-${isPaused}`}
                     style={{
                       height: '100%',
-                      background: '#FFFFFF',
+                      background: '#005BAB',
+                      boxShadow: '0 0 8px rgba(0, 91, 171, 0.8)',
                       animation: isPaused ? 'none' : 'slideProgress 3.5s linear forwards',
                       width: isPaused ? '0%' : undefined
                     }}
                   />
                 </div>
               )}
+
               {/* Smooth Slide Track Container */}
               <div style={{
                 position: 'absolute',
                 top: 0,
                 left: 0,
-                width: `${imagesList.length * 100}%`,
+                width: `${Math.max(imagesList.length, 1) * 100}%`,
                 height: '100%',
                 display: 'flex',
-                transform: `translateX(-${(currentImageIndex * 100) / imagesList.length}%)`,
+                transform: `translateX(-${(currentImageIndex * 100) / Math.max(imagesList.length, 1)}%)`,
                 transition: 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)',
                 willChange: 'transform'
               }}>
-                {imagesList.map((imgSrc, idx) => (
+                {(imagesList.length > 0 ? imagesList : [item.cover || item.image_url]).map((imgSrc, idx) => (
                   <div
                     key={idx}
                     style={{
                       position: 'relative',
-                      width: `${100 / imagesList.length}%`,
+                      width: `${100 / Math.max(imagesList.length, 1)}%`,
                       height: '100%',
                       flexShrink: 0,
                       overflow: 'hidden',
@@ -399,18 +1231,18 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
                       aria-hidden="true"
                       style={{
                         position: 'absolute',
-                        top: '-10%',
-                        left: '-10%',
-                        width: '120%',
-                        height: '120%',
+                        top: '-15%',
+                        left: '-15%',
+                        width: '130%',
+                        height: '130%',
                         objectFit: 'cover',
-                        filter: 'blur(20px) brightness(0.5) saturate(1.4)',
-                        transform: 'scale(1.05)',
+                        filter: 'blur(20px) brightness(0.65) saturate(1.3)',
+                        transform: 'scale(1.08)',
                         pointerEvents: 'none',
                         zIndex: 1
                       }}
                     />
-                    {/* Layer 2: Main Contained Image (Watermarked on save) */}
+                    {/* Layer 2: Main Contained Image */}
                     <WatermarkedImage
                       src={imgSrc}
                       alt={`${titleText} - Foto ${idx + 1}`}
@@ -429,661 +1261,411 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
                 ))}
               </div>
 
-              {/* Carousel Controls (If > 1 Image) */}
+              {/* Tombol Close Merah Bulat di Pojok Kanan Atas Gambar */}
+              <button
+                onClick={onClose}
+                aria-label="Tutup modal"
+                style={{
+                  position: 'absolute',
+                  top: '12px',
+                  right: '12px',
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '50%',
+                  background: '#EF4444',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(239, 68, 68, 0.45)',
+                  zIndex: 16
+                }}
+              >
+                <X size={20} strokeWidth={2.8} />
+              </button>
+
+              {/* Badge Indikator Foto jika > 1 gambar */}
+              {imagesList.length > 1 && (
+                <div style={{
+                  position: 'absolute',
+                  bottom: '12px',
+                  right: '12px',
+                  background: 'rgba(0, 0, 0, 0.65)',
+                  color: '#FFFFFF',
+                  padding: '0.2rem 0.6rem',
+                  borderRadius: '999px',
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  zIndex: 14,
+                  backdropFilter: 'blur(4px)'
+                }}>
+                  {currentImageIndex + 1} / {imagesList.length}
+                </div>
+              )}
+
+              {/* Tombol Slide Carousel Panah Kiri & Kanan (jika gambar > 1) */}
               {imagesList.length > 1 && (
                 <>
-                  {/* Prev Button */}
                   <button
                     onClick={handlePrevImage}
-                    className="detail-carousel-btn detail-carousel-btn-prev"
+                    aria-label="Foto Sebelumnya"
                     style={{
                       position: 'absolute',
-                      left: '0.85rem',
+                      left: '10px',
                       top: '50%',
                       transform: 'translateY(-50%)',
-                      background: '#FFFFFF',
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      background: 'rgba(255, 255, 255, 0.9)',
+                      border: '1.5px solid rgba(0, 91, 171, 0.25)',
                       color: '#005BAB',
-                      border: '2.5px solid #005BAB',
-                      borderRadius: '999px',
-                      width: '40px',
-                      height: '40px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      boxShadow: '0 4px 12px rgba(0, 91, 171, 0.25)',
-                      zIndex: 10
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                      backdropFilter: 'blur(4px)',
+                      zIndex: 14
                     }}
-                    title="Foto Sebelumnya"
                   >
-                    <ChevronLeft size={22} />
+                    <ChevronLeft size={20} strokeWidth={2.5} />
                   </button>
 
-                  {/* Next Button */}
                   <button
                     onClick={handleNextImage}
-                    className="detail-carousel-btn detail-carousel-btn-next"
+                    aria-label="Foto Selanjutnya"
                     style={{
                       position: 'absolute',
-                      right: '0.85rem',
+                      right: '10px',
                       top: '50%',
                       transform: 'translateY(-50%)',
-                      background: '#FFFFFF',
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      background: 'rgba(255, 255, 255, 0.9)',
+                      border: '1.5px solid rgba(0, 91, 171, 0.25)',
                       color: '#005BAB',
-                      border: '2.5px solid #005BAB',
-                      borderRadius: '999px',
-                      width: '40px',
-                      height: '40px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      boxShadow: '0 4px 12px rgba(0, 91, 171, 0.25)',
-                      zIndex: 10
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                      backdropFilter: 'blur(4px)',
+                      zIndex: 14
                     }}
-                    title="Foto Selanjutnya"
                   >
-                    <ChevronRight size={22} />
+                    <ChevronRight size={20} strokeWidth={2.5} />
                   </button>
-
-                  {/* Slide Counter Badge */}
-                  <div style={{
-                    position: 'absolute',
-                    bottom: '12px',
-                    right: '12px',
-                    background: '#005BAB',
-                    color: '#FFFFFF',
-                    padding: '0.25rem 0.75rem',
-                    borderRadius: '999px',
-                    fontSize: '0.78rem',
-                    fontWeight: 800,
-                    border: '1.5px solid #FFFFFF'
-                  }}>
-                    {lang === 'en' ? `Photo ${currentImageIndex + 1} of ${imagesList.length}` : `Foto ${currentImageIndex + 1} dari ${imagesList.length}`}
-                  </div>
                 </>
               )}
             </div>
-          )}
 
-          {/* Thumbnail Strip Selector (If > 1 Image) */}
-          {!videoEmbedUrl && imagesList.length > 1 && (
-            <div style={{
-              display: 'flex',
-              gap: '0.5rem',
-              justifyContent: 'center',
-              padding: '0.65rem',
-              background: '#FFFFFF',
-              borderTop: '1.5px solid #005BAB',
-              overflowX: 'auto'
-            }}>
-              {imagesList.map((thumbSrc, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setCurrentImageIndex(idx)}
-                  style={{
-                    width: '56px',
-                    height: '56px',
-                    borderRadius: '12px',
-                    overflow: 'hidden',
-                    border: idx === currentImageIndex ? '3px solid #005BAB' : '1.5px solid #005BAB',
-                    opacity: idx === currentImageIndex ? 1 : 0.6,
-                    transform: idx === currentImageIndex ? 'scale(1.05)' : 'scale(1)',
-                    transition: 'all 0.2s ease',
-                    padding: 0
-                  }}
-                >
-                  <WatermarkedImage src={thumbSrc} alt="" objectFit="cover" style={{ width: '100%', height: '100%' }} />
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Detail Content Body */}
-        <div className="detail-modal-body" style={{ padding: '1.5rem' }}>
-          {/* Judul Karya / Sertifikat */}
-          <h2 style={{
-            fontSize: '1.35rem',
-            fontWeight: 800,
-            color: '#005BAB',
-            margin: '0 0 1.15rem 0',
-            lineHeight: 1.3,
-            wordBreak: 'break-word',
-            display: 'flex',
-            alignItems: 'center',
-            flexWrap: 'wrap'
-          }}>
-            <span>{titleText}</span>
-            <MetadataCopyBtn text={titleText} label="Judul" />
-          </h2>
-
-          {/* Metadata badges — aligned nicely left to right with spacious row gap */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem 0.65rem', flexWrap: 'wrap', marginBottom: '1.35rem' }}>
-            <span className={`badge badge-${item.category}`} style={{ border: '1.5px solid #005BAB', padding: '0.4rem 0.95rem', borderRadius: '999px', fontSize: '0.82rem', fontWeight: 800 }}>
-              {item.category === 'desain-grafis' ? t('cat_grafis') :
-               item.category === 'multimedia' ? t('cat_multimedia') :
-               item.category === 'aplikasi' ? t('cat_aplikasi') : item.category}
-            </span>
-            {subcatText && (
-              <span style={{
-                fontSize: '0.82rem',
-                fontWeight: 800,
-                color: '#005BAB',
-                background: '#FFFFFF',
-                padding: '0.4rem 0.95rem',
-                borderRadius: '999px',
-                border: '1.5px solid #005BAB'
-              }}>
-                {subcatText}
-              </span>
-            )}
-            {item.institution && (
-              <span style={{
-                fontSize: '0.82rem',
-                fontWeight: 800,
-                color: '#005BAB',
-                background: '#FFFFFF',
-                padding: '0.4rem 0.95rem',
-                borderRadius: '999px',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.45rem',
-                border: '1.5px solid #005BAB'
-              }}>
-                <Award size={15} />
-                <span>{item.institution}</span>
-                <MetadataCopyBtn text={item.institution} label="Instansi" />
-              </span>
-            )}
-            {item.client && (
-              <span
-                className="detail-modal-client-badge"
-                style={{
-                  fontSize: '0.82rem',
-                  fontWeight: 800,
-                  color: '#005BAB',
-                  background: '#FFFFFF',
-                  padding: '0.4rem 0.95rem',
-                  borderRadius: '999px',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.45rem',
-                  border: '1.5px solid #005BAB'
-                }}
-              >
-                <User size={15} />
-                {item.client}
-              </span>
-            )}
-            {item.project_type && (
-              <span
-                className="detail-modal-project-type-badge"
-                style={{
-                  fontSize: '0.82rem',
-                  fontWeight: 800,
-                  color: '#005BAB',
-                  background: '#FFFFFF',
-                  padding: '0.4rem 0.95rem',
-                  borderRadius: '999px',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.45rem',
-                  border: '1.5px solid #005BAB'
-                }}
-              >
-                {((type) => {
-                  const t = (type || '').toLowerCase().trim();
-                  if (t.includes('freelance')) return <Briefcase size={15} />;
-                  if (t.includes('pekerjaan') || t.includes('work') || t.includes('job')) return <Building2 size={15} />;
-                  if (t.includes('iseng') || t.includes('pribadi') || t.includes('personal')) return <Sparkles size={15} />;
-                  if (t.includes('lomba') || t.includes('contest') || t.includes('competition')) return <Award size={15} />;
-                  return <FolderKanban size={15} />;
-                })(item.project_type)}
-                <span>{lang === 'en' ? 'Project Type' : 'Jenis Proyek'}: {item.project_type === 'Iseng' ? 'Personal' : item.project_type}</span>
-              </span>
-            )}
-            {(isMobileApp || isWebApp) && item.development_method && (
-              <span
-                className="detail-modal-method-badge"
-                style={{
-                  fontSize: '0.82rem',
-                  fontWeight: 800,
-                  color: '#FFFFFF',
-                  background: '#005BAB',
-                  padding: '0.4rem 0.95rem',
-                  borderRadius: '999px',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.45rem',
-                  border: '1.5px solid #005BAB'
-                }}
-              >
-                <Code size={15} />
-                <span>{lang === 'en' ? 'Method' : 'Metode'}: {item.development_method}</span>
-              </span>
-            )}
-            {item.tools_used && (
-              <span
-                className="detail-modal-tools-badge"
-                style={{
-                  fontSize: '0.82rem',
-                  fontWeight: 800,
-                  color: '#005BAB',
-                  background: '#FFFFFF',
-                  padding: '0.4rem 0.95rem',
-                  borderRadius: '999px',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.45rem',
-                  border: '1.5px solid #005BAB'
-                }}
-              >
-                <Wrench size={15} />
-                <span>{lang === 'en' ? 'Tools / Software' : 'Alat / Software'}: {item.tools_used}</span>
-              </span>
-            )}
-            {(isMobileApp || isWebApp) && item.framework && (
-              <span
-                className="detail-modal-framework-badge"
-                style={{
-                  fontSize: '0.82rem',
-                  fontWeight: 800,
-                  color: '#005BAB',
-                  background: '#FFFFFF',
-                  padding: '0.4rem 0.95rem',
-                  borderRadius: '999px',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.45rem',
-                  border: '1.5px solid #005BAB'
-                }}
-              >
-                <Layers size={15} />
-                <span>Framework: {item.framework}</span>
-              </span>
-            )}
-            {isUIUX && item.platform && (
-              <span
-                className="detail-modal-platform-badge"
-                style={{
-                  fontSize: '0.82rem',
-                  fontWeight: 800,
-                  color: '#FFFFFF',
-                  background: '#005BAB',
-                  padding: '0.4rem 0.95rem',
-                  borderRadius: '999px',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.45rem',
-                  border: '1.5px solid #005BAB'
-                }}
-              >
-                <Smartphone size={15} />
-                <span>Platform: {item.platform}</span>
-              </span>
-            )}
-          </div>
-
-          {/* Peran Hamdani — Khusus Kategori Multimedia Subkategori Film */}
-          {isMultimediaFilm && item.role && item.role.trim() !== '' && (
-            <div className="role-pill-wrapper" style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              background: '#005BAB',
-              color: '#FFFFFF',
-              padding: '0.5rem 1.1rem',
-              borderRadius: '999px',
-              fontSize: '0.88rem',
-              fontWeight: 800,
-              marginBottom: '1rem',
-              border: '2px solid #005BAB',
-              boxShadow: '0 4px 12px rgba(0,91,171,0.18)'
-            }}>
-              <Award className="role-pill-icon" size={16} />
-              <span>{lang === 'en' ? 'Hamdani as' : 'Peran Hamdani sebagai'}:</span>
-              <span className="role-pill-value" style={{ background: '#FFFFFF', color: '#005BAB', padding: '0.15rem 0.7rem', borderRadius: '999px', fontSize: '0.85rem', fontWeight: 800 }}>
-                {item.role}
-              </span>
-            </div>
-          )}
-
-          {/* Description */}
-          {descText && (
-            <div style={{
-              fontSize: '0.92rem',
-              color: '#005BAB',
-              fontWeight: 400,
-              lineHeight: 1.6,
-              marginBottom: '1.5rem',
-              whiteSpace: 'pre-line',
-              background: '#FFFFFF',
-              padding: '1.25rem',
-              borderRadius: '20px',
-              border: '2px solid #005BAB'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem' }}>
-                <div style={{ flex: 1, minWidth: 0 }}>{descText}</div>
-                <MetadataCopyBtn text={descText} label="Deskripsi" />
-              </div>
-            </div>
-          )}
-
-          {/* Software / Tech Tags */}
-          {Array.isArray(item.tags) && item.tags.length > 0 && (
-            <div style={{ marginBottom: '1.5rem' }}>
-              <h4 style={{ fontSize: '0.85rem', color: '#005BAB', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem', fontWeight: 800 }}>
-                {t('detail_tags')}:
-              </h4>
-              <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap' }}>
-                {item.tags.map((tag, idx) => (
-                  <span key={idx} style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.35rem',
-                    background: '#FFFFFF',
-                    color: '#005BAB',
-                    border: '1.5px solid #005BAB',
-                    padding: '0.35rem 0.8rem',
-                    borderRadius: '999px',
-                    fontSize: '0.82rem',
-                    fontWeight: 800
-                  }}>
-                    <Tag size={13} />
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Bottom Actions */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', paddingTop: '0.75rem' }}>
-
-            {appOrProjLink && !isVideografi && (
-              <a
-                href={appOrProjLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-primary"
-                style={{ background: '#005BAB', color: '#FFFFFF' }}
-              >
-                <span>
-                  {isUIUX
-                    ? t('detail_btn_prototype')
-                    : (isMobileApp || isWebApp || isAplikasiCategory)
-                      ? (lang === 'en' ? 'Try App' : 'Coba Aplikasi')
-                      : t('detail_btn_project')}
-                </span>
-                <ExternalLink size={16} />
-              </a>
-            )}
-
-            {/* Share Link Button (Khusus Karya) */}
-            {item.category && (
-              <button
-                type="button"
-                onClick={handleShare}
-                className="btn-secondary"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.45rem',
-                  background: copied ? '#005BAB' : '#FFFFFF',
-                  color: copied ? '#FFFFFF' : '#005BAB',
-                  border: '2px solid #005BAB',
-                  transition: 'all 0.2s ease',
-                  fontWeight: 800
-                }}
-                title={lang === 'en' ? 'Share link to this portfolio item' : 'Bagikan link karya ini'}
-              >
-                {copied ? <Check size={16} /> : <Share2 size={16} />}
-                <span>{copied ? (lang === 'en' ? 'Link Copied!' : 'Link Tersalin!') : (lang === 'en' ? 'Share' : 'Bagikan')}</span>
-              </button>
-            )}
-
-            <button onClick={onClose} className="btn-secondary">
-              <span>{t('detail_close')}</span>
-            </button>
-          </div>
-
-          {/* ─── SEKSI KARYA LAINNYA ─── */}
-          {otherWorks.length > 0 && (
-            <div style={{
-              marginTop: '1.75rem',
-              marginBottom: '1.5rem',
-              paddingTop: '0.75rem',
-              width: '100%',
-              boxSizing: 'border-box'
-            }}>
+            {/* 2. Body Konten Mobile dengan padding samping dan bawah */}
+            <div style={{ padding: '1.25rem 1.1rem 2rem 1.1rem' }}>
+              
+              {/* Baris 1: Strip Kategori ─────── Subkategori & Tombol Bagikan */}
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                gap: '0.75rem',
-                flexWrap: 'wrap',
-                marginBottom: '1rem',
-                width: '100%',
-                boxSizing: 'border-box'
+                gap: '0.65rem',
+                marginBottom: '1rem'
               }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
-                  <div style={{
-                    padding: '0.4rem',
-                    borderRadius: '10px',
-                    background: '#005BAB',
-                    color: '#FFFFFF',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
+                {/* Kategori ─────── Subkategori */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  flex: 1,
+                  minWidth: 0
+                }}>
+                  <span style={{
+                    fontSize: '0.86rem',
+                    fontWeight: 700,
+                    color: '#005BAB',
+                    whiteSpace: 'nowrap'
                   }}>
-                    <FolderKanban size={18} />
-                  </div>
-                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#005BAB', margin: 0, lineHeight: 1.3 }}>
-                    {lang === 'en' ? 'Other Works' : 'Karya Lainnya'}
-                  </h3>
+                    {item.category === 'desain-grafis' ? 'Desain Grafis' :
+                     item.category === 'multimedia' ? 'Multimedia' :
+                     item.category === 'aplikasi' ? 'Aplikasi' : (item.category || 'Desain Grafis')}
+                  </span>
+
+                  <div style={{
+                    flex: 1,
+                    height: '1.5px',
+                    background: '#005BAB',
+                    opacity: 0.65
+                  }} />
+
+                  <span style={{
+                    fontSize: '0.86rem',
+                    fontWeight: 700,
+                    color: '#005BAB',
+                    whiteSpace: 'nowrap'
+                  }}>
+                    {subcatText || (lang === 'en' ? 'Design' : 'Desain')}
+                  </span>
                 </div>
 
+                {/* Tombol Bagikan Pill Biru */}
                 <button
                   type="button"
-                  onClick={() => {
-                    if (onViewAllWorks) {
-                      onViewAllWorks();
-                    } else {
-                      onClose();
-                    }
-                  }}
-                  className="btn-secondary other-works-desktop-btn"
+                  onClick={handleShare}
                   style={{
-                    fontSize: '0.82rem',
+                    padding: '0.42rem 1.35rem',
+                    borderRadius: '999px',
+                    background: copied ? '#16A34A' : '#005BAB',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    fontSize: '0.88rem',
                     fontWeight: 800,
-                    padding: '0.4rem 0.85rem',
-                    gap: '0.4rem',
-                    background: '#FFFFFF',
-                    color: '#005BAB',
-                    border: '2px solid #005BAB'
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 12px rgba(0, 91, 171, 0.25)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                    flexShrink: 0
                   }}
                 >
-                  <span>{lang === 'en' ? 'View All Works' : 'Lihat Selengkapnya'}</span>
-                  <ChevronRight size={16} />
+                  {copied ? <Check size={14} /> : null}
+                  <span>{copied ? (lang === 'en' ? 'Copied!' : 'Tersalin!') : (lang === 'en' ? 'Share' : 'Bagikan')}</span>
                 </button>
               </div>
 
-              {/* Grid 5 Karya Lainnya */}
-              <div className="other-works-grid" style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(5, 1fr)',
+              {/* Baris 2: Judul Karya & Tahun (Tahun di sebelah kanan bawah judul) */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'flex-end',
+                justifyContent: 'space-between',
                 gap: '0.75rem',
-                width: '100%',
-                boxSizing: 'border-box'
+                marginBottom: '1.25rem'
               }}>
-                {otherWorks.map((otherItem) => {
-                  const otherTitle = getLocalizedField(otherItem, 'title');
-                  const otherSubcat = getLocalizedField(otherItem, 'subcategory');
-                  const coverImg = otherItem.cover || otherItem.cover_image || otherItem.image_url;
+                <h2 style={{
+                  margin: 0,
+                  fontSize: '1.38rem',
+                  fontWeight: 900,
+                  color: '#005BAB',
+                  lineHeight: 1.25,
+                  letterSpacing: '-0.02em',
+                  wordBreak: 'break-word',
+                  flex: 1
+                }}>
+                  {titleText}
+                </h2>
 
-                  return (
-                    <div
-                      key={otherItem.id}
-                      className="herta-card other-work-card"
+                {item.year && (
+                  <span style={{
+                    fontSize: '1.05rem',
+                    fontWeight: 800,
+                    color: '#005BAB',
+                    whiteSpace: 'nowrap',
+                    paddingBottom: '2px'
+                  }}>
+                    {item.year}
+                  </span>
+                )}
+              </div>
+
+              {/* Baris 3 & 4: Metadata 2 Kolom (Klien di kiri, Jenis Proyek di kanan, Alat/Software di bawah) */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(2, 1fr)',
+                gap: '1.15rem 1rem',
+                marginBottom: '1.45rem'
+              }}>
+                {/* Klien */}
+                <div>
+                  <span style={{
+                    display: 'block',
+                    fontSize: '0.82rem',
+                    fontWeight: 600,
+                    color: '#4B6B9A',
+                    marginBottom: '0.2rem'
+                  }}>
+                    {lang === 'en' ? 'Client' : 'Klien'}
+                  </span>
+                  <span style={{
+                    fontSize: '1.15rem',
+                    fontWeight: 800,
+                    color: '#005BAB',
+                    lineHeight: 1.25,
+                    display: 'block'
+                  }}>
+                    {item.client || item.institution || '-'}
+                  </span>
+                </div>
+
+                {/* Jenis Proyek */}
+                <div>
+                  <span style={{
+                    display: 'block',
+                    fontSize: '0.82rem',
+                    fontWeight: 600,
+                    color: '#4B6B9A',
+                    marginBottom: '0.2rem'
+                  }}>
+                    {lang === 'en' ? 'Project Type' : 'Jenis Proyek'}
+                  </span>
+                  <span style={{
+                    fontSize: '1.15rem',
+                    fontWeight: 800,
+                    color: '#005BAB',
+                    lineHeight: 1.25,
+                    display: 'block'
+                  }}>
+                    {item.project_type || 'Pekerjaan'}
+                  </span>
+                </div>
+
+                {/* Alat / Software */}
+                <div style={{ gridColumn: 'span 2' }}>
+                  <span style={{
+                    display: 'block',
+                    fontSize: '0.82rem',
+                    fontWeight: 600,
+                    color: '#4B6B9A',
+                    marginBottom: '0.2rem'
+                  }}>
+                    {lang === 'en' ? 'Tool / Software' : 'Alat/Software'}
+                  </span>
+                  <span style={{
+                    fontSize: '1.15rem',
+                    fontWeight: 800,
+                    color: '#005BAB',
+                    lineHeight: 1.25,
+                    display: 'block'
+                  }}>
+                    {item.tools_used || item.framework || '-'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Deskripsi Karya */}
+              <div style={{ marginBottom: '1.35rem' }}>
+                <h3 style={{
+                  fontSize: '1.02rem',
+                  fontWeight: 800,
+                  color: '#005BAB',
+                  margin: '0 0 0.45rem 0',
+                  letterSpacing: '-0.01em'
+                }}>
+                  {lang === 'en' ? 'Artwork Description' : 'Deskripsi Karya'}
+                </h3>
+                <p style={{
+                  fontSize: '0.9rem',
+                  lineHeight: 1.55,
+                  color: '#28588E',
+                  margin: 0,
+                  fontWeight: 500,
+                  whiteSpace: 'pre-line'
+                }}>
+                  {descText || (lang === 'en' ? 'No description available for this project.' : 'Belum ada deskripsi untuk karya ini.')}
+                </p>
+              </div>
+
+              {/* Tag */}
+              {Array.isArray(item.tags) && item.tags.length > 0 && (
+                <div style={{ marginBottom: '1.75rem' }}>
+                  <h4 style={{
+                    fontSize: '0.92rem',
+                    fontWeight: 800,
+                    color: '#005BAB',
+                    margin: '0 0 0.4rem 0'
+                  }}>
+                    Tag
+                  </h4>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem 0.55rem' }}>
+                    {item.tags.map((tag, idx) => (
+                      <span
+                        key={idx}
+                        style={{
+                          fontSize: '0.88rem',
+                          fontWeight: 700,
+                          color: '#005BAB'
+                        }}
+                      >
+                        {tag.startsWith('#') ? tag : `#${tag}`}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Karya Lainnya + Button Selengkapnya + Grid 2 Kolom */}
+              {otherWorks.length > 0 && (
+                <div style={{
+                  borderTop: '1.5px solid rgba(0, 91, 171, 0.12)',
+                  paddingTop: '1.35rem'
+                }}>
+                  {/* Header */}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '0.75rem',
+                    marginBottom: '1.15rem'
+                  }}>
+                    <h3 style={{
+                      fontSize: '1.25rem',
+                      fontWeight: 900,
+                      color: '#005BAB',
+                      margin: 0,
+                      letterSpacing: '-0.01em'
+                    }}>
+                      {lang === 'en' ? 'Other Works' : 'Karya Lainnya'}
+                    </h3>
+
+                    <button
+                      type="button"
                       onClick={() => {
-                        if (onSelectWork) {
-                          onSelectWork(otherItem);
+                        if (onViewAllWorks) {
+                          onViewAllWorks();
+                        } else {
+                          onClose();
                         }
                       }}
                       style={{
-                        padding: '0.6rem',
-                        background: '#FFFFFF',
-                        borderRadius: '16px',
-                        border: '2px solid #005BAB',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
+                        padding: '0.42rem 1.25rem',
+                        borderRadius: '999px',
+                        background: '#005BAB',
+                        color: '#FFFFFF',
+                        border: 'none',
+                        fontSize: '0.86rem',
+                        fontWeight: 800,
                         cursor: 'pointer',
-                        transition: 'all 0.2s ease',
-                        gap: '0.45rem',
-                        width: '100%',
-                        boxSizing: 'border-box',
-                        overflow: 'hidden'
+                        boxShadow: '0 4px 12px rgba(0, 91, 171, 0.22)'
                       }}
                     >
-                      <div>
-                        {/* 16:9 Thumbnail Cover */}
-                        <div style={{
-                          position: 'relative',
-                          width: '100%',
-                          paddingTop: '62.5%',
-                          borderRadius: '10px',
-                          overflow: 'hidden',
-                          border: '1.5px solid #005BAB',
-                          backgroundColor: '#111827',
-                          marginBottom: '0.45rem'
-                        }}>
-                          {coverImg ? (
-                            <>
-                              <img
-                                src={coverImg}
-                                alt=""
-                                aria-hidden="true"
-                                style={{
-                                  position: 'absolute',
-                                  top: '-10%',
-                                  left: '-10%',
-                                  width: '120%',
-                                  height: '120%',
-                                  objectFit: 'cover',
-                                  filter: 'blur(12px) brightness(0.6)',
-                                  pointerEvents: 'none',
-                                  zIndex: 1
-                                }}
-                              />
-                              <WatermarkedImage
-                                src={coverImg}
-                                alt={otherTitle}
-                                objectFit="contain"
-                                objectPosition="center center"
-                                style={{
-                                  position: 'absolute',
-                                  top: 0,
-                                  left: 0,
-                                  width: '100%',
-                                  height: '100%',
-                                  zIndex: 2
-                                }}
-                              />
-                            </>
-                          ) : (
-                            <div style={{
-                              position: 'absolute',
-                              inset: 0,
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              color: '#005BAB',
-                              background: '#FFFFFF',
-                              fontSize: '0.72rem',
-                              fontWeight: 800
-                            }}>
-                              No Image
-                            </div>
-                          )}
-                        </div>
+                      {lang === 'en' ? 'See More' : 'Selengkapnya'}
+                    </button>
+                  </div>
 
-                        {/* Category Badge */}
-                        <span style={{
-                          fontSize: '0.68rem',
-                          fontWeight: 800,
-                          background: '#005BAB',
-                          color: '#FFFFFF',
-                          padding: '0.15rem 0.45rem',
-                          borderRadius: '999px',
-                          display: 'inline-block',
-                          maxWidth: '100%',
-                          whiteSpace: 'nowrap',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis'
-                        }}>
-                          {otherSubcat || otherItem.category || 'Karya'}
-                        </span>
-
-                        {/* Title */}
-                        <h4 style={{
-                          fontSize: '0.8rem',
-                          fontWeight: 800,
-                          color: '#005BAB',
-                          margin: '0.3rem 0 0 0',
-                          lineHeight: 1.25,
-                          display: '-webkit-box',
-                          WebkitLineClamp: 2,
-                          WebkitBoxOrient: 'vertical',
-                          overflow: 'hidden',
-                          wordBreak: 'break-word',
-                          overflowWrap: 'break-word'
-                        }}>
-                          {otherTitle}
-                        </h4>
-                      </div>
-
-                      {/* Year */}
-                      {otherItem.year && (
-                        <span style={{ fontSize: '0.68rem', fontWeight: 700, color: '#005BAB', opacity: 0.8 }}>
-                          {otherItem.year}
-                        </span>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Mobile View Button Lihat Selengkapnya */}
-              <div className="other-works-mobile-btn-wrap" style={{ display: 'none', marginTop: '1rem', width: '100%' }}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (onViewAllWorks) {
-                      onViewAllWorks();
-                    } else {
-                      onClose();
-                    }
-                  }}
-                  className="btn-primary"
-                  style={{
-                    width: '100%',
-                    justifyContent: 'center',
-                    padding: '0.65rem 1rem',
-                    fontSize: '0.88rem',
-                    fontWeight: 800,
-                    gap: '0.5rem',
-                    background: '#FFFFFF',
-                    color: '#005BAB',
-                    border: '2px solid #005BAB'
-                  }}
-                >
-                  <span>{lang === 'en' ? 'View All Works' : 'Lihat Selengkapnya Karya'}</span>
-                  <ChevronRight size={18} />
-                </button>
-              </div>
+                  {/* Grid 2 Kolom Card Karya Lainnya */}
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(2, 1fr)',
+                    gap: '0.75rem',
+                    alignItems: 'stretch'
+                  }}>
+                    {otherWorks.map((otherItem) => (
+                      <PortfolioCard
+                        key={otherItem.id}
+                        item={otherItem}
+                        onClick={onSelectWork}
+                        compact={true}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-        </div>
+          </div>
+          </>
+        )}
+
         {/* ── GDrive Video Fullscreen Overlay ── */}
         {isVideoFullscreen && videoEmbedUrl && (
           <div
@@ -1134,10 +1716,56 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
 
         <style>{`
           .detail-modal-scroll::-webkit-scrollbar { display: none; }
+
+          /* Desktop vs Mobile Detail View Toggle */
+          .detail-modal-desktop-view { display: block; }
+          .detail-modal-mobile-view { display: none; }
+
+          @media (max-width: 768px) {
+            .detail-modal-overlay-wrap {
+              padding: 0.65rem 0.5rem !important;
+            }
+            .detail-modal-inner-card {
+              padding: 0 !important;
+              border-radius: 28px !important;
+              max-height: 96vh !important;
+              overflow-x: hidden !important;
+            }
+            .detail-modal-desktop-view {
+              display: none !important;
+            }
+            .detail-modal-mobile-view {
+              display: block !important;
+              width: 100% !important;
+              padding: 0 !important;
+              margin: 0 !important;
+            }
+          }
+
           @keyframes slideProgress {
             from { width: 0%; }
             to   { width: 100%; }
           }
+          
+          /* Responsive 2 Columns Grid for Design Modal */
+          @media (max-width: 768px) {
+            .detail-two-col-grid {
+              grid-template-columns: 1fr !important;
+              gap: 1.5rem !important;
+            }
+            .detail-other-works-grid {
+              grid-template-columns: repeat(2, 1fr) !important;
+              gap: 0.75rem !important;
+            }
+          }
+
+          @media (max-width: 480px) {
+            .detail-other-works-grid {
+              grid-template-columns: repeat(2, 1fr) !important;
+              gap: 0.5rem !important;
+            }
+          }
+
           /* GDrive mobile hint: hidden by default (desktop), shown on mobile via media query */
           .gdrive-mobile-hint {
             display: none;
@@ -1180,13 +1808,10 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
             background: #003d80;
             transform: scale(0.96);
           }
-          /* Google Drive preview player has its own UI chrome (top timeline + bottom controls)
-             that require extra height beyond pure 16:9 to avoid overlap — applies all screen sizes */
           .video-embed-container.is-gdrive {
             padding-top: 66% !important;
           }
           @media (max-width: 640px) {
-            /* Show mobile fullscreen hint on small screens centered directly over play button */
             .gdrive-mobile-hint {
               display: flex !important;
               top: 50% !important;
@@ -1200,8 +1825,6 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
             .video-embed-container {
               padding-top: 56.25% !important;
             }
-            /* Mobile: GDrive chrome ~80px on 375px screen → ratio ≈ 80% for safety.
-               Shift iframe up 30px to clip the weird top-timeline bar. */
             .video-embed-container.is-gdrive {
               padding-top: 80% !important;
               min-height: 265px !important;
@@ -1211,70 +1834,10 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
               top: -30px !important;
               height: calc(100% + 30px) !important;
             }
-            .detail-modal-header {
-              padding: 0.75rem 0.85rem !important;
-            }
-            .detail-modal-body {
-              padding: 1rem 0.85rem !important;
-            }
-            .detail-carousel-btn-prev {
-              left: 0.5rem !important;
-              width: 36px !important;
-              height: 36px !important;
-            }
-            .detail-carousel-btn-next {
-              right: 0.5rem !important;
-              width: 36px !important;
-              height: 36px !important;
-            }
-            /* Peran Hamdani pill — mobile fix */
-            .role-pill-wrapper {
-              flex-wrap: wrap !important;
-              justify-content: center !important;
-              padding: 0.6rem 1rem !important;
-            }
-            .role-pill-icon {
-              width: 16px !important;
-              height: 16px !important;
-              min-width: 16px !important;
-              flex-shrink: 0 !important;
-            }
-            .role-pill-value {
-              font-weight: 400 !important;
-              text-align: center !important;
-              padding: 0.35rem 0.7rem !important;
-              margin-top: 0.25rem !important;
-              margin-bottom: 0.25rem !important;
-              width: 100% !important;
-            }
-          .other-work-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 16px rgba(0, 91, 171, 0.2);
-            border-color: #003d80 !important;
-          }
-          .other-work-card:active {
-            transform: scale(0.98);
-          }
-          .other-works-desktop-btn {
-            display: inline-flex !important;
-          }
-          .other-works-mobile-btn-wrap {
-            display: none !important;
-          }
-          @media (max-width: 640px) {
-            .other-works-grid {
-              grid-template-columns: repeat(2, 1fr) !important;
-              gap: 0.65rem !important;
-            }
-            .other-works-desktop-btn {
-              display: none !important;
-            }
-            .other-works-mobile-btn-wrap {
-              display: block !important;
-            }
           }
         `}</style>
       </div>
     </div>
   );
 }
+

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { X, Images, Palette, Info, ArrowRight } from 'lucide-react';
+import { X, Images, Palette, Info } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import WatermarkedImage from './WatermarkedImage';
 
@@ -131,8 +131,10 @@ function useResponsiveColumnCount(isLogo = false) {
   return colCount;
 }
 
-// ── Single Image Card — Ringan, stabil, frame rapi ──
-function GalleryImageCard({ item, onLoadAspect }) {
+// ── Single Image Card — Ringan, stabil, frame rapi, interaktif klik modal detail ──
+function GalleryImageCard({ item, onLoadAspect, onSelectWork }) {
+  const [isHovered, setIsHovered] = React.useState(false);
+
   const handleLoad = (e) => {
     if (onLoadAspect && e.target.naturalWidth > 0) {
       const aspect = e.target.naturalHeight / e.target.naturalWidth;
@@ -142,18 +144,35 @@ function GalleryImageCard({ item, onLoadAspect }) {
 
   return (
     <div
+      onClick={() => onSelectWork && onSelectWork(item)}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if ((e.key === 'Enter' || e.key === ' ') && onSelectWork) {
+          e.preventDefault();
+          onSelectWork(item);
+        }
+      }}
+      title={`Lihat detail: ${item.title || 'Karya'}`}
       style={{
         borderRadius: '10px',
         overflow: 'hidden',
         background: '#EEF2F8',
-        boxShadow: '0 2px 6px rgba(0, 91, 171, 0.08)',
-        cursor: 'default',
+        boxShadow: isHovered
+          ? '0 6px 18px rgba(0, 91, 171, 0.28)'
+          : '0 2px 6px rgba(0, 91, 171, 0.08)',
+        border: isHovered ? '2px solid #005BAB' : '2px solid transparent',
+        transform: isHovered ? 'translateY(-2px)' : 'translateY(0)',
+        cursor: 'pointer',
         userSelect: 'none',
         padding: '3px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: '0.65rem',
+        transition: 'transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease',
       }}
     >
       <img
@@ -165,7 +184,7 @@ function GalleryImageCard({ item, onLoadAspect }) {
           width: '100%',
           height: 'auto',
           display: 'block',
-          borderRadius: '8px',
+          borderRadius: '7px',
           pointerEvents: 'none',
         }}
       />
@@ -174,7 +193,7 @@ function GalleryImageCard({ item, onLoadAspect }) {
 }
 
 // ── Subcategory Section dengan Greedy Shortest-Column Masonry (Tanpa Ruang Kosong) ──
-function SubcategorySection({ subcategory, items, lang }) {
+function SubcategorySection({ subcategory, items, lang, onSelectWork }) {
   const meta = resolveMeta(subcategory, lang);
   const isLogo = subcategory === 'logo' || (meta.label && meta.label.toLowerCase().includes('logo'));
   const columnCount = useResponsiveColumnCount(isLogo);
@@ -297,7 +316,12 @@ function SubcategorySection({ subcategory, items, lang }) {
         {columns.map((colItems, colIdx) => (
           <div key={colIdx} style={{ display: 'flex', flexDirection: 'column' }}>
             {colItems.map((item) => (
-              <GalleryImageCard key={item.id} item={item} onLoadAspect={handleImageLoad} />
+              <GalleryImageCard
+                key={item.id}
+                item={item}
+                onLoadAspect={handleImageLoad}
+                onSelectWork={onSelectWork}
+              />
             ))}
           </div>
         ))}
@@ -307,7 +331,7 @@ function SubcategorySection({ subcategory, items, lang }) {
 }
 
 // ── Main GalleryModal ───────────────────────────────────────────────────────
-export default function GalleryModal({ items = [], onClose, onExploreClick }) {
+export default function GalleryModal({ items = [], onClose, onSelectWork }) {
   const { lang } = useLanguage();
   const overlayRef = useRef(null);
 
@@ -434,51 +458,12 @@ export default function GalleryModal({ items = [], onClose, onExploreClick }) {
               </h2>
             </div>
 
-            {/* Right Actions: Tombol Jelajahi Karya + Tombol Close */}
+            {/* Right Actions: Tombol Close */}
             <div className="gallery-header-actions" style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '0.5rem',
-              flexWrap: 'wrap',
               justifyContent: 'flex-end',
             }}>
-              {onExploreClick && (
-                <button
-                  type="button"
-                  onClick={() => { onClose(); onExploreClick(); }}
-                  className="gallery-explore-btn"
-                  style={{
-                    padding: '0.5rem 1rem',
-                    fontSize: '0.8rem',
-                    fontWeight: 800,
-                    borderRadius: '999px',
-                    background: '#16A34A',
-                    color: '#FFFFFF',
-                    border: '2px solid #16A34A',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.4rem',
-                    cursor: 'pointer',
-                    boxShadow: '0 4px 12px rgba(22, 163, 74, 0.25)',
-                    transition: 'all 0.2s ease',
-                    textAlign: 'center',
-                    lineHeight: 1.3,
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = '#15803D';
-                    e.currentTarget.style.borderColor = '#15803D';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = '#16A34A';
-                    e.currentTarget.style.borderColor = '#16A34A';
-                  }}
-                >
-                  <span>{lang === 'en' ? 'Explore Works & Info' : 'Jelajahi Karya Beserta Informasi nya'}</span>
-                  <ArrowRight size={15} style={{ flexShrink: 0 }} />
-                </button>
-              )}
-
               {/* Tombol Close */}
               <button
                 onClick={onClose}
@@ -540,6 +525,7 @@ export default function GalleryModal({ items = [], onClose, onExploreClick }) {
                   subcategory={subcategory}
                   items={grpItems}
                   lang={lang}
+                  onSelectWork={onSelectWork}
                 />
               ))
             )}
@@ -595,23 +581,11 @@ export default function GalleryModal({ items = [], onClose, onExploreClick }) {
           }
         }
 
-        /* Mobile Header Responsive: wrap action button & allow flexible text */
+        /* Mobile Header Responsive */
         @media (max-width: 650px) {
           .gallery-modal-header {
             padding: 0.85rem 1rem !important;
             gap: 0.6rem !important;
-          }
-          .gallery-header-actions {
-            width: 100% !important;
-            justify-content: space-between !important;
-            order: 3 !important;
-            margin-top: 0.25rem !important;
-          }
-          .gallery-explore-btn {
-            flex: 1 1 auto !important;
-            font-size: 0.76rem !important;
-            padding: 0.45rem 0.85rem !important;
-            white-space: normal !important;
           }
         }
 

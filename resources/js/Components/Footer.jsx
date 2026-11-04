@@ -69,7 +69,7 @@ export default function Footer({ onCategoryClick, onOpenAdmin, isLoggedIn }) {
                 }}
               />
               <span style={{ fontSize: '1.45rem', fontWeight: 800, color: footerColor, textAlign: 'left' }}>
-                PORTODA — {t('nav_subtitle')}
+                Portoda {t('nav_subtitle')} 
               </span>
             </div> 
             <p style={{
@@ -128,7 +128,7 @@ export default function Footer({ onCategoryClick, onOpenAdmin, isLoggedIn }) {
                       padding: '0.4rem',
                       borderRadius: '14px',
                       background: '#FFFFFF',
-                      border: '1.5px solid #005BAB',
+                      border: '2px solid #005BAB',
                       transition: 'all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
                       textDecoration: 'none'
                     }}

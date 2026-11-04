@@ -1,23 +1,12 @@
 import React from 'react';
-import { Play, Eye, Sparkles, Calendar, Tag } from 'lucide-react';
+import { Play } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import WatermarkedImage from './WatermarkedImage';
 
-export default function PortfolioCard({ item, onClick }) {
+export default function PortfolioCard({ item, onClick, compact = false }) {
   const { lang, t, getLocalizedField } = useLanguage();
 
-  const getBadgeClass = (category) => {
-    switch (category) {
-      case 'desain-grafis':
-        return 'badge-desain-grafis';
-      case 'multimedia':
-        return 'badge-multimedia';
-      case 'aplikasi':
-        return 'badge-aplikasi';
-      default:
-        return 'badge-aplikasi';
-    }
-  };
+  if (!item) return null;
 
   const getCategoryLabel = (category) => {
     switch (category) {
@@ -28,188 +17,190 @@ export default function PortfolioCard({ item, onClick }) {
       case 'aplikasi':
         return t('cat_aplikasi');
       default:
-        return category;
+        return category === 'desain-grafis' ? 'Desain Grafis' : (category || 'Desain Grafis');
     }
   };
 
   const titleText = getLocalizedField(item, 'title');
   const descText = getLocalizedField(item, 'description');
-  const subcatText = getLocalizedField(item, 'subcategory');
+  const subcatText = getLocalizedField(item, 'subcategory') || (lang === 'en' ? 'Design' : 'Desain');
+  const coverImg = item.cover || item.cover_image || item.image_url;
 
   return (
-    <div 
-      onClick={() => onClick(item)}
-      className="herta-card animate-fade-in"
+    <div
+      onClick={() => onClick && onClick(item)}
+      className="portfolio-card-custom"
       style={{
+        background: '#FFFFFF',
+        borderRadius: compact ? '20px' : '28px',
+        border: 'none',
+        boxShadow: '0 4px 20px rgba(0, 40, 110, 0.07)',
+        padding: 0,
         display: 'flex',
         flexDirection: 'column',
         cursor: 'pointer',
         position: 'relative',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        height: '100%',
+        boxSizing: 'border-box'
       }}
     >
-      {/* Thumbnail Container — 16:9 Landscape | Blurred Backdrop + Contained Image */}
-      <div style={{
-        position: 'relative',
-        width: '100%',
-        paddingTop: '56.25%',
-        overflow: 'hidden',
-        borderBottom: '2.5px solid #005BAB',
-        backgroundColor: '#111827'
-      }}>
-        {/* Featured Star Badge (Kanan Bawah) */}
-        {item.featured && (
+      {/* ── THUMBNAIL CONTAINER: Full frame (w-full, tanpa padding kartu) ── */}
+      <div
+        style={{
+          position: 'relative',
+          width: '100%',
+          aspectRatio: '16 / 10',
+          borderBottomLeftRadius: compact ? '16px' : '22px',
+          borderBottomRightRadius: compact ? '16px' : '22px',
+          overflow: 'hidden',
+          backgroundColor: '#111827',
+          boxShadow: '0 6px 20px rgba(0, 20, 60, 0.12)',
+          flexShrink: 0,
+          zIndex: 2
+        }}
+      >
+        {coverImg ? (
+          <>
+            {/* Layer 1: Blurred Backdrop (mengisi penuh sisi kiri-kanan/atas-bawah) */}
+            <img
+              src={coverImg}
+              alt=""
+              aria-hidden="true"
+              loading="lazy"
+              style={{
+                position: 'absolute',
+                top: '-15%',
+                left: '-15%',
+                width: '130%',
+                height: '130%',
+                objectFit: 'cover',
+                filter: 'blur(20px) brightness(0.65) saturate(1.3)',
+                transform: 'scale(1.08)',
+                pointerEvents: 'none',
+                userSelect: 'none',
+                zIndex: 1
+              }}
+            />
+
+            {/* Layer 2: Main Contained Image (pas di tengah frame, tidak terpotong, tidak ketarik) */}
+            <WatermarkedImage
+              src={coverImg}
+              alt={titleText}
+              loading="lazy"
+              objectFit="contain"
+              objectPosition="center center"
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                zIndex: 2
+              }}
+            />
+          </>
+        ) : (
           <div style={{
-            position: 'absolute',
-            bottom: '10px',
-            right: '10px',
-            zIndex: 10,
-            background: '#005BAB',
-            color: '#FFFFFF',
-            padding: '0.35rem 0.75rem',
-            borderRadius: '999px',
-            fontSize: '0.72rem',
-            fontWeight: 800,
+            width: '100%',
+            height: '100%',
             display: 'flex',
             alignItems: 'center',
-            gap: '0.25rem',
-            border: '1.5px solid #FFFFFF'
+            justifyContent: 'center',
+            color: '#005BAB',
+            fontWeight: 800,
+            fontSize: '0.85rem'
           }}>
-            <Sparkles size={12} />
-            <span>{t('card_featured').toUpperCase()}</span>
+            No Image
           </div>
         )}
 
-        {/* Layer 1: Blurred Backdrop */}
-        <img
-          src={item.image_url}
-          alt=""
-          aria-hidden="true"
-          loading="lazy"
-          style={{
-            position: 'absolute',
-            top: '-10%',
-            left: '-10%',
-            width: '120%',
-            height: '120%',
-            objectFit: 'cover',
-            filter: 'blur(18px) brightness(0.55) saturate(1.4)',
-            transform: 'scale(1.05)',
-            pointerEvents: 'none',
-            userSelect: 'none',
-            zIndex: 1
-          }}
-        />
-
-        {/* Layer 2: Gambar Asli — contain, tidak terpotong (Watermarked on save) */}
-        <WatermarkedImage
-          src={item.image_url}
-          alt={titleText}
-          loading="lazy"
-          objectFit="contain"
-          objectPosition="center center"
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            zIndex: 2
-          }}
-          className="card-img"
-        />
-
-        {/* Video Badge (Kanan Atas) */}
-        {item.video_url && (() => {
-          const subcatLower = (item.subcategory || '').toLowerCase();
-          const isVideoSubcat = subcatLower.includes('videografi') || 
-                                subcatLower.includes('videography') || 
-                                subcatLower.includes('motion graphic') || 
-                                subcatLower.includes('film');
-          
-          const isTopRight = isVideoSubcat;
-
-          return (
-            <div style={{
+        {/* Video Icon Badge (Jika karya memiliki video) */}
+        {item.video_url && (
+          <div
+            style={{
               position: 'absolute',
-              ...(isTopRight ? {
-                top: '10px',
-                right: '10px',
-              } : {
-                bottom: '10px',
-                left: '10px',
-              }),
+              top: compact ? '8px' : '12px',
+              right: compact ? '8px' : '12px',
               zIndex: 5,
-              background: '#005BAB',
+              background: 'rgba(0, 91, 171, 0.9)',
               color: '#FFFFFF',
-              padding: '0.3rem 0.65rem',
-              borderRadius: '8px',
-              fontSize: '0.75rem',
+              padding: compact ? '0.2rem 0.45rem' : '0.25rem 0.6rem',
+              borderRadius: '999px',
+              fontSize: compact ? '0.65rem' : '0.72rem',
               fontWeight: 800,
               display: 'flex',
               alignItems: 'center',
-              gap: '0.3rem',
-              border: '1.5px solid #FFFFFF'
-            }}>
-              <Play size={12} fill="currentColor" />
-              <span>Video</span>
-            </div>
-          );
-        })()}
+              gap: '0.25rem',
+              backdropFilter: 'blur(4px)',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.25)'
+            }}
+          >
+            <Play size={compact ? 10 : 12} fill="currentColor" />
+            <span>Video</span>
+          </div>
+        )}
       </div>
 
-      {/* Card Content Body */}
+      {/* ── CARD CONTENT BODY (Padding khusus area teks saja) ── */}
       <div style={{
-        padding: '1.25rem',
         display: 'flex',
         flexDirection: 'column',
         flexGrow: 1,
-        justifyContent: 'space-between',
-        background: '#FFFFFF'
+        padding: compact ? '0.55rem 0.65rem 0.75rem 0.65rem' : '1.15rem 1.25rem 1.45rem 1.25rem'
       }}>
-        <div>
-          {/* Badges & Subcategory & Year */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
-            <span className={`badge ${getBadgeClass(item.category)}`}>
-              {getCategoryLabel(item.category)}
-            </span>
-            <span style={{
-              fontSize: '0.75rem',
-              fontWeight: 800,
-              color: '#005BAB',
-              background: '#FFF3DD',
-              padding: '0.25rem 0.65rem',
-              borderRadius: '999px',
-              border: '1.5px solid #005BAB'
-            }}>
-              {subcatText}
-            </span>
-            {item.year && (
-              <span style={{
-                fontSize: '0.75rem',
-                fontWeight: 800,
-                color: '#005BAB',
-                background: '#FFF3DD',
-                padding: '0.25rem 0.65rem',
-                borderRadius: '999px',
-                border: '1.5px solid #005BAB',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.25rem'
-              }}>
-                <Calendar size={12} />
-                {item.year}
-              </span>
-            )}
-          </div>
-
-          {/* Title */}
-          <h3 style={{
-            fontSize: '1.15rem',
-            fontWeight: 800,
-            lineHeight: 1.3,
-            marginBottom: '0.5rem',
+        {/* Strip: Kategori ───────── Subkategori */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: compact ? '0.25rem' : '0.55rem',
+          width: '100%',
+          marginBottom: compact ? '0.35rem' : '0.7rem'
+        }}>
+          <span style={{
+            fontSize: compact ? '0.65rem' : '0.92rem',
+            fontWeight: 700,
             color: '#005BAB',
+            whiteSpace: 'nowrap'
+          }}>
+            {getCategoryLabel(item.category)}
+          </span>
+
+          {/* Garis Horizontal Tipis */}
+          <div style={{
+            flex: 1,
+            height: '1px',
+            background: '#005BAB',
+            opacity: 0.65,
+            minWidth: compact ? '8px' : '16px'
+          }} />
+
+          <span style={{
+            fontSize: compact ? '0.65rem' : '0.92rem',
+            fontWeight: 700,
+            color: '#005BAB',
+            whiteSpace: 'nowrap'
+          }}>
+            {subcatText}
+          </span>
+        </div>
+
+        {/* Judul & Tahun (Tahun di sebelah kanan bawah judul) */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'flex-end',
+          justifyContent: 'space-between',
+          gap: '0.35rem',
+          marginBottom: compact ? '0.3rem' : '0.65rem'
+        }}>
+          <h3 style={{
+            margin: 0,
+            fontSize: compact ? '0.78rem' : '1.24rem',
+            fontWeight: 800,
+            color: '#005BAB',
+            lineHeight: 1.25,
+            letterSpacing: '-0.02em',
+            flex: 1,
             display: '-webkit-box',
             WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical',
@@ -218,33 +209,37 @@ export default function PortfolioCard({ item, onClick }) {
             {titleText}
           </h3>
 
-          {/* Description Snippet */}
+          {item.year && (
+            <span style={{
+              fontSize: compact ? '0.65rem' : '0.95rem',
+              fontWeight: 700,
+              color: '#005BAB',
+              whiteSpace: 'nowrap',
+              paddingBottom: '1px',
+              opacity: 0.95
+            }}>
+              {item.year}
+            </span>
+          )}
+        </div>
+
+        {/* Deskripsi Singkat */}
+        {descText && (
           <p style={{
-            fontSize: '0.85rem',
-            color: '#005BAB',
-            fontWeight: 600,
-            lineHeight: 1.5,
-            marginBottom: '1rem',
+            margin: 0,
+            fontSize: compact ? '0.64rem' : '0.88rem',
+            lineHeight: 1.35,
+            color: '#28588E',
+            fontWeight: 500,
             display: '-webkit-box',
-            WebkitLineClamp: 2,
+            WebkitLineClamp: compact ? 2 : 3,
             WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-            opacity: 0.9
+            overflow: 'hidden'
           }}>
             {descText}
           </p>
-        </div>
+        )}
       </div>
-
-      <style>{`
-        .herta-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 10px 24px rgba(0, 91, 171, 0.2);
-        }
-        .herta-card:hover .card-img {
-          transform: scale(1.05);
-        }
-      `}</style>
     </div>
   );
 }

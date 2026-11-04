@@ -366,8 +366,7 @@ function AppContent({ karyaId, docId }) {
 
   const handleViewAllWorks = () => {
     handleCloseDetailModal();
-    setIsFullGallery(true);
-    setIsExpandedBeranda(true);
+    setIsFullGallery(false);
     setTimeout(() => {
       scrollToGallery();
     }, 100);
@@ -538,15 +537,12 @@ function AppContent({ karyaId, docId }) {
         onSelectCertificate={(cert) => setSelectedItem(cert)}
       />
 
-      {/* Modal Seluruh Karya Graphic Design — display only, no detail click */}
+      {/* Modal Seluruh Karya Graphic Design */}
       {isGalleryOpen && (
         <GalleryModal
           items={allItems}
           onClose={() => setIsGalleryOpen(false)}
-          onExploreClick={() => {
-            setIsGalleryOpen(false);
-            scrollToGallery();
-          }}
+          onSelectWork={(item) => setSelectedItem(item)}
         />
       )}
 

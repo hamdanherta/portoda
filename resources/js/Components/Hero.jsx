@@ -307,7 +307,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
               {/* Floating Figma Icon (Atas Sebelah Kanan) */}
               <div className="floating-figma-badge">
                 <img
-                  src="/profile/figma.png"
+                  src="/profile/figma.webp"
                   alt="Figma Logo"
                   style={{
                     width: '70px',

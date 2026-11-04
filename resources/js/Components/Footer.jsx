@@ -127,7 +127,7 @@ export default function Footer({ onCategoryClick, onOpenAdmin, isLoggedIn }) {
                       justifyContent: 'center',
                       padding: '0.4rem',
                       borderRadius: '14px',
-                      background: 'rgba(0, 91, 171, 0.08)',
+                      background: '#FFFFFF',
                       border: '1.5px solid #005BAB',
                       transition: 'all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
                       textDecoration: 'none'

@@ -107,6 +107,30 @@ function groupBySubcategory(items) {
   });
 }
 
+// ── Custom Hook untuk Menghitung Jumlah Kolom Responsif ──
+function useResponsiveColumnCount(isLogo = false) {
+  const [colCount, setColCount] = React.useState(5);
+
+  React.useEffect(() => {
+    const updateCount = () => {
+      const width = window.innerWidth;
+      if (width <= 650) {
+        setColCount(2); // Mobile: 2 kolom untuk semua
+      } else if (width <= 900) {
+        setColCount(isLogo ? 3 : 4); // Tablet: 3 (logo) atau 4
+      } else {
+        setColCount(isLogo ? 4 : 5); // Desktop: 4 (logo) atau 5
+      }
+    };
+
+    updateCount();
+    window.addEventListener('resize', updateCount);
+    return () => window.removeEventListener('resize', updateCount);
+  }, [isLogo]);
+
+  return colCount;
+}
+
 // ── Single Image Card — Ringan, stabil, frame rapi ──
 function GalleryImageCard({ item }) {
   return (
@@ -122,6 +146,7 @@ function GalleryImageCard({ item }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        marginBottom: '0.65rem',
       }}
     >
       <img
@@ -140,10 +165,23 @@ function GalleryImageCard({ item }) {
   );
 }
 
-// ── Subcategory Section ─────────────────────────────────────────────────────
+// ── Subcategory Section dengan True Masonry per Baris (Round-Robin) ──
 function SubcategorySection({ subcategory, items, lang }) {
   const meta = resolveMeta(subcategory, lang);
   const isLogo = subcategory === 'logo' || (meta.label && meta.label.toLowerCase().includes('logo'));
+  const columnCount = useResponsiveColumnCount(isLogo);
+
+  // Distribusikan items secara round-robin ke masing-masing kolom:
+  // Item 1 -> Kolom 1 (baris 1), Item 2 -> Kolom 2 (baris 1), ..., Item N -> Kolom N (baris 1)
+  // Item N+1 -> Kolom 1 (baris 2), Item N+2 -> Kolom 2 (baris 2), dst.
+  const columns = React.useMemo(() => {
+    const cols = Array.from({ length: columnCount }, () => []);
+    items.forEach((item, index) => {
+      const colIndex = index % columnCount;
+      cols[colIndex].push(item);
+    });
+    return cols;
+  }, [items, columnCount]);
 
   return (
     <div style={{ marginBottom: '2.25rem' }}>
@@ -209,10 +247,21 @@ function SubcategorySection({ subcategory, items, lang }) {
         </div>
       </div>
 
-      {/* Image Grid — Khusus Desain Logo 4 kolom, lainnya 5 kolom */}
-      <div className={isLogo ? 'gallery-modal-grid gallery-grid-logo' : 'gallery-modal-grid'}>
-        {items.map((item) => (
-          <GalleryImageCard key={item.id} item={item} />
+      {/* True Masonry Columns: Aliran Per Baris Rapat Tanpa Ruang Kosong */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))`,
+          gap: columnCount === 2 ? '0.5rem' : '0.65rem',
+          alignItems: 'start',
+        }}
+      >
+        {columns.map((colItems, colIdx) => (
+          <div key={colIdx} style={{ display: 'flex', flexDirection: 'column' }}>
+            {colItems.map((item) => (
+              <GalleryImageCard key={item.id} item={item} />
+            ))}
+          </div>
         ))}
       </div>
     </div>
@@ -388,6 +437,7 @@ export default function GalleryModal({ items = [], onClose, onExploreClick }) {
                   }}
                 >
                   <span>{lang === 'en' ? 'Explore Works & Info' : 'Jelajahi Karya Beserta Informasi nya'}</span>
+                  <ArrowRight size={15} style={{ flexShrink: 0 }} />
                 </button>
               )}
 

@@ -1158,7 +1158,7 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
           {/* ═════════════════════════════════════════════════════════ */}
           {/* MOBILE DETAIL VIEW (Khusus Layar <= 768px, 100% Lampiran)  */}
           {/* ═════════════════════════════════════════════════════════ */}
-          <div className="detail-modal-mobile-view" style={{ width: '100%' }}>
+          <div className=" detail-modal-mobile-view" style={{ width: '100%' }}>
             
             {/* 1. Container Image Full Frame (w-full, no margin, no padding) */}
             <div

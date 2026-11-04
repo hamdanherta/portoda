@@ -70,7 +70,11 @@ function getCanonicalSubcategoryKey(subcategory) {
   return 'lain';
 }
 
-/** Group items by canonical subcategory, sort by newest year first, preserve order. */
+// Urutan prioritas subkategori sesuai permintaan pengguna:
+// Desain Feed -> Poster -> Banner -> Kemasan -> Logo -> Lainnya
+const SUBCATEGORY_ORDER = ['feed', 'poster', 'banner', 'kemasan', 'logo', 'lain'];
+
+/** Group items by canonical subcategory, sort by newest year first, and order categories. */
 function groupBySubcategory(items) {
   const map = new Map();
   items.forEach((item) => {
@@ -79,7 +83,16 @@ function groupBySubcategory(items) {
     map.get(key).push(item);
   });
 
-  return Array.from(map.entries()).map(([subcategoryKey, grpItems]) => {
+  // Urutkan grup kategori sesuai urutan: Feed -> Poster -> Banner -> Kemasan -> Logo -> Lainnya
+  const sortedEntries = Array.from(map.entries()).sort(([keyA], [keyB]) => {
+    const indexA = SUBCATEGORY_ORDER.indexOf(keyA);
+    const indexB = SUBCATEGORY_ORDER.indexOf(keyB);
+    const posA = indexA === -1 ? 99 : indexA;
+    const posB = indexB === -1 ? 99 : indexB;
+    return posA - posB;
+  });
+
+  return sortedEntries.map(([subcategoryKey, grpItems]) => {
     // Urutkan item dari tahun terbaru ke terlama (2026, 2025, 2024, ...)
     const sortedItems = [...grpItems].sort((a, b) => {
       const yearA = parseInt(a.year, 10) || 0;
@@ -87,7 +100,6 @@ function groupBySubcategory(items) {
       if (yearB !== yearA) {
         return yearB - yearA; // descending (terbaru dulu)
       }
-      // Jika tahun sama, urutkan berdasarkan id/urutan input terbaru
       return (b.id || 0) > (a.id || 0) ? 1 : -1;
     });
 
@@ -95,13 +107,11 @@ function groupBySubcategory(items) {
   });
 }
 
-// ── Single Image Card — Ringan, stabil tanpa glitch ──
+// ── Single Image Card — Ringan, stabil, frame rapi ──
 function GalleryImageCard({ item }) {
   return (
     <div
       style={{
-        breakInside: 'avoid',
-        marginBottom: '0.55rem',
         borderRadius: '10px',
         overflow: 'hidden',
         background: '#EEF2F8',
@@ -109,6 +119,9 @@ function GalleryImageCard({ item }) {
         cursor: 'default',
         userSelect: 'none',
         padding: '3px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
       }}
     >
       <img
@@ -469,26 +482,28 @@ export default function GalleryModal({ items = [], onClose, onExploreClick }) {
           background: #005BAB;
         }
 
-        /* CSS Columns masonry — gambar ikuti rasio asli, tidak ada ruang kosong */
+        /* Grid Masonry per Baris (Row-first flow: Kolom 1 Baris 1, Kolom 2 Baris 1, ...) */
         .gallery-modal-grid {
-          column-count: 5;
-          column-gap: 0.55rem;
+          display: grid;
+          grid-template-columns: repeat(5, minmax(0, 1fr));
+          gap: 0.65rem;
+          align-items: start;
         }
 
         /* Khusus Desain Logo: 4 Kolom di Desktop */
         @media (min-width: 901px) {
           .gallery-grid-logo {
-            column-count: 4 !important;
+            grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
           }
         }
 
         /* Tablet: 4 kolom untuk umum, 3 kolom untuk logo */
         @media (max-width: 900px) and (min-width: 651px) {
           .gallery-modal-grid {
-            column-count: 4;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
           }
           .gallery-grid-logo {
-            column-count: 3 !important;
+            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
           }
         }
 
@@ -516,8 +531,8 @@ export default function GalleryModal({ items = [], onClose, onExploreClick }) {
         @media (max-width: 650px) {
           .gallery-modal-grid,
           .gallery-grid-logo {
-            column-count: 2 !important;
-            column-gap: 0.45rem !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 0.5rem !important;
           }
         }
       `}</style>

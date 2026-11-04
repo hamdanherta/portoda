@@ -132,7 +132,14 @@ function useResponsiveColumnCount(isLogo = false) {
 }
 
 // ── Single Image Card — Ringan, stabil, frame rapi ──
-function GalleryImageCard({ item }) {
+function GalleryImageCard({ item, onLoadAspect }) {
+  const handleLoad = (e) => {
+    if (onLoadAspect && e.target.naturalWidth > 0) {
+      const aspect = e.target.naturalHeight / e.target.naturalWidth;
+      onLoadAspect(item.id, aspect);
+    }
+  };
+
   return (
     <div
       style={{
@@ -153,6 +160,7 @@ function GalleryImageCard({ item }) {
         src={item.image_url}
         alt={item.title || 'Karya Graphic Design'}
         decoding="async"
+        onLoad={handleLoad}
         style={{
           width: '100%',
           height: 'auto',
@@ -165,23 +173,53 @@ function GalleryImageCard({ item }) {
   );
 }
 
-// ── Subcategory Section dengan True Masonry per Baris (Round-Robin) ──
+// ── Subcategory Section dengan Greedy Shortest-Column Masonry (Tanpa Ruang Kosong) ──
 function SubcategorySection({ subcategory, items, lang }) {
   const meta = resolveMeta(subcategory, lang);
   const isLogo = subcategory === 'logo' || (meta.label && meta.label.toLowerCase().includes('logo'));
   const columnCount = useResponsiveColumnCount(isLogo);
+  const [imageHeights, setImageHeights] = React.useState({});
 
-  // Distribusikan items secara round-robin ke masing-masing kolom:
-  // Item 1 -> Kolom 1 (baris 1), Item 2 -> Kolom 2 (baris 1), ..., Item N -> Kolom N (baris 1)
-  // Item N+1 -> Kolom 1 (baris 2), Item N+2 -> Kolom 2 (baris 2), dst.
+  // Simpan rasio aspek alami gambar saat selesai dimuat
+  const handleImageLoad = React.useCallback((id, aspect) => {
+    setImageHeights((prev) => {
+      if (prev[id] === aspect) return prev;
+      return { ...prev, [id]: aspect };
+    });
+  }, []);
+
+  // Distribusikan gambar:
+  // - Baris pertama (index < columnCount): Masuk urut ke kolom 0, 1, 2, ... (mengikuti Aturan 1)
+  // - Baris berikutnya: Masuk ke kolom yang saat itu paling pendek (mengisi ruang kosong)
   const columns = React.useMemo(() => {
     const cols = Array.from({ length: columnCount }, () => []);
+    const heights = new Array(columnCount).fill(0);
+
     items.forEach((item, index) => {
-      const colIndex = index % columnCount;
-      cols[colIndex].push(item);
+      let targetCol;
+      if (index < columnCount) {
+        // Baris pertama persis urut dari kiri ke kanan
+        targetCol = index;
+      } else {
+        // Cari kolom yang tingginya paling rendah saat ini
+        let minHeight = heights[0];
+        targetCol = 0;
+        for (let c = 1; c < columnCount; c++) {
+          if (heights[c] < minHeight) {
+            minHeight = heights[c];
+            targetCol = c;
+          }
+        }
+      }
+
+      cols[targetCol].push(item);
+      // Asumsi rasio tinggi default 1.33 jika belum ter-load
+      const itemHeightWeight = imageHeights[item.id] || 1.33;
+      heights[targetCol] += itemHeightWeight;
     });
+
     return cols;
-  }, [items, columnCount]);
+  }, [items, columnCount, imageHeights]);
 
   return (
     <div style={{ marginBottom: '2.25rem' }}>
@@ -259,7 +297,7 @@ function SubcategorySection({ subcategory, items, lang }) {
         {columns.map((colItems, colIdx) => (
           <div key={colIdx} style={{ display: 'flex', flexDirection: 'column' }}>
             {colItems.map((item) => (
-              <GalleryImageCard key={item.id} item={item} />
+              <GalleryImageCard key={item.id} item={item} onLoadAspect={handleImageLoad} />
             ))}
           </div>
         ))}

@@ -81,10 +81,8 @@ function groupBySubcategory(items) {
   return Array.from(map.entries()).map(([subcategoryKey, grpItems]) => ({ subcategory: subcategoryKey, items: grpItems }));
 }
 
-// ── Single Image Card — Ringan, hardware accelerated, rasio gambar asli ──
+// ── Single Image Card — Ringan, stabil tanpa glitch ──
 function GalleryImageCard({ item }) {
-  const [loaded, setLoaded] = React.useState(false);
-
   return (
     <div
       style={{
@@ -92,31 +90,23 @@ function GalleryImageCard({ item }) {
         marginBottom: '0.55rem',
         borderRadius: '10px',
         overflow: 'hidden',
-        background: loaded ? 'transparent' : '#E8EEF8',
+        background: '#EEF2F8',
         boxShadow: '0 2px 6px rgba(0, 91, 171, 0.08)',
         cursor: 'default',
         userSelect: 'none',
         padding: '3px',
-        contain: 'paint layout',
-        minHeight: loaded ? 'auto' : '110px',
-        transition: 'background 0.3s ease',
       }}
     >
       <img
         src={item.image_url}
         alt={item.title || 'Karya Graphic Design'}
-        loading="lazy"
         decoding="async"
-        onLoad={() => setLoaded(true)}
         style={{
           width: '100%',
           height: 'auto',
           display: 'block',
           borderRadius: '8px',
           pointerEvents: 'none',
-          opacity: loaded ? 1 : 0.85,
-          transition: 'opacity 0.25s ease',
-          contentVisibility: 'auto',
         }}
       />
     </div>
@@ -126,6 +116,7 @@ function GalleryImageCard({ item }) {
 // ── Subcategory Section ─────────────────────────────────────────────────────
 function SubcategorySection({ subcategory, items, lang }) {
   const meta = resolveMeta(subcategory, lang);
+  const isLogo = subcategory === 'logo' || (meta.label && meta.label.toLowerCase().includes('logo'));
 
   return (
     <div style={{ marginBottom: '2.25rem' }}>
@@ -191,8 +182,8 @@ function SubcategorySection({ subcategory, items, lang }) {
         </div>
       </div>
 
-      {/* Image Grid — CSS columns masonry: mengisi ruang, ikuti rasio asli */}
-      <div className="gallery-modal-grid">
+      {/* Image Grid — Khusus Desain Logo 4 kolom, lainnya 5 kolom */}
+      <div className={isLogo ? 'gallery-modal-grid gallery-grid-logo' : 'gallery-modal-grid'}>
         {items.map((item) => (
           <GalleryImageCard key={item.id} item={item} />
         ))}
@@ -468,13 +459,20 @@ export default function GalleryModal({ items = [], onClose, onExploreClick }) {
         .gallery-modal-grid {
           column-count: 5;
           column-gap: 0.55rem;
-          contain: layout;
         }
 
-        /* Tablet: 4 kolom */
+        /* Khusus Desain Logo: 4 Kolom di Desktop */
+        .gallery-grid-logo {
+          column-count: 4 !important;
+        }
+
+        /* Tablet: 4 kolom (logo tetap 4/3 kolom) */
         @media (max-width: 900px) {
           .gallery-modal-grid {
             column-count: 4;
+          }
+          .gallery-grid-logo {
+            column-count: 3 !important;
           }
         }
 

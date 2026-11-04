@@ -70,7 +70,7 @@ function getCanonicalSubcategoryKey(subcategory) {
   return 'lain';
 }
 
-/** Group items by canonical subcategory, preserve order. */
+/** Group items by canonical subcategory, sort by newest year first, preserve order. */
 function groupBySubcategory(items) {
   const map = new Map();
   items.forEach((item) => {
@@ -78,7 +78,21 @@ function groupBySubcategory(items) {
     if (!map.has(key)) map.set(key, []);
     map.get(key).push(item);
   });
-  return Array.from(map.entries()).map(([subcategoryKey, grpItems]) => ({ subcategory: subcategoryKey, items: grpItems }));
+
+  return Array.from(map.entries()).map(([subcategoryKey, grpItems]) => {
+    // Urutkan item dari tahun terbaru ke terlama (2026, 2025, 2024, ...)
+    const sortedItems = [...grpItems].sort((a, b) => {
+      const yearA = parseInt(a.year, 10) || 0;
+      const yearB = parseInt(b.year, 10) || 0;
+      if (yearB !== yearA) {
+        return yearB - yearA; // descending (terbaru dulu)
+      }
+      // Jika tahun sama, urutkan berdasarkan id/urutan input terbaru
+      return (b.id || 0) > (a.id || 0) ? 1 : -1;
+    });
+
+    return { subcategory: subcategoryKey, items: sortedItems };
+  });
 }
 
 // ── Single Image Card — Ringan, stabil tanpa glitch ──
@@ -462,12 +476,14 @@ export default function GalleryModal({ items = [], onClose, onExploreClick }) {
         }
 
         /* Khusus Desain Logo: 4 Kolom di Desktop */
-        .gallery-grid-logo {
-          column-count: 4 !important;
+        @media (min-width: 901px) {
+          .gallery-grid-logo {
+            column-count: 4 !important;
+          }
         }
 
-        /* Tablet: 4 kolom (logo tetap 4/3 kolom) */
-        @media (max-width: 900px) {
+        /* Tablet: 4 kolom untuk umum, 3 kolom untuk logo */
+        @media (max-width: 900px) and (min-width: 651px) {
           .gallery-modal-grid {
             column-count: 4;
           }
@@ -496,18 +512,12 @@ export default function GalleryModal({ items = [], onClose, onExploreClick }) {
           }
         }
 
-        /* Tablet kecil: 3 kolom */
+        /* Tablet kecil & Mobile: SEMUA kategori termasuk Desain Logo menjadi 2 kolom */
         @media (max-width: 650px) {
-          .gallery-modal-grid {
-            column-count: 3;
-          }
-        }
-
-        /* Mobile: 2 kolom */
-        @media (max-width: 420px) {
-          .gallery-modal-grid {
-            column-count: 2;
-            column-gap: 0.4rem;
+          .gallery-modal-grid,
+          .gallery-grid-logo {
+            column-count: 2 !important;
+            column-gap: 0.45rem !important;
           }
         }
       `}</style>

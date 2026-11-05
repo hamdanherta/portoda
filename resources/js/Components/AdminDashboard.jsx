@@ -610,10 +610,13 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
 
     startProcessing(editingExpId ? 'Menyimpan perubahan pengalaman...' : 'Menambahkan pengalaman baru...', 10);
 
+    const isKerja = (expForm.experience_type || 'Kerja').trim().toLowerCase() === 'kerja';
+
     try {
       const updatedList = await infoService.saveExperience({
         id: editingExpId,
-        ...expForm
+        ...expForm,
+        employment_type: isKerja ? (expForm.employment_type || 'Full Time') : null
       }, (pct) => setProcessingProgress(pct));
       setExperiences(updatedList);
       const successMsg = editingExpId ? 'Pengalaman berhasil diperbarui!' : 'Pengalaman baru berhasil ditambahkan!';
@@ -3568,7 +3571,15 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                         <label>Tipe Pengalaman *</label>
                         <select
                           value={expForm.experience_type || 'Kerja'}
-                          onChange={(e) => setExpForm({ ...expForm, experience_type: e.target.value })}
+                          onChange={(e) => {
+                            const newType = e.target.value;
+                            const isNewKerja = newType.trim().toLowerCase() === 'kerja';
+                            setExpForm({
+                              ...expForm,
+                              experience_type: newType,
+                              employment_type: isNewKerja ? (expForm.employment_type || 'Full Time') : ''
+                            });
+                          }}
                           className="form-select"
                         >
                           <option value="Kerja">Kerja</option>
@@ -3578,7 +3589,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                         </select>
                       </div>
 
-                      {(expForm.experience_type === 'Kerja' || !expForm.experience_type) && (
+                      {((expForm.experience_type || 'Kerja').trim().toLowerCase() === 'kerja') && (
                         <div className="form-group">
                           <label>Tipe Pekerjaan *</label>
                           <select
@@ -3780,7 +3791,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                                 })()}
 
                                 {/* Tipe Pekerjaan Sub-Badge (Khusus Tipe Kerja) */}
-                                {(exp.experience_type === 'Kerja' || !exp.experience_type) && exp.employment_type && (
+                                {((exp.experience_type || 'Kerja').trim().toLowerCase() === 'kerja') && exp.employment_type && (
                                   <span style={{ fontSize: '0.72rem', fontWeight: 800, background: '#FFF3DD', color: '#005BAB', border: '1.5px solid #005BAB', padding: '0.15rem 0.55rem', borderRadius: '999px' }}>
                                     {exp.employment_type}
                                   </span>
@@ -3855,10 +3866,11 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                             <div style={{ display: 'flex', gap: '0.6rem' }}>
                               <button onClick={() => {
                                 setEditingExpId(exp.id);
+                                const isExpKerja = (exp.experience_type || 'Kerja').trim().toLowerCase() === 'kerja';
                                 setExpForm({
                                   title: exp.title || '',
                                   experience_type: exp.experience_type || 'Kerja',
-                                  employment_type: exp.employment_type || 'Full Time',
+                                  employment_type: isExpKerja ? (exp.employment_type || 'Full Time') : '',
                                   company: exp.company || '',
                                   period: exp.period || '',
                                   description: exp.description || '',
@@ -4050,21 +4062,33 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                                 position: 'relative'
                               }}
                             >
-                              <span style={{
-                                position: 'absolute',
-                                top: '0.85rem',
-                                right: '0.85rem',
-                                fontSize: '0.7rem',
-                                fontWeight: 800,
-                                background: (doc.category || 'CV ATS') === 'CV Kreatif' ? '#FEF3C7' : (doc.category || 'CV ATS') === 'Portofolio' ? '#D1FAE5' : '#EEF2FF',
-                                color: (doc.category || 'CV ATS') === 'CV Kreatif' ? '#D97706' : (doc.category || 'CV ATS') === 'Portofolio' ? '#059669' : '#4F46E5',
-                                border: `1.5px solid ${(doc.category || 'CV ATS') === 'CV Kreatif' ? '#D97706' : (doc.category || 'CV ATS') === 'Portofolio' ? '#059669' : '#4F46E5'}`,
-                                padding: '0.12rem 0.55rem',
-                                borderRadius: '999px',
-                                zIndex: 2
-                              }}>
-                                {doc.category || 'CV ATS'}
-                              </span>
+                              {(() => {
+                                const cat = (doc.category || 'CV ATS').trim().toLowerCase();
+                                let bg = '#D0FF97';
+                                if (cat.includes('kreatif') || cat.includes('creative')) bg = '#62B6FF';
+                                else if (cat.includes('portofolio')) bg = '#FFF455';
+                                else if (cat.includes('ats')) bg = '#D0FF97';
+                                else bg = '#E1E1E1';
+
+                                return (
+                                  <span style={{
+                                    position: 'absolute',
+                                    top: '0.85rem',
+                                    right: '0.85rem',
+                                    fontSize: '0.72rem',
+                                    fontWeight: 800,
+                                    background: bg,
+                                    color: '#005BAB',
+                                    border: 'none',
+                                    padding: '0.18rem 0.65rem',
+                                    borderRadius: '999px',
+                                    zIndex: 2,
+                                    boxShadow: '0 1px 4px rgba(0,0,0,0.04)'
+                                  }}>
+                                    {doc.category || 'CV ATS'}
+                                  </span>
+                                );
+                              })()}
 
                               <div>
                                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.65rem', marginBottom: '0.65rem', paddingRight: '5.5rem' }}>
@@ -4271,21 +4295,33 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                                 position: 'relative'
                               }}
                             >
-                              <span style={{
-                                position: 'absolute',
-                                top: '0.85rem',
-                                right: '0.85rem',
-                                fontSize: '0.7rem',
-                                fontWeight: 800,
-                                background: (doc.category || 'CV ATS') === 'CV Kreatif' ? '#FEF3C7' : (doc.category || 'CV ATS') === 'Portofolio' ? '#D1FAE5' : '#EEF2FF',
-                                color: (doc.category || 'CV ATS') === 'CV Kreatif' ? '#D97706' : (doc.category || 'CV ATS') === 'Portofolio' ? '#059669' : '#4F46E5',
-                                border: `1.5px solid ${(doc.category || 'CV ATS') === 'CV Kreatif' ? '#D97706' : (doc.category || 'CV ATS') === 'Portofolio' ? '#059669' : '#4F46E5'}`,
-                                padding: '0.12rem 0.55rem',
-                                borderRadius: '999px',
-                                zIndex: 2
-                              }}>
-                                {doc.category || 'CV ATS'}
-                              </span>
+                              {(() => {
+                                const cat = (doc.category || 'CV ATS').trim().toLowerCase();
+                                let bg = '#D0FF97';
+                                if (cat.includes('kreatif') || cat.includes('creative')) bg = '#62B6FF';
+                                else if (cat.includes('portofolio')) bg = '#FFF455';
+                                else if (cat.includes('ats')) bg = '#D0FF97';
+                                else bg = '#E1E1E1';
+
+                                return (
+                                  <span style={{
+                                    position: 'absolute',
+                                    top: '0.85rem',
+                                    right: '0.85rem',
+                                    fontSize: '0.72rem',
+                                    fontWeight: 800,
+                                    background: bg,
+                                    color: '#005BAB',
+                                    border: 'none',
+                                    padding: '0.18rem 0.65rem',
+                                    borderRadius: '999px',
+                                    zIndex: 2,
+                                    boxShadow: '0 1px 4px rgba(0,0,0,0.04)'
+                                  }}>
+                                    {doc.category || 'CV ATS'}
+                                  </span>
+                                );
+                              })()}
 
                               <div>
                                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.65rem', marginBottom: '0.65rem', paddingRight: '5.5rem' }}>
@@ -4492,21 +4528,33 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                                 position: 'relative'
                               }}
                             >
-                              <span style={{
-                                position: 'absolute',
-                                top: '0.85rem',
-                                right: '0.85rem',
-                                fontSize: '0.7rem',
-                                fontWeight: 800,
-                                background: (doc.category || 'CV ATS') === 'CV Kreatif' ? '#FEF3C7' : (doc.category || 'CV ATS') === 'Portofolio' ? '#D1FAE5' : '#EEF2FF',
-                                color: (doc.category || 'CV ATS') === 'CV Kreatif' ? '#D97706' : (doc.category || 'CV ATS') === 'Portofolio' ? '#059669' : '#4F46E5',
-                                border: `1.5px solid ${(doc.category || 'CV ATS') === 'CV Kreatif' ? '#D97706' : (doc.category || 'CV ATS') === 'Portofolio' ? '#059669' : '#4F46E5'}`,
-                                padding: '0.12rem 0.55rem',
-                                borderRadius: '999px',
-                                zIndex: 2
-                              }}>
-                                {doc.category || 'CV ATS'}
-                              </span>
+                              {(() => {
+                                const cat = (doc.category || 'CV ATS').trim().toLowerCase();
+                                let bg = '#D0FF97';
+                                if (cat.includes('kreatif') || cat.includes('creative')) bg = '#62B6FF';
+                                else if (cat.includes('portofolio')) bg = '#FFF455';
+                                else if (cat.includes('ats')) bg = '#D0FF97';
+                                else bg = '#E1E1E1';
+
+                                return (
+                                  <span style={{
+                                    position: 'absolute',
+                                    top: '0.85rem',
+                                    right: '0.85rem',
+                                    fontSize: '0.72rem',
+                                    fontWeight: 800,
+                                    background: bg,
+                                    color: '#005BAB',
+                                    border: 'none',
+                                    padding: '0.18rem 0.65rem',
+                                    borderRadius: '999px',
+                                    zIndex: 2,
+                                    boxShadow: '0 1px 4px rgba(0,0,0,0.04)'
+                                  }}>
+                                    {doc.category || 'CV ATS'}
+                                  </span>
+                                );
+                              })()}
 
                               <div>
                                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.65rem', marginBottom: '0.65rem', paddingRight: '5.5rem' }}>
@@ -4714,9 +4762,21 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                               </div>
                               <div>
                                 <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#005BAB' }}>{c.title}</h4>
-                                <span style={{ fontSize: '0.75rem', fontWeight: 800, background: '#005BAB', color: '#FFFFFF', padding: '0.15rem 0.5rem', borderRadius: '999px', textTransform: 'capitalize' }}>
-                                  {c.type}
-                                </span>
+                                {(() => {
+                                  const t = (c.type || '').toLowerCase();
+                                  let bg = '#D0FF97';
+                                  let label = 'WhatsApp';
+                                  if (t === 'email') { bg = '#FFF455'; label = 'Email'; }
+                                  else if (t === 'social') { bg = '#62B6FF'; label = 'Sosial Media'; }
+                                  else if (t === 'whatsapp') { bg = '#D0FF97'; label = 'WhatsApp'; }
+                                  else { bg = '#E1E1E1'; label = c.type; }
+
+                                  return (
+                                    <span style={{ fontSize: '0.75rem', fontWeight: 800, background: bg, color: '#005BAB', padding: '0.15rem 0.65rem', borderRadius: '999px' }}>
+                                      {label}
+                                    </span>
+                                  );
+                                })()}
                               </div>
                             </div>
                             <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#005BAB', marginBottom: '0.25rem' }}>
@@ -5820,17 +5880,34 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
                           >
                             <div>
                               <div style={{ marginBottom: '0.45rem' }}>
-                                <span style={{
-                                  fontSize: '0.72rem',
-                                  fontWeight: 800,
-                                  background: skill.category === 'Hard Skill' ? '#10B981' : '#005BAB',
-                                  color: '#FFFFFF',
-                                  padding: '0.15rem 0.6rem',
-                                  borderRadius: '999px',
-                                  display: 'inline-block'
-                                }}>
-                                  {skill.category || 'Soft Skill'}
-                                </span>
+                                {(() => {
+                                  const cat = (skill.category || 'Hard Skill').trim().toLowerCase();
+                                  let bg = '#D0FF97';
+                                  let label = skill.category || 'Hard Skill';
+                                  if (cat.includes('soft')) {
+                                    bg = '#FFF455';
+                                    label = 'Soft Skill';
+                                  } else if (cat.includes('hard')) {
+                                    bg = '#D0FF97';
+                                    label = 'Hard Skill';
+                                  } else {
+                                    bg = '#62B6FF';
+                                  }
+                                  return (
+                                    <span style={{
+                                      fontSize: '0.74rem',
+                                      fontWeight: 800,
+                                      background: bg,
+                                      color: '#005BAB',
+                                      padding: '0.18rem 0.7rem',
+                                      borderRadius: '999px',
+                                      display: 'inline-block',
+                                      letterSpacing: '-0.01em'
+                                    }}>
+                                      {label}
+                                    </span>
+                                  );
+                                })()}
                               </div>
                               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', fontWeight: 800, color: '#005BAB', fontSize: '1.05rem', marginBottom: '0.4rem' }}>
                                 <Award size={20} color="#005BAB" style={{ flexShrink: 0, marginTop: '2px' }} />

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { X, Images, Palette, Info } from 'lucide-react';
+import { X, Info } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import WatermarkedImage from './WatermarkedImage';
 
@@ -242,66 +242,49 @@ function SubcategorySection({ subcategory, items, lang, onSelectWork }) {
 
   return (
     <div style={{ marginBottom: '2.25rem' }}>
-      {/* Header subkategori */}
+      {/* Header subkategori — Sesuai Desain Referensi (Judul + Garis Horizontal + Badge Kuning) */}
       <div style={{
         display: 'flex',
-        alignItems: 'flex-start',
-        gap: '0.75rem',
-        marginBottom: '1rem',
+        alignItems: 'center',
+        gap: '0.85rem',
+        marginBottom: '1.15rem',
+        width: '100%',
       }}>
-        {/* Icon bulat */}
-        <div style={{
-          width: '36px',
-          height: '36px',
-          borderRadius: '999px',
-          background: '#005BAB',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexShrink: 0,
-          marginTop: '2px',
+        <h3 style={{
+          margin: 0,
+          fontSize: 'clamp(1.05rem, 2vw, 1.25rem)',
+          fontWeight: 700,
+          color: '#005BAB',
+          lineHeight: 1.2,
+          letterSpacing: '-0.01em',
+          whiteSpace: 'nowrap',
         }}>
-          <Palette size={17} color="#FFFFFF" />
-        </div>
+          {meta.label}
+        </h3>
 
-        <div style={{ flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-            <h3 style={{
-              margin: 0,
-              fontSize: 'clamp(0.95rem, 2vw, 1.15rem)',
-              fontWeight: 800,
-              color: '#005BAB',
-              lineHeight: 1.25,
-            }}>
-              {meta.label}
-            </h3>
-            {/* Badge jumlah karya */}
-            <span style={{
-              fontSize: '0.7rem',
-              fontWeight: 800,
-              color: '#005BAB',
-              background: '#E8F0FE',
-              borderRadius: '999px',
-              padding: '0.15rem 0.55rem',
-              border: '1.5px solid rgba(0, 91, 171, 0.3)',
-              whiteSpace: 'nowrap',
-            }}>
-              {items.length} {lang === 'en' ? 'works' : 'karya'}
-            </span>
-          </div>
+        {/* Garis Horizontal Penghubung */}
+        <div style={{
+          flex: 1,
+          height: '1.5px',
+          background: '#005BAB',
+          opacity: 0.65,
+        }} />
 
-          {meta.desc && (
-            <p style={{
-              margin: '0.2rem 0 0 0',
-              fontSize: '0.8rem',
-              fontWeight: 500,
-              color: '#4B6B9A',
-              lineHeight: 1.45,
-            }}>
-              {meta.desc}
-            </p>
-          )}
-        </div>
+        {/* Badge jumlah karya warna kuning */}
+        <span style={{
+          fontSize: '0.84rem',
+          fontWeight: 800,
+          color: '#005BAB',
+          background: '#FFF455',
+          borderRadius: '999px',
+          padding: '0.3rem 0.95rem',
+          border: 'none',
+          whiteSpace: 'nowrap',
+          boxShadow: '0 2px 6px rgba(0, 0, 0, 0.04)',
+          letterSpacing: '-0.01em',
+        }}>
+          {items.length} {lang === 'en' ? (items.length === 1 ? 'Work' : 'Works') : 'Karya'}
+        </span>
       </div>
 
       {/* True Masonry Columns: Aliran Per Baris Rapat Tanpa Ruang Kosong */}
@@ -395,141 +378,99 @@ export default function GalleryModal({ items = [], onClose, onSelectWork }) {
           WebkitBackdropFilter: 'blur(4px)',
         }}
       >
-        {/* Modal Panel — Single unified container dengan maxHeight dan scroll internal */}
+        {/* Modal Panel Container — Persis 100% Desain Referensi */}
         <div
+          onClick={(e) => e.stopPropagation()}
+          className="herta-card gallery-modal-card animate-fade-in modal-no-scrollbar"
           style={{
             width: '100%',
             maxWidth: '1100px',
-            maxHeight: '92vh',
+            maxHeight: 'min(92vh, 92dvh)',
+            overflowY: 'auto',
             background: '#FFFFFF',
-            borderRadius: '32px',
-            boxShadow: '0 24px 80px rgba(0, 36, 100, 0.28)',
+            borderRadius: '36px',
+            border: 'none',
+            boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.28)',
             display: 'flex',
             flexDirection: 'column',
-            overflow: 'hidden',
             position: 'relative',
+            padding: '1.85rem 2rem 2.25rem',
             animation: 'galleryModalIn 0.28s cubic-bezier(0.16, 1, 0.3, 1)',
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
           }}
         >
-          {/* ── Header sticky ── */}
-          <div
-            className="gallery-modal-header"
+          {/* Tombol Close Merah Bulat di Pojok Kanan Atas */}
+          <button
+            onClick={onClose}
+            aria-label="Tutup modal"
             style={{
+              position: 'absolute',
+              top: '1.25rem',
+              right: '1.25rem',
+              zIndex: 30,
+              background: '#EF4444',
+              color: '#FFFFFF',
+              border: 'none',
+              width: '36px',
+              height: '36px',
+              borderRadius: '50%',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: '0.75rem',
-              padding: 'clamp(0.9rem, 2.5vw, 1.4rem) clamp(1rem, 3vw, 2rem)',
-              borderBottom: '2px solid rgba(0, 91, 171, 0.12)',
-              position: 'sticky',
-              top: 0,
-              background: '#FFFFFF',
-              zIndex: 10,
-              flexWrap: 'wrap',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              boxShadow: '0 4px 14px rgba(239, 68, 68, 0.45)',
+              transition: 'transform 0.18s ease, background 0.18s ease',
             }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'scale(1.08)';
+              e.currentTarget.style.background = '#DC2626';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'scale(1)';
+              e.currentTarget.style.background = '#EF4444';
+            }}
+            title="Tutup (ESC)"
           >
-            {/* Left: Icon & Judul */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', minWidth: 0, flex: '1 1 auto' }}>
-              <div style={{
-                width: '42px',
-                height: '42px',
-                borderRadius: '12px',
-                background: '#005BAB',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-              }}>
-                <Images size={20} color="#FFFFFF" />
-              </div>
+            <X size={18} strokeWidth={2.8} />
+          </button>
 
-              <h2 style={{
-                margin: 0,
-                fontSize: 'clamp(0.95rem, 2.2vw, 1.4rem)',
-                fontWeight: 900,
-                color: '#005BAB',
-                lineHeight: 1.25,
-                letterSpacing: '-0.02em',
-                wordBreak: 'break-word',
-              }}>
-                {lang === 'en'
-                  ? "All Graphic Design Works"
-                  : 'Seluruh Karya Graphic Design'}
-              </h2>
-            </div>
-
-            {/* Right Actions: Tombol Close */}
-            <div className="gallery-header-actions" style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-end',
+          {/* Header Judul Modal — Persis Referensi */}
+          <div style={{ marginBottom: '1.5rem', paddingRight: '3.5rem' }}>
+            <h2 style={{
+              fontSize: '1.65rem',
+              fontWeight: 800,
+              color: '#005BAB',
+              lineHeight: 1.25,
+              margin: 0,
+              letterSpacing: '-0.02em',
             }}>
-              {/* Tombol Close */}
-              <button
-                onClick={onClose}
-                aria-label="Tutup modal"
-                style={{
-                  width: '38px',
-                  height: '38px',
-                  borderRadius: '999px',
-                  border: '2px solid #005BAB',
-                  background: '#FFFFFF',
-                  color: '#005BAB',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  flexShrink: 0,
-                  transition: 'background 0.18s ease, color 0.18s ease',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#005BAB';
-                  e.currentTarget.style.color = '#FFFFFF';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = '#FFFFFF';
-                  e.currentTarget.style.color = '#005BAB';
-                }}
-              >
-                <X size={18} />
-              </button>
-            </div>
+              {lang === 'en' ? 'All Design Works' : 'Seluruh Karya Desain'}
+            </h2>
           </div>
 
-          {/* ── Body (Scrollable dengan Momentum & GPU Acceleration) ── */}
-          <div
-            className="gallery-modal-body"
-            style={{
-              overflowY: 'auto',
-              WebkitOverflowScrolling: 'touch',
-              overscrollBehavior: 'contain',
-              padding: 'clamp(1rem, 2.5vw, 1.5rem) clamp(1.25rem, 3vw, 2rem)',
-              flex: 1,
-              willChange: 'scroll-position',
-            }}
-          >
-            {mgdItems.length === 0 ? (
-              <div style={{
-                textAlign: 'center',
-                padding: '3rem 1rem',
-                color: '#4B6B9A',
-                fontSize: '1rem',
-                fontWeight: 600,
-              }}>
-                {lang === 'en' ? 'No graphic design works found.' : 'Belum ada karya Graphic Design yang ditemukan.'}
-              </div>
-            ) : (
-              groups.map(({ subcategory, items: grpItems }) => (
-                <SubcategorySection
-                  key={subcategory}
-                  subcategory={subcategory}
-                  items={grpItems}
-                  lang={lang}
-                  onSelectWork={onSelectWork}
-                />
-              ))
-            )}
-          </div>
+          {/* Konten Subkategori & Karya */}
+          {mgdItems.length === 0 ? (
+            <div style={{
+              textAlign: 'center',
+              padding: '3rem 1rem',
+              color: '#4B6B9A',
+              fontSize: '1rem',
+              fontWeight: 600,
+            }}>
+              {lang === 'en' ? 'No graphic design works found.' : 'Belum ada karya Graphic Design yang ditemukan.'}
+            </div>
+          ) : (
+            groups.map(({ subcategory, items: grpItems }) => (
+              <SubcategorySection
+                key={subcategory}
+                subcategory={subcategory}
+                items={grpItems}
+                lang={lang}
+                onSelectWork={onSelectWork}
+              />
+            ))
+          )}
         </div>
       </div>
 
@@ -540,61 +481,19 @@ export default function GalleryModal({ items = [], onClose, onSelectWork }) {
           to   { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        /* Smooth scrollbar styling untuk modal body */
-        .gallery-modal-body::-webkit-scrollbar {
-          width: 8px;
-        }
-        .gallery-modal-body::-webkit-scrollbar-track {
-          background: #F1F5F9;
-          border-radius: 999px;
-        }
-        .gallery-modal-body::-webkit-scrollbar-thumb {
-          background: #C4D3EA;
-          border-radius: 999px;
-        }
-        .gallery-modal-body::-webkit-scrollbar-thumb:hover {
-          background: #005BAB;
+        /* Modal card scrollbar hidden */
+        .gallery-modal-card::-webkit-scrollbar {
+          display: none;
         }
 
-        /* Grid Masonry per Baris (Row-first flow: Kolom 1 Baris 1, Kolom 2 Baris 1, ...) */
-        .gallery-modal-grid {
-          display: grid;
-          grid-template-columns: repeat(5, minmax(0, 1fr));
-          gap: 0.65rem;
-          align-items: start;
-        }
-
-        /* Khusus Desain Logo: 4 Kolom di Desktop */
-        @media (min-width: 901px) {
-          .gallery-grid-logo {
-            grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-          }
-        }
-
-        /* Tablet: 4 kolom untuk umum, 3 kolom untuk logo */
-        @media (max-width: 900px) and (min-width: 651px) {
-          .gallery-modal-grid {
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-          }
-          .gallery-grid-logo {
-            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-          }
-        }
-
-        /* Mobile Header Responsive */
-        @media (max-width: 650px) {
-          .gallery-modal-header {
-            padding: 0.85rem 1rem !important;
-            gap: 0.6rem !important;
-          }
-        }
-
-        /* Tablet kecil & Mobile: SEMUA kategori termasuk Desain Logo menjadi 2 kolom */
-        @media (max-width: 650px) {
-          .gallery-modal-grid,
-          .gallery-grid-logo {
-            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-            gap: 0.5rem !important;
+        /* Responsive Mobile View — Extra padding-top agar judul & konten tidak menabrak tombol close */
+        @media (max-width: 768px) {
+          .gallery-modal-card {
+            padding-top: 3.5rem !important;
+            padding-left: 1.15rem !important;
+            padding-right: 1.15rem !important;
+            padding-bottom: 2rem !important;
+            border-radius: 32px !important;
           }
         }
       `}</style>

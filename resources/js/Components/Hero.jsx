@@ -1,5 +1,6 @@
 import React from 'react';
 import { Sparkles, Palette, Video, Code, ArrowRight, MapPin, Mail, MessageSquare, Clock, Briefcase, Award, Building2, Paintbrush, Monitor, Images } from 'lucide-react';
+import BrushDesignIcon from './Icons/BrushDesignIcon';
 import { useLanguage } from '../context/LanguageContext';
 import { usePersona } from '../context/PersonaContext';
 import { infoService } from '../services/infoService';
@@ -472,79 +473,141 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
                   </span>
                 </div>
 
-                {/* Button Explore (Jelajahi Karya) — sembunyikan di persona MGD */}
-                {persona !== 'mgd' && (
-                  <button onClick={onExploreClick} className="btn-green hero-cta-explore" style={{ padding: '0.65rem 1.4rem', fontSize: '0.92rem' }}>
-                    <span>{t('hero_btn_explore')}</span>
-                    <ArrowRight size={16} />
-                  </button>
-                )}
+                {/* Button 1: Lihat Semua Karya — Persis Mockup Referensi (Hijau Muda Segar + Icon CalendarMinus2 + 2 Baris Teks) */}
+                <button
+                  onClick={() => {
+                    if (persona === 'mgd' && onOpenGallery) {
+                      onOpenGallery();
+                    } else if (onExploreClick) {
+                      onExploreClick();
+                    } else if (onOpenGallery) {
+                      onOpenGallery();
+                    }
+                  }}
+                  className="hero-cta-gallery hero-cta-works"
+                  style={{
+                    padding: '0.55rem 1.6rem',
+                    borderRadius: '999px',
+                    background: '#D0FF97',
+                    color: '#005BAB',
+                    border: 'none',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.85rem',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 16px rgba(0, 40, 100, 0.06)',
+                    transition: 'transform 0.18s ease, filter 0.18s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-1px)';
+                    e.currentTarget.style.filter = 'brightness(0.96)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.filter = 'none';
+                  }}
+                  title={lang === 'en' ? 'View All Works' : 'Lihat Semua Karya'}
+                >
+                  <BrushDesignIcon size={34} color="#005BAB" style={{ flexShrink: 0 }} />
+                  <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    textAlign: 'left',
+                    lineHeight: 1.15
+                  }}>
+                    <span style={{
+                      fontSize: '0.96rem',
+                      fontWeight: 500,
+                      color: '#005BAB',
+                      letterSpacing: '-0.01em'
+                    }}>
+                      {lang === 'en' ? 'View All' : 'Lihat Semua'}
+                    </span>
+                    <span style={{
+                      fontSize: '1.14rem',
+                      fontWeight: 500,
+                      color: '#005BAB',
+                      letterSpacing: '-0.02em'
+                    }}>
+                      {lang === 'en' ? (
+                        <>Works <strong style={{ fontWeight: 800 }}>{persona === 'ms' ? 'Multimedia' : (persona === 'dpd' ? 'Apps' : 'Design')}</strong></>
+                      ) : (
+                        <>Karya <strong style={{ fontWeight: 800 }}>{persona === 'ms' ? 'Multimedia' : (persona === 'dpd' ? 'Aplikasi' : 'Desain')}</strong></>
+                      )}
+                    </span>
+                  </div>
+                </button>
 
-                {/* Button Lihat Semua Karya Graphic Design — HANYA muncul di MGD, warna hijau */}
-                {persona === 'mgd' && onOpenGallery && (
-                  <button
-                    onClick={onOpenGallery}
-                    className="hero-cta-gallery"
-                    style={{
-                      padding: '0.65rem 1.4rem',
-                      fontSize: '0.92rem',
-                      fontWeight: 800,
-                      borderRadius: '999px',
-                      background: '#D0FF97',
-                      color: '#FFFFFF',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '0.5rem',
-                      cursor: 'pointer',
-                      animation: 'pulseGreenHero 3s ease-in-out infinite',
-                      transition: 'all 0.2s ease',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.animationPlayState = 'paused';
-                      e.currentTarget.style.background = '#15803D';
-                      e.currentTarget.style.borderColor = '#15803D';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.animationPlayState = 'running';
-                      e.currentTarget.style.background = '#16A34A';
-                      e.currentTarget.style.borderColor = '#16A34A';
-                    }}
-                  >
-                    <Images size={17} style={{ flexShrink: 0 }} />
-                    <span>{lang === 'en' ? 'View All Design Works' : 'Lihat Semua Karya Desain'}</span>
-                  </button>
-                )}
-
-                {/* Button Klien Saya (Kuning Soft) */}
+                {/* Button 2: Klien Saya — Persis Mockup Referensi (Kuning Soft + Teks Bold + Tanpa Icon) */}
                 <button
                   onClick={handleScrollToClients}
                   className="hero-cta-clients"
                   style={{
-                    padding: '0.65rem 1.4rem',
-                    fontSize: '0.92rem',
+                    padding: '0.78rem 1.85rem',
+                    minHeight: '52px',
+                    boxSizing: 'border-box',
+                    fontSize: '1.22rem',
                     fontWeight: 800,
+                    letterSpacing: '-0.01em',
                     borderRadius: '999px',
-                    background: '#FAFFA4',
-                    color: '#005BAB', 
-                    border: '2.5px solid #005BAB',
+                    background: '#FFF455',
+                    color: '#005BAB',
+                    border: 'none',
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '0.55rem',
+                    justifyContent: 'center',
                     cursor: 'pointer',
-                    boxShadow: '0 4px 12px rgba(217, 119, 6, 0.15)',
-                    transition: 'all 0.2s ease'
+                    boxShadow: '0 4px 16px rgba(0, 40, 100, 0.06)',
+                    transition: 'transform 0.18s ease, filter 0.18s ease',
+                    whiteSpace: 'nowrap'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-1px)';
+                    e.currentTarget.style.filter = 'brightness(0.96)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.filter = 'none';
                   }}
                 >
-                  <Building2 size={16} />
-                  <span>{lang === 'en' ? 'My Clients' : 'Klien Saya'}</span> 
-                  <ArrowRight size={16} />
-                </button> 
+                  <span>{lang === 'en' ? 'My Clients' : 'Klien Saya'}</span>
+                </button>
 
-                {/* Button Contact */}
+                {/* Button 3: Hubungi Saya — Persis Mockup Referensi (Biru Navy + Teks Putih Bold + Tanpa Icon) */}
                 {onOpenContact && (
-                  <button onClick={onOpenContact} className="btn-primary hero-cta-contact" style={{ padding: '0.65rem 1.4rem', fontSize: '0.92rem' }}>
-                    <MessageSquare size={16} />
-                    <span>{t('hero_btn_contact')}</span>
+                  <button
+                    onClick={onOpenContact}
+                    className="hero-cta-contact"
+                    style={{
+                      padding: '0.78rem 1.85rem',
+                      minHeight: '52px',
+                      boxSizing: 'border-box',
+                      fontSize: '1.22rem',
+                      fontWeight: 800,
+                      letterSpacing: '-0.01em',
+                      borderRadius: '999px',
+                      background: '#005BAB',
+                      color: '#FFFFFF',
+                      border: 'none',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 16px rgba(0, 91, 171, 0.22)',
+                      transition: 'transform 0.18s ease, background 0.18s ease',
+                      whiteSpace: 'nowrap'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-1px)';
+                      e.currentTarget.style.background = '#0049B1';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.background = '#005BAB';
+                    }}
+                  >
+                    <span>{lang === 'en' ? 'Contact Me' : 'Hubungi Saya'}</span>
                   </button>
                 )}
               </div>
@@ -780,21 +843,6 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
                 gap: '0.75rem',
                 marginBottom: '1.25rem'
               }}>
-                <div style={{
-                  width: '44px',
-                  height: '44px',
-                  borderRadius: '999px',
-                  background: '#FFF3DD',
-                  color: '#005BAB',
-                  border: '2px solid #005BAB',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                  marginTop: '2px'
-                }}>
-                  <Building2 size={22} />
-                </div>
                 <div style={{ flex: 1 }}>
                   <h3 style={{
                     fontSize: '1.4rem',
@@ -820,40 +868,43 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
                 </div>
               </div>
 
-              {/* Grid Logo Klien */}
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))',
-                gap: '1rem',
-                maxWidth: '100%'
-              }}>
+              {/* Grid Logo Klien — Maksimal 12 Kolom di Desktop, 3 Kolom di Mobile, Frame Dikecilkan */}
+              <div
+                className="client-logos-grid"
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(12, minmax(0, 1fr))',
+                  gap: '0.65rem',
+                  maxWidth: '100%'
+                }}
+              >
                 {clients.map((client) => {
                   const hasName = Boolean(client.name && client.name.trim());
                   return (
                     <div
                       key={client.id || client.name || Math.random()}
-                      className="herta-card"
+                      className="herta-card client-logo-card"
                       title={hasName ? client.name : 'Logo Klien'}
                       style={{
                         aspectRatio: '1 / 1',
-                        borderRadius: '28px',
+                        borderRadius: '16px',
                         background: '#FFFFFF',
-                        border: '2.5px solid #005BAB',
-                        padding: hasName ? '0.6rem 0.5rem 0.5rem' : '0.6rem',
+                        border: '1.5px solid #005BAB',
+                        padding: hasName ? '0.35rem 0.25rem 0.25rem' : '0.35rem',
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
                         position: 'relative',
                         overflow: 'hidden',
-                        transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
-                        boxShadow: '0 4px 12px rgba(0, 91, 171, 0.06)'
+                        transition: 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                        boxShadow: '0 2px 8px rgba(0, 91, 171, 0.05)'
                       }}
                     >
                       {client.logo ? (
                         <div style={{
                           width: '100%',
-                          height: hasName ? 'calc(100% - 1.2rem)' : '100%',
+                          height: hasName ? 'calc(100% - 0.95rem)' : '100%',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -863,23 +914,23 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
                             src={client.logo}
                             alt={hasName ? client.name : 'Client Logo'}
                             objectFit="contain"
-                            style={{ width: '100%', height: '100%', borderRadius: '18px' }}
+                            style={{ width: '100%', height: '100%', borderRadius: '10px' }}
                           />
                         </div>
                       ) : (
                         <div style={{
                           width: '100%',
                           height: '100%',
-                          borderRadius: '18px',
+                          borderRadius: '10px',
                           background: '#FFF3DD',
                           color: '#005BAB',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
                           fontWeight: 800,
-                          fontSize: '0.82rem',
+                          fontSize: '0.68rem',
                           textAlign: 'center',
-                          padding: '0.25rem',
+                          padding: '0.2rem',
                           wordBreak: 'break-word'
                         }}>
                           {hasName ? client.name : 'Klien'}
@@ -888,15 +939,16 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
 
                       {hasName && (
                         <div style={{
-                          marginTop: '0.25rem',
-                          fontSize: '0.72rem',
-                          fontWeight: 800,
+                          marginTop: '0.15rem',
+                          fontSize: '0.62rem',
+                          fontWeight: 700,
                           color: '#005BAB',
                           textAlign: 'center',
                           whiteSpace: 'nowrap',
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
-                          width: '100%'
+                          width: '100%',
+                          lineHeight: 1.15
                         }}>
                           {client.name}
                         </div>
@@ -976,7 +1028,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
             flex-direction: column !important;
             align-items: center !important;
             justify-content: center !important;
-            gap: 0.95rem !important;
+            gap: 0.85rem !important;
             width: 100% !important;
           }
           .hero-cta-badge {
@@ -985,7 +1037,14 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
             display: flex !important;
             justify-content: center !important;
           }
-          .hero-cta-explore,
+          .hero-cta-gallery,
+          .hero-cta-clients,
+          .hero-cta-contact {
+            width: 100% !important;
+            max-width: 320px !important;
+            box-sizing: border-box !important;
+            justify-content: center !important;
+          }
           .hero-cta-gallery {
             order: 2 !important;
           }
@@ -1022,6 +1081,28 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
           .hero-subtext-br {
             display: block !important;
           }
+
+          /* Client Logos Grid 3 Kolom di Mobile */
+          .client-logos-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+            gap: 0.5rem !important;
+          }
+        }
+        @media (min-width: 641px) and (max-width: 1024px) {
+          .client-logos-grid {
+            grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+            gap: 0.55rem !important;
+          }
+        }
+        @media (min-width: 1025px) {
+          .client-logos-grid {
+            grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+            gap: 0.65rem !important;
+          }
+        }
+        .client-logo-card:hover {
+          transform: translateY(-2px) scale(1.04);
+          box-shadow: 0 6px 16px rgba(0, 91, 171, 0.12);
         }
         @media (min-width: 641px) {
           .hero-cta-container {
@@ -1031,11 +1112,16 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
             gap: 0.85rem !important;
           }
           .hero-cta-badge {
-            width: fit-content !important;
-            margin-bottom: 0.25rem !important;
+            width: 100% !important;
+            margin-bottom: 0.35rem !important;
             order: 1 !important;
           }
-          .hero-cta-explore,
+          .hero-cta-gallery,
+          .hero-cta-clients,
+          .hero-cta-contact {
+            width: auto !important;
+            max-width: none !important;
+          }
           .hero-cta-gallery {
             order: 2 !important;
           }

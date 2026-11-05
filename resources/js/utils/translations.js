@@ -62,8 +62,8 @@ export const translations = {
     detail_close: 'Tutup',
 
     // Info Modal - Profile
-    profile_title: 'Profil & Bio',
-    profile_skills_heading: 'Spesialisasi & Keahlian Utama',
+    profile_title: 'Profil Hamdani',
+    profile_skills_heading: 'Spesialisasi & Keahlian',
     profile_domisili_heading: 'Domisili & Data Diri',
     profile_domisili: 'Domisili Sekarang',
     profile_residence: 'Asal',
@@ -168,11 +168,11 @@ export const translations = {
     detail_close: 'Close',
 
     // Info Modal - Profile
-    profile_title: 'Profile & Bio',
-    profile_skills_heading: 'Core Specializations & Skills',
+    profile_title: 'Hamdani Profile',
+    profile_skills_heading: 'Specializations & Skills',
     profile_domisili_heading: 'Domicile & Personal Info',
     profile_domisili: 'Domicile',
-    profile_residence: 'Current Residence',
+    profile_residence: 'Origin',
     profile_ttl: 'Place & Date of Birth',
 
     // Info Modal - Experiences

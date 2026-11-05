@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, User, Briefcase, Mail, MapPin, Palette, Video, Code, FileText, Download, MessageSquare, Award, ExternalLink, ChevronLeft, ChevronRight, Image as ImageIcon, Home, Calendar, Share2, Globe, Send, SearchX, Check, Loader2, Laptop } from 'lucide-react';
+import { X, User, Briefcase, Mail, MapPin, Palette, Video, Code, FileText, Download, MessageSquare, Award, ExternalLink, ChevronLeft, ChevronRight, Image as ImageIcon, Home, Calendar, Share2, Globe, Send, SearchX, Check, Loader2, Laptop, Copy } from 'lucide-react';
 import { infoService } from '../services/infoService';
 import { useLanguage } from '../context/LanguageContext';
 import { usePersona } from '../context/PersonaContext';
@@ -327,6 +327,58 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
     }
   };
 
+  const [copiedContactId, setCopiedContactId] = useState(null);
+
+  const handleCopyContact = (val, id) => {
+    if (!val) return;
+    const cleanText = String(val).trim();
+
+    const copyContactFallback = (text) => {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        setCopiedContactId(id);
+        setTimeout(() => setCopiedContactId(null), 2500);
+      } catch (err) {
+        console.error('Fallback copy failed', err);
+      }
+      document.body.removeChild(textArea);
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(cleanText).then(() => {
+        setCopiedContactId(id);
+        setTimeout(() => setCopiedContactId(null), 2500);
+      }).catch(() => {
+        copyContactFallback(cleanText);
+      });
+    } else {
+      copyContactFallback(cleanText);
+    }
+  };
+
+  const handleContactAction = (c) => {
+    let targetUrl = c.url;
+    if (!targetUrl) {
+      const cType = (c.type || '').toLowerCase();
+      if (cType === 'whatsapp' || (c.title && c.title.toLowerCase().includes('whatsapp'))) {
+        const digits = (c.value || '').replace(/[^0-9]/g, '');
+        targetUrl = digits ? `https://wa.me/${digits.startsWith('0') ? '62' + digits.slice(1) : digits}` : '';
+      } else if (cType === 'email' || (c.value && c.value.includes('@'))) {
+        targetUrl = `mailto:${c.value}`;
+      } else if (c.value && (c.value.startsWith('http://') || c.value.startsWith('https://'))) {
+        targetUrl = c.value;
+      }
+    }
+
+    if (targetUrl) {
+      window.open(targetUrl, '_blank', 'noopener,noreferrer');
+    }
+  };
+
   const handleDownload = async (doc) => {
     const docTitle = getLocalizedField(doc, 'title');
     const rawUrl = doc.file_url || doc.fileUrl || doc.file_path || doc.url || '';
@@ -378,7 +430,7 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
 
   if (!activeType) return null;
 
-  const isModernModal = activeType === 'pengalaman' || activeType === 'sertifikat';
+  const isModernModal = activeType === 'pengalaman' || activeType === 'sertifikat' || activeType === 'dokumen' || activeType === 'kontak' || activeType === 'profil';
   const modalBg = '#FFFFFF';
   const modalColor = '#005BAB';
   const modalBorder = isModernModal ? 'none' : '2.5px solid #005BAB';
@@ -387,7 +439,7 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
     <div className="modal-overlay" onClick={onClose}>
       <div 
         onClick={(e) => e.stopPropagation()}
-        className="herta-card animate-fade-in modal-no-scrollbar"
+        className="herta-card info-modal-card animate-fade-in modal-no-scrollbar"
         style={{
           width: '100%',
           maxWidth: isModernModal ? '860px' : '840px',
@@ -476,19 +528,21 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
         {/* --- DOKUMEN HAMDANI --- */}
         {activeType === 'dokumen' && (
           <div>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', paddingBottom: '0.5rem', paddingRight: '3.6rem' }}>
-              <div style={{ padding: '0.6rem', borderRadius: '14px', background: '#FFFFFF', color: '#005BAB', border: '2px solid #005BAB', flexShrink: 0 }}>
-                <FileText size={28} />
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>{t('doc_title')}</h2>
-                <p style={{ fontSize: '0.88rem', color: '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
-                  {lang === 'en' ? 'Please download Hamdani CV if needed' : 'Silahkan Unduh Berkas CV Hamdani Jika Diperlukan'}
-                </p>
-              </div>
-            </div>
+            {/* Header Modal Dokumen — Persis Gambar Referensi (Hanya Judul & Tombol Close Merah) */}
+            <div style={{ marginBottom: '1.5rem', paddingRight: '3.5rem' }}>
+              <h2 style={{
+                fontSize: '1.65rem',
+                fontWeight: 800,
+                color: '#005BAB',
+                lineHeight: 1.25,
+                margin: 0,
+                letterSpacing: '-0.02em',
+              }}>
+                {lang === 'en' ? 'Download Hamdani CV' : 'Unduh CV Hamdani'}
+              </h2>
+            </div> 
 
-            {/* Grid Dokumen Dynamic — filtered by persona */}
+            {/* Grid Dokumen Dynamic — 2 Kolom di Desktop, 1 Kolom di Mobile */}
             {filteredDocuments.length === 0 ? (
               <VisitorEmptyState
                 icon={SearchX}
@@ -500,71 +554,194 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                 className="docs-grid"
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(2, 1fr)',
-                  gap: '1.2rem',
-                  alignItems: 'start'
+                  gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+                  gap: '1.25rem',
+                  alignItems: 'stretch'
                 }}
               >
                 {filteredDocuments.map((doc) => {
                   const docTitle = getLocalizedField(doc, 'title');
                   const docType = getLocalizedField(doc, 'type');
                   const docDesc = getLocalizedField(doc, 'description');
-                  const docCategory = doc.category || 'CV ATS';
                   const isCopied = copiedDocId === doc.id;
 
+                  // Normalisasi nama kategori: misal 'CV ATS' -> 'CV Ats' sesuai gambar referensi
+                  let displayCategory = doc.category || 'CV Ats';
+                  if (displayCategory.toUpperCase() === 'CV ATS') {
+                    displayCategory = 'CV Ats';
+                  }
+
+                  // Warna status kategori dokumen sesuai tema sistem (CV Ats: #D0FF97, CV Kreatif: #62B6FF)
+                  const catLower = displayCategory.trim().toLowerCase();
+                  let badgeBg = '#D0FF97';
+                  if (catLower.includes('kreatif') || catLower.includes('creative') || catLower.includes('organisasi')) {
+                    badgeBg = '#62B6FF';
+                  } else if (catLower.includes('ats') || catLower.includes('kerja')) {
+                    badgeBg = '#D0FF97';
+                  } else if (catLower.includes('portofolio') || catLower.includes('magang') || catLower.includes('kontrak')) {
+                    badgeBg = '#FFF455';
+                  } else if (catLower.includes('freelance') || catLower.includes('other') || catLower.includes('lainnya')) {
+                    badgeBg = '#E1E1E1';
+                  }
+
                   return (
-                    <div key={doc.id} className="herta-card" style={{ padding: '1.35rem', background: '#FFFFFF', border: '2px solid #005BAB', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative', minWidth: 0 }}>
-                      <span style={{
-                        position: 'absolute',
-                        top: '1rem',
-                        right: '1rem',
-                        fontSize: '0.72rem',
-                        fontWeight: 800,
-                        background: docCategory === 'CV Kreatif' ? '#FEF3C7' : docCategory === 'Portofolio' ? '#D1FAE5' : '#EEF2FF',
-                        color: docCategory === 'CV Kreatif' ? '#D97706' : docCategory === 'Portofolio' ? '#059669' : '#4F46E5',
-                        border: `1.5px solid ${docCategory === 'CV Kreatif' ? '#D97706' : docCategory === 'Portofolio' ? '#059669' : '#4F46E5'}`,
-                        padding: '0.15rem 0.6rem',
-                        borderRadius: '999px',
-                        zIndex: 2
+                    <div
+                      key={doc.id}
+                      className="herta-card document-card"
+                      style={{
+                        padding: '1.45rem 1.45rem 1.35rem 1.45rem',
+                        background: '#FFFFFF',
+                        border: 'none',
+                        borderRadius: '28px',
+                        boxShadow: '0 8px 30px rgba(0, 40, 100, 0.08)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        minWidth: 0,
+                        boxSizing: 'border-box'
+                      }}
+                    >
+                      {/* Top Row: Pill Badge Status Kategori Dokumen & Garis Biru */}
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.85rem',
+                        width: '100%'
                       }}>
-                        {docCategory}
-                      </span>
-                      <div>
-                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.85rem', marginBottom: '0.85rem', paddingRight: '5.5rem' }}>
-                          <div style={{ padding: '0.5rem', borderRadius: '10px', background: '#FFFFFF', color: '#005BAB', border: '1.5px solid #005BAB', flexShrink: 0 }}>
-                            <FileText size={20} />
-                          </div>
-                          <div>
-                            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#005BAB' }}>{docTitle}</h3>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap', marginTop: '0.15rem' }}>
-                              <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#005BAB', opacity: 0.85 }}>{docType}</span>
-                            </div>
-                          </div>
-                        </div>
-                        {docDesc && (
-                          <p style={{ fontSize: '0.86rem', color: '#005BAB', fontWeight: 600, lineHeight: 1.5, marginBottom: '1.25rem' }}>
-                            {docDesc}
-                          </p>
-                        )}
+                        <span style={{
+                          fontSize: '0.86rem',
+                          fontWeight: 800,
+                          background: badgeBg,
+                          color: '#005BAB',
+                          border: 'none',
+                          padding: '0.35rem 1.15rem',
+                          borderRadius: '999px',
+                          letterSpacing: '-0.01em',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                          whiteSpace: 'nowrap'
+                        }}>
+                          {displayCategory}
+                        </span>
+
+                        <div style={{
+                          flex: 1,
+                          height: '1.5px',
+                          background: '#005BAB',
+                          opacity: 0.65
+                        }} />
                       </div>
 
-                      <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+                      {/* Judul Dokumen */}
+                      <h3 style={{
+                        fontSize: '1.25rem',
+                        fontWeight: 800,
+                        color: '#005BAB',
+                        margin: '0.95rem 0 0.15rem 0',
+                        lineHeight: 1.25,
+                        letterSpacing: '-0.02em',
+                        wordBreak: 'break-word'
+                      }}>
+                        {docTitle}
+                      </h3>
+
+                      {/* Tipe / Sub-Judul Dokumen */}
+                      {docType && (
+                        <h4 style={{
+                          fontSize: '0.92rem',
+                          fontWeight: 700,
+                          color: '#005BAB',
+                          opacity: 0.9,
+                          margin: '0 0 0.55rem 0',
+                          lineHeight: 1.35
+                        }}>
+                          {docType}
+                        </h4>
+                      )}
+
+                      {/* Deskripsi Dokumen (Rata Justify) */}
+                      {docDesc && (
+                        <p style={{
+                          fontSize: '0.84rem',
+                          color: '#005BAB',
+                          fontWeight: 500,
+                          lineHeight: 1.55,
+                          margin: '0 0 1.25rem 0',
+                          textAlign: 'justify',
+                          flex: 1
+                        }}>
+                          {docDesc}
+                        </p>
+                      )}
+
+                      {/* Bottom Action Row: Tombol Download (Hijau Lime) & Tombol Share (Biru dengan Icon Pesawat Kertas) */}
+                      <div style={{
+                        display: 'flex',
+                        gap: '0.65rem',
+                        alignItems: 'center',
+                        marginTop: 'auto'
+                      }}>
+                        {/* Tombol Download */}
                         <button
                           onClick={() => handleDownload(doc)}
-                          className="btn-primary"
-                          style={{ flex: 1, justifyContent: 'center', fontSize: '0.88rem', padding: '0.6rem 1rem' }}
+                          style={{
+                            flex: 1,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            background: '#D0FF97',
+                            color: '#005BAB',
+                            border: 'none',
+                            borderRadius: '999px',
+                            padding: '0.68rem 1.25rem',
+                            fontSize: '0.95rem',
+                            fontWeight: 800,
+                            letterSpacing: '-0.01em',
+                            cursor: 'pointer',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                            transition: 'all 0.18s ease'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-1px)';
+                            e.currentTarget.style.filter = 'brightness(0.96)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.filter = 'none';
+                          }}
                         >
-                          <Download size={16} />
-                          <span>{t('doc_download')}</span>
+                          Download
                         </button>
+
+                        {/* Tombol Share / Kirim dengan icon Send */}
                         <button
                           onClick={() => handleShareDocument(doc)}
-                          className={isCopied ? "btn-green" : "btn-secondary"}
-                          style={{ padding: '0.6rem 0.85rem', borderRadius: '12px', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
-                          title="Bagikan Tautan Dokumen"
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            background: '#005BAB',
+                            color: '#FFFFFF',
+                            border: 'none',
+                            borderRadius: '999px',
+                            padding: '0.68rem 1.15rem',
+                            minWidth: '52px',
+                            cursor: 'pointer',
+                            boxShadow: '0 3px 12px rgba(0, 91, 171, 0.22)',
+                            transition: 'all 0.18s ease'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-1px)';
+                            e.currentTarget.style.background = '#0049B1';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.background = '#005BAB';
+                          }}
+                          title={isCopied ? (lang === 'en' ? 'Link Copied!' : 'Tautan Tersalin!') : (lang === 'en' ? 'Share Document Link' : 'Bagikan Tautan Dokumen')}
                         >
-                          {isCopied ? <Check size={16} /> : <Share2 size={16} />}
-                          <span>{isCopied ? 'Tersalin!' : 'Bagikan'}</span>
+                          {isCopied ? <Check size={18} strokeWidth={2.8} /> : <Send size={18} strokeWidth={2.4} />}
                         </button>
                       </div>
                     </div>
@@ -578,108 +755,244 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
         {/* --- PROFIL HAMDANI --- */}
         {activeType === 'profil' && (
           <div>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', paddingBottom: '0.5rem', paddingRight: '3.6rem' }}>
-              <div style={{ padding: '0.6rem', borderRadius: '14px', background: '#FFFFFF', color: '#005BAB', border: '2px solid #005BAB', flexShrink: 0 }}>
-                <User size={28} />
+            {/* Header Modal Profil — Persis Gambar Referensi (Hanya Judul & Tombol Close Merah) */}
+            <div style={{ marginBottom: '1.5rem', paddingRight: '3.5rem' }}>
+              <h2 style={{
+                fontSize: '1.65rem',
+                fontWeight: 800,
+                color: '#005BAB',
+                lineHeight: 1.25,
+                margin: 0,
+                letterSpacing: '-0.02em',
+              }}>
+                {lang === 'en' ? 'Hamdani Profile' : 'Profil Hamdani'}
+              </h2>
+            </div>
+
+            {/* Section: Tentang Hamdani */}
+            <div style={{ marginBottom: '1.5rem' }}>
+              <h3 style={{
+                fontSize: '1.12rem',
+                fontWeight: 800,
+                color: '#005BAB',
+                margin: '0 0 0.5rem 0',
+                letterSpacing: '-0.01em'
+              }}>
+                {lang === 'en' ? `About ${profileData.name || 'Hamdani'}` : `Tentang ${profileData.name || 'Hamdani'}`}
+              </h3>
+              <p style={{
+                fontSize: '0.92rem',
+                color: '#005BAB',
+                fontWeight: 500,
+                lineHeight: 1.6,
+                margin: 0,
+                textAlign: 'justify'
+              }}>
+                {currentBio || (lang === 'en' ? 'Professional graphic designer, multimedia creator, and visual specialist.' : 'Pengerjaan menggunakan teknik compositing feed media sosial berformat vertikal dengan latar belakang gradasi hijau segar. Pengerjaan menggunakan teknik compositing feed media sosial berformat vertikal dengan latar belakang gradasi hijau segar')}
+              </p>
+            </div>
+
+            {/* Section: Data Diri & Domisili (2 Kolom Bersih Tanpa Box Card) */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+              gap: '1.25rem 2rem',
+              marginBottom: '2.25rem'
+            }}>
+              {/* Domisili Sekarang */}
+              <div>
+                <h4 style={{
+                  fontSize: '0.98rem',
+                  fontWeight: 800,
+                  color: '#005BAB',
+                  margin: '0 0 0.25rem 0'
+                }}>
+                  {t('profile_domisili')}
+                </h4>
+                <p style={{
+                  fontSize: '0.92rem',
+                  fontWeight: 500,
+                  color: '#005BAB',
+                  margin: 0
+                }}>
+                  {getLocalizedField(profileData, 'domisili') || 'Kota Jambi, Indonesia'}
+                </p>
               </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>{t('profile_title')} — {profileData.name || 'Hamdani'}</h2>
-                <p style={{ fontSize: '0.88rem', color: '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
-                  {currentTagline}
+
+              {/* Asal */}
+              <div>
+                <h4 style={{
+                  fontSize: '0.98rem',
+                  fontWeight: 800,
+                  color: '#005BAB',
+                  margin: '0 0 0.25rem 0'
+                }}>
+                  {t('profile_residence')}
+                </h4>
+                <p style={{
+                  fontSize: '0.92rem',
+                  fontWeight: 500,
+                  color: '#005BAB',
+                  margin: 0
+                }}>
+                  {getLocalizedField(profileData, 'tempat_tinggal') || 'Kuala Tungkal Jambi'}
+                </p>
+              </div>
+
+              {/* Tempat Tanggal Lahir / TTL */}
+              <div>
+                <h4 style={{
+                  fontSize: '0.98rem',
+                  fontWeight: 800,
+                  color: '#005BAB',
+                  margin: '0 0 0.25rem 0'
+                }}>
+                  {t('profile_ttl')}
+                </h4>
+                <p style={{
+                  fontSize: '0.92rem',
+                  fontWeight: 500,
+                  color: '#005BAB',
+                  margin: 0
+                }}>
+                  {getLocalizedField(profileData, 'ttl') || 'Jambi, 14 Mei 1998'}
                 </p>
               </div>
             </div>
 
-            {/* Bio Card */}
-            <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF', border: '2px solid #005BAB', marginBottom: '1.5rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem', gap: '0.5rem' }}>
-                <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#005BAB', margin: 0 }}>
-                  {lang === 'en' ? `About ${profileData.name || 'Hamdani'}` : `Tentang ${profileData.name || 'Hamdani'}`}
-                </h3>
-                <MetadataCopyBtn text={currentBio} label="Tentang" />
-              </div>
-              <p style={{ fontSize: '0.95rem', color: '#005BAB', fontWeight: 400, lineHeight: 1.65, whiteSpace: 'pre-line', margin: 0 }}>
-                {currentBio}
-              </p>
-            </div>
+            {/* Section: Spesialisasi & Keahlian */}
+            <div>
+              <h2 style={{
+                fontSize: '1.45rem',
+                fontWeight: 800,
+                color: '#005BAB',
+                lineHeight: 1.25,
+                margin: '0 0 1.25rem 0',
+                letterSpacing: '-0.02em',
+              }}>
+                {t('profile_skills_heading')}
+              </h2>
 
-            {/* Domisili & Data Diri Card */}
-            <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF', border: '2px solid #005BAB', marginBottom: '1.5rem' }}>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#005BAB', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <MapPin size={20} style={{ flexShrink: 0 }} />
-                <span>{t('profile_domisili_heading')}</span>
-              </h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
-                <div style={{ background: '#FFFFFF', padding: '1.1rem 1rem', borderRadius: '14px', border: '1.5px solid #005BAB', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '0.6rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontWeight: 800, color: '#005BAB', fontSize: '0.85rem' }}>
-                      <MapPin size={16} style={{ flexShrink: 0 }} />
-                      <span style={{ lineHeight: 1.3 }}>{t('profile_domisili')}</span>
-                    </div>
-                    <MetadataCopyBtn text={getLocalizedField(profileData, 'domisili') || 'Kota Jambi, Indonesia'} label="Domisili" />
-                  </div>
-                  <div style={{ fontSize: '0.92rem', fontWeight: 400, color: '#005BAB', lineHeight: 1.5 }}>
-                    {getLocalizedField(profileData, 'domisili') || 'Kota Jambi, Indonesia'}
-                  </div>
-                </div>
+              {(!profileData.skills || profileData.skills.length === 0) ? (
+                <VisitorEmptyState
+                  icon={SearchX}
+                  title={lang === 'en' ? 'No Skills Listed' : 'Belum Ada Keahlian'}
+                  description={lang === 'en' ? 'Skills and specializations will appear here.' : 'Daftar keahlian dan spesialisasi Hamdani akan tampil di sini.'}
+                />
+              ) : (
+                <div
+                  className="skills-grid"
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+                    gap: '1.25rem',
+                    alignItems: 'stretch'
+                  }}
+                >
+                  {profileData.skills.map((skill, index) => {
+                    const skillTitle = getLocalizedField(skill, 'title');
+                    const skillDesc = getLocalizedField(skill, 'desc');
 
-                <div style={{ background: '#FFFFFF', padding: '1.1rem 1rem', borderRadius: '14px', border: '1.5px solid #005BAB', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '0.6rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontWeight: 800, color: '#005BAB', fontSize: '0.85rem', flex: 1, minWidth: 0 }}>
-                      <Home size={16} style={{ flexShrink: 0 }} />
-                      <span style={{ lineHeight: 1.3 }}>{t('profile_residence')}</span>
-                    </div>
-                    <MetadataCopyBtn text={getLocalizedField(profileData, 'tempat_tinggal') || 'Kota Jambi, Indonesia'} label="Tempat Tinggal" />
-                  </div>
-                  <div style={{ fontSize: '0.92rem', fontWeight: 400, color: '#005BAB', lineHeight: 1.5 }}>
-                    {getLocalizedField(profileData, 'tempat_tinggal') || 'Kota Jambi, Indonesia'}
-                  </div>
-                </div>
+                    // Tentukan Status Kategori Keahlian & Warna Persis Gambar Referensi
+                    const cat = (skill.category || 'Hard Skill').trim().toLowerCase();
+                    let badgeLabel = 'Hard Skill';
+                    let badgeBg = '#D0FF97';
 
-                <div style={{ background: '#FFFFFF', padding: '1.1rem 1rem', borderRadius: '14px', border: '1.5px solid #005BAB', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '0.6rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontWeight: 800, color: '#005BAB', fontSize: '0.85rem' }}>
-                    <Calendar size={16} style={{ flexShrink: 0 }} />
-                    <span style={{ lineHeight: 1.3 }}>{t('profile_ttl')}</span>
-                  </div>
-                  <div style={{ fontSize: '0.92rem', fontWeight: 400, color: '#005BAB', lineHeight: 1.5 }}>
-                    {getLocalizedField(profileData, 'ttl') || 'Jambi, 14 Mei 1998'}
-                  </div>
-                </div>
-              </div>
-            </div>
+                    if (cat.includes('soft')) {
+                      badgeLabel = 'Soft Skill';
+                      badgeBg = '#FFF455';
+                    } else if (cat.includes('hard')) {
+                      badgeLabel = 'Hard Skill';
+                      badgeBg = '#D0FF97';
+                    } else if (cat.includes('tool') || cat.includes('software')) {
+                      badgeLabel = skill.category || 'Tools';
+                      badgeBg = '#62B6FF';
+                    } else {
+                      badgeLabel = skill.category || 'Keahlian';
+                      badgeBg = '#E1E1E1';
+                    }
 
-            {/* Keahlian & Spesialisasi */}
-            {profileData.skills && profileData.skills.length > 0 && (
-              <div className="herta-card" style={{ padding: '1.5rem', background: '#FFFFFF', border: '2px solid #005BAB' }}>
-                <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#005BAB', marginBottom: '1rem' }}>
-                  {t('profile_skills_heading')}
-                </h3>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
-                  {profileData.skills.map((skill, index) => (
-                    <div key={skill.id || index} style={{ background: '#FFFFFF', padding: '1rem', borderRadius: '12px', border: '1.5px solid #005BAB' }}>
-                      <div style={{ marginBottom: '0.45rem' }}>
-                        <span style={{
-                          fontSize: '0.7rem',
-                          fontWeight: 800,
-                          background: skill.category === 'Hard Skill' ? '#10B981' : '#005BAB',
-                          color: '#FFFFFF',
-                          padding: '0.12rem 0.55rem',
-                          borderRadius: '999px',
-                          display: 'inline-block'
+                    return (
+                      <div
+                        key={skill.id || index}
+                        className="herta-card skill-card"
+                        style={{
+                          padding: '1.45rem 1.45rem 1.4rem 1.45rem',
+                          background: '#FFFFFF',
+                          border: 'none',
+                          borderRadius: '28px',
+                          boxShadow: '0 8px 30px rgba(0, 40, 100, 0.08)',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          minWidth: 0,
+                          boxSizing: 'border-box'
+                        }}
+                      >
+                        {/* Top Row: Pill Badge Status Kategori Keahlian & Garis Biru */}
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.85rem',
+                          width: '100%'
                         }}>
-                          {skill.category || 'Soft Skill'}
-                        </span>
+                          <span style={{
+                            fontSize: '0.86rem',
+                            fontWeight: 800,
+                            background: badgeBg,
+                            color: '#005BAB',
+                            border: 'none',
+                            padding: '0.35rem 1.15rem',
+                            borderRadius: '999px',
+                            letterSpacing: '-0.01em',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                            whiteSpace: 'nowrap'
+                          }}>
+                            {badgeLabel}
+                          </span>
+
+                          <div style={{
+                            flex: 1,
+                            height: '1.5px',
+                            background: '#005BAB',
+                            opacity: 0.65
+                          }} />
+                        </div>
+
+                        {/* Judul Keahlian */}
+                        <h3 style={{
+                          fontSize: '1.25rem',
+                          fontWeight: 800,
+                          color: '#005BAB',
+                          margin: '0.95rem 0 0.35rem 0',
+                          lineHeight: 1.25,
+                          letterSpacing: '-0.02em',
+                          wordBreak: 'break-word'
+                        }}>
+                          {skillTitle}
+                        </h3>
+
+                        {/* Deskripsi Keahlian (Rata Justify) */}
+                        {skillDesc && (
+                          <p style={{
+                            fontSize: '0.84rem',
+                            color: '#005BAB',
+                            fontWeight: 500,
+                            lineHeight: 1.55,
+                            margin: 0,
+                            textAlign: 'justify'
+                          }}>
+                            {skillDesc}
+                          </p>
+                        )}
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.4rem', fontWeight: 800, color: '#005BAB', marginBottom: '0.4rem' }}>
-                        <Award size={18} style={{ flexShrink: 0, marginTop: '2px' }} />
-                        <span style={{ wordBreak: 'break-word', lineHeight: 1.35 }}>{getLocalizedField(skill, 'title')}</span>
-                      </div>
-                      <p style={{ fontSize: '0.82rem', color: '#005BAB', fontWeight: 600 }}>{getLocalizedField(skill, 'desc')}</p>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
-              </div>
-            )}
+              )}
+            </div>
 
           </div>
         )}
@@ -813,8 +1126,14 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                             );
                           })()}
 
-                          {/* Badge Tipe Pekerjaan */}
-                          {exp.employment_type && (() => {
+                          {/* Badge Tipe Pekerjaan (Hanya tampil jika tipe pengalaman adalah 'Kerja' dan ada tipe pekerjaannya) */}
+                          {(() => {
+                            const expType = (exp.experience_type || 'Kerja').trim().toLowerCase();
+                            const isKerja = expType === 'kerja' || expType === 'work';
+                            if (!isKerja || !exp.employment_type || !exp.employment_type.trim()) {
+                              return null;
+                            }
+
                             const rawEmp = exp.employment_type.trim();
                             const empLower = rawEmp.toLowerCase();
 
@@ -941,19 +1260,21 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
         {/* --- KONTAK --- */}
         {activeType === 'kontak' && (
           <div>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', paddingBottom: '0.5rem', paddingRight: '3.6rem' }}>
-              <div style={{ padding: '0.6rem', borderRadius: '14px', background: '#FFFFFF', color: '#005BAB', border: '2px solid #005BAB', flexShrink: 0 }}>
-                <Mail size={28} />
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>{t('contact_title')}</h2>
-                <p style={{ fontSize: '0.88rem', color: '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
-                  {t('contact_sub')}
-                </p>
-              </div>
+            {/* Header Modal Kontak — Persis Gambar Referensi (Hanya Judul & Tombol Close Merah) */}
+            <div style={{ marginBottom: '1.5rem', paddingRight: '3.5rem' }}>
+              <h2 style={{
+                fontSize: '1.65rem',
+                fontWeight: 800,
+                color: '#005BAB',
+                lineHeight: 1.25,
+                margin: 0,
+                letterSpacing: '-0.02em',
+              }}>
+                {lang === 'en' ? 'Contact Hamdani' : 'Hubungi Hamdani'}
+              </h2>
             </div>
 
-            {/* Contact Action Buttons Grid Dynamic */}
+            {/* Contact Grid Dynamic — 2 Kolom di Desktop, 1 Kolom di Mobile */}
             {contactsList.length === 0 ? (
               <VisitorEmptyState
                 icon={SearchX}
@@ -961,78 +1282,178 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                 description={lang === 'en' ? 'Contact details will appear here.' : 'Informasi dan media komunikasi langsung Hamdani akan tampil di sini.'}
               />
             ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem', marginBottom: '1.5rem' }}>
+              <div
+                className="contacts-grid"
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+                  gap: '1.25rem',
+                  alignItems: 'stretch'
+                }}
+              >
                 {contactsList.map((c) => {
-                  const isLink = Boolean(c.url);
                   const cTitle = getLocalizedField(c, 'title');
-                  const cSubtext = getLocalizedField(c, 'subtext') || (lang === 'en' ? 'Open Link' : 'Buka Link');
+                  const isCopied = copiedContactId === c.id;
+
+                  // Tentukan Status Tipe Kontak & Warna Persis Gambar Referensi
+                  const cType = (c.type || '').trim().toLowerCase();
+                  const titleLower = (cTitle || '').trim().toLowerCase();
+
+                  let badgeLabel = 'WhatsApp';
+                  let badgeBg = '#D0FF97';
+
+                  if (cType === 'email' || titleLower.includes('email') || titleLower.includes('gmail') || titleLower.includes('mail')) {
+                    badgeLabel = 'Email';
+                    badgeBg = '#FFF455';
+                  } else if (cType === 'social' || titleLower.includes('social') || titleLower.includes('sosial') || titleLower.includes('instagram') || titleLower.includes('linkedin') || titleLower.includes('github') || titleLower.includes('youtube') || titleLower.includes('tiktok') || titleLower.includes('twitter') || titleLower.includes('x')) {
+                    badgeLabel = lang === 'en' ? 'Social Media' : 'Sosial Media';
+                    badgeBg = '#62B6FF';
+                  } else if (cType === 'whatsapp' || titleLower.includes('whatsapp') || titleLower.includes('wa')) {
+                    badgeLabel = 'WhatsApp';
+                    badgeBg = '#D0FF97';
+                  } else {
+                    badgeLabel = c.type ? (c.type.charAt(0).toUpperCase() + c.type.slice(1)) : 'Kontak';
+                    badgeBg = '#E1E1E1';
+                  }
 
                   return (
                     <div
                       key={c.id}
-                      className="herta-card"
+                      className="herta-card contact-card"
                       style={{
-                        padding: '1.35rem',
+                        padding: '1.45rem 1.45rem 1.35rem 1.45rem',
+                        background: '#FFFFFF',
+                        border: 'none',
+                        borderRadius: '28px',
+                        boxShadow: '0 8px 30px rgba(0, 40, 100, 0.08)',
                         display: 'flex',
                         flexDirection: 'column',
-                        justifyContent: 'space-between',
-                        background: '#FFFFFF',
-                        borderRadius: '20px',
-                        border: '2.5px solid #005BAB',
-                        gap: '1rem'
+                        minWidth: 0,
+                        boxSizing: 'border-box'
                       }}
                     >
-                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.85rem' }}>
-                        <div style={{ padding: '0.65rem', borderRadius: '12px', background: '#FFFFFF', color: '#005BAB', border: '1.5px solid #005BAB', flexShrink: 0 }}>
-                          {c.type === 'email' ? <Mail size={24} /> : c.type === 'social' ? <Globe size={24} /> : <MessageSquare size={24} />}
-                        </div>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#005BAB', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.2rem' }}>
-                            {cTitle}
-                          </div>
-                          <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#005BAB', wordBreak: 'break-word' }}>
-                            {c.value}
-                          </div>
-                        </div>
+                      {/* Top Row: Pill Badge Status Tipe Kontak & Garis Biru */}
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.85rem',
+                        width: '100%'
+                      }}>
+                        <span style={{
+                          fontSize: '0.86rem',
+                          fontWeight: 800,
+                          background: badgeBg,
+                          color: '#005BAB',
+                          border: 'none',
+                          padding: '0.35rem 1.15rem',
+                          borderRadius: '999px',
+                          letterSpacing: '-0.01em',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                          whiteSpace: 'nowrap'
+                        }}>
+                          {badgeLabel}
+                        </span>
+
+                        <div style={{
+                          flex: 1,
+                          height: '1.5px',
+                          background: '#005BAB',
+                          opacity: 0.65
+                        }} />
                       </div>
 
-                      {/* Tombol yang ketika diklik mengarah ke URL Link */}
-                      {isLink ? (
-                        <a
-                          href={c.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="btn-primary"
-                          style={{
-                            width: '100%',
-                            justifyContent: 'center',
-                            padding: '0.65rem 1rem',
-                            fontSize: '0.9rem',
-                            borderRadius: '12px',
-                            textDecoration: 'none',
-                            gap: '0.5rem',
-                            boxSizing: 'border-box'
-                          }}
-                        >
-                          <span>{cSubtext}</span>
-                          <ExternalLink size={16} />
-                        </a>
-                      ) : (
+                      {/* Judul Kontak (contoh: WhatsApp Hamdani) */}
+                      <h3 style={{
+                        fontSize: '1.28rem',
+                        fontWeight: 800,
+                        color: '#005BAB',
+                        margin: '0.95rem 0 0.35rem 0',
+                        lineHeight: 1.25,
+                        letterSpacing: '-0.02em',
+                        wordBreak: 'break-word'
+                      }}>
+                        {cTitle}
+                      </h3>
+
+                      {/* Baris Nilai Kontak (Detail nomor/email) & Tombol Outline Copy */}
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: '0.65rem',
+                        marginBottom: '1.15rem',
+                        flexWrap: 'wrap'
+                      }}>
+                        <div style={{
+                          fontSize: '0.96rem',
+                          fontWeight: 700,
+                          color: '#005BAB',
+                          wordBreak: 'break-word'
+                        }}>
+                          {c.value}
+                        </div>
+
+                        {/* Tombol Copy (Salin Nilai Kontak) */}
                         <button
-                          disabled
-                          className="btn-secondary"
+                          type="button"
+                          onClick={() => handleCopyContact(c.value, c.id)}
                           style={{
-                            width: '100%',
-                            justifyContent: 'center',
-                            padding: '0.65rem 1rem',
-                            fontSize: '0.9rem',
-                            borderRadius: '12px',
-                            opacity: 0.7
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.35rem',
+                            background: isCopied ? '#005BAB' : 'transparent',
+                            color: isCopied ? '#FFFFFF' : '#005BAB',
+                            border: '1.5px solid #005BAB',
+                            borderRadius: '999px',
+                            padding: '0.28rem 0.85rem',
+                            fontSize: '0.80rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            transition: 'all 0.18s ease'
                           }}
+                          title={isCopied ? (lang === 'en' ? 'Copied!' : 'Tersalin!') : (lang === 'en' ? 'Copy' : 'Salin')}
                         >
-                          <span>{cSubtext}</span>
+                          {isCopied ? <Check size={13} strokeWidth={2.8} /> : <Copy size={13} strokeWidth={2.2} />}
+                          <span>{isCopied ? (lang === 'en' ? 'Copied' : 'Tersalin') : 'Copy'}</span>
                         </button>
-                      )}
+                      </div>
+
+                      {/* Bottom Row: Tombol "Hubungi Sekarang" (Hijau Lime) */}
+                      <button
+                        type="button"
+                        onClick={() => handleContactAction(c)}
+                        style={{
+                          width: '100%',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          background: '#D0FF97',
+                          color: '#005BAB',
+                          border: 'none',
+                          borderRadius: '999px',
+                          padding: '0.72rem 1.5rem',
+                          fontSize: '1.05rem',
+                          fontWeight: 800,
+                          letterSpacing: '-0.01em',
+                          cursor: 'pointer',
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                          marginTop: 'auto',
+                          transition: 'all 0.18s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.transform = 'translateY(-1px)';
+                          e.currentTarget.style.filter = 'brightness(0.96)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = 'translateY(0)';
+                          e.currentTarget.style.filter = 'none';
+                        }}
+                      >
+                        {lang === 'en' ? 'Contact Now' : 'Hubungi Sekarang'}
+                      </button>
                     </div>
                   );
                 })}

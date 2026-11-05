@@ -25,6 +25,11 @@ class InfoController extends Controller
     public function saveExperience(Request $request)
     {
         $data = $request->all();
+        $type = strtolower(trim($data['experience_type'] ?? 'kerja'));
+        if ($type !== 'kerja') {
+            $data['employment_type'] = null;
+        }
+
         if (!empty($data['id'])) {
             $exp = Experience::find($data['id']);
             if ($exp) {

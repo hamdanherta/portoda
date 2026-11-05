@@ -27,7 +27,9 @@ export default function ClientShowcase({ clients = [] }) {
             display: 'flex',
             alignItems: 'flex-start',
             gap: '0.75rem',
-            marginBottom: '0.65rem'
+            marginBottom: '0.65rem',
+            marginLeft: 'clamp(0.5rem, 1.2vw, 1rem)',
+            marginRight: 'clamp(0.5rem, 1.2vw, 1rem)'
           }}>
             <div style={{
               width: '44px',
@@ -49,7 +51,7 @@ export default function ClientShowcase({ clients = [] }) {
                 fontSize: '1.4rem',
                 fontWeight: 800,
                 color: '#005BAB',
-                margin: 0,
+                margin: '0 0 0.25rem 0',
                 lineHeight: 1.25
               }}>
                 {lang === 'en' ? "Hamdani's Clients" : 'Klien Hamdani'}

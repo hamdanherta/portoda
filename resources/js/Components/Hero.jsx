@@ -65,6 +65,38 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
     }
   };
 
+  // Touch gesture tracker khusus mobile persona switch agar tidak ganti saat scroll
+  const touchStartY = React.useRef(0);
+  const touchStartX = React.useRef(0);
+  const isTouchScrolling = React.useRef(false);
+
+  const handleMobileTouchStart = (e) => {
+    if (e.touches && e.touches[0]) {
+      touchStartY.current = e.touches[0].clientY;
+      touchStartX.current = e.touches[0].clientX;
+      isTouchScrolling.current = false;
+    }
+  };
+
+  const handleMobileTouchMove = (e) => {
+    if (e.touches && e.touches[0]) {
+      const deltaY = Math.abs(e.touches[0].clientY - touchStartY.current);
+      const deltaX = Math.abs(e.touches[0].clientX - touchStartX.current);
+      // Jika jari bergeser lebih dari 6px, tandai sebagai aktivitas scrolling
+      if (deltaY > 6 || deltaX > 6) {
+        isTouchScrolling.current = true;
+      }
+    }
+  };
+
+  const handleMobilePersonaClick = (key) => {
+    // Abaikan jika interaksi sentuhan adalah gerakan scrolling layar
+    if (isTouchScrolling.current) {
+      return;
+    }
+    setPersona(key);
+  };
+
   React.useEffect(() => {
     const loadInfo = async () => {
       const p = await infoService.getProfile();
@@ -332,8 +364,9 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
                       <button
                         key={p.key}
                         type="button"
-                        onClick={() => setPersona(p.key)}
-                        onTouchEnd={() => setPersona(p.key)}
+                        onClick={() => handleMobilePersonaClick(p.key)}
+                        onTouchStart={handleMobileTouchStart}
+                        onTouchMove={handleMobileTouchMove}
                         style={{
                           display: 'flex',
                           alignItems: 'center',
@@ -841,7 +874,9 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
                 display: 'flex',
                 alignItems: 'flex-start',
                 gap: '0.75rem',
-                marginBottom: '1.25rem'
+                marginBottom: '1.25rem',
+                marginLeft: 'clamp(0.5rem, 1.2vw, 1rem)',
+                marginRight: 'clamp(0.5rem, 1.2vw, 1rem)'
               }}>
                 <div style={{ flex: 1 }}>
                   <h3 style={{

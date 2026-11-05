@@ -111,7 +111,7 @@ export default function PortfolioGrid({
 
       {/* BERANDA MODE: Tombol Lihat Selengkapnya */}
       {!isFullGallery && !isExpanded && items.length > 12 && (
-        <div className="reveal-on-scroll" style={{ textAlign: 'center', marginTop: '2.5rem', transitionDelay: '0.15s' }}>
+        <div className="reveal-on-scroll" style={{ textAlign: 'center', marginTop: '2.5rem', marginBottom: '1.5rem', transitionDelay: '0.15s' }}>
           <button
             onClick={onViewMore}
             className="btn-primary"

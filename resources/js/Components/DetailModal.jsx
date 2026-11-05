@@ -482,7 +482,7 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
                   border: '2px solid #005BAB'
                 }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem' }}>
-                    <div style={{ flex: 1, minWidth: 0 }}>{descText}</div>
+                    <div style={{ flex: 1, minWidth: 0, textAlign: 'justify' }}>{descText}</div>
                     <MetadataCopyBtn text={descText} label="Deskripsi" />
                   </div>
                 </div>
@@ -678,7 +678,8 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
                         </h3>
                         <p style={{
                           fontSize: '0.9rem', lineHeight: 1.6, color: '#28588E',
-                          margin: 0, fontWeight: 500, whiteSpace: 'pre-line'
+                          margin: 0, fontWeight: 500, whiteSpace: 'pre-line',
+                          textAlign: 'justify'
                         }}>
                           {descText}
                         </p>
@@ -813,6 +814,8 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
                   position: 'relative',
                   width: '100%',
                   paddingTop: '62%',
+                  borderTopLeftRadius: '28px',
+                  borderTopRightRadius: '28px',
                   borderBottomLeftRadius: '26px',
                   borderBottomRightRadius: '26px',
                   overflow: 'hidden',
@@ -1019,7 +1022,8 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
                   </h3>
                   <p style={{
                     fontSize: '0.92rem', lineHeight: 1.6, color: '#28588E',
-                    margin: 0, fontWeight: 500, whiteSpace: 'pre-line'
+                    margin: 0, fontWeight: 500, whiteSpace: 'pre-line',
+                    textAlign: 'justify'
                   }}>
                     {descText}
                   </p>
@@ -1312,7 +1316,8 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
                     color: '#28588E',
                     margin: 0,
                     fontWeight: 500,
-                    whiteSpace: 'pre-line'
+                    whiteSpace: 'pre-line',
+                    textAlign: 'justify'
                   }}>
                     {descText || (lang === 'en' ? 'No description available for this project.' : 'Belum ada deskripsi untuk karya ini.')}
                   </p>
@@ -1649,6 +1654,8 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
                 position: 'relative',
                 width: '100%',
                 paddingTop: '62%', // Rasio ideal mobile view
+                borderTopLeftRadius: '28px',
+                borderTopRightRadius: '28px',
                 borderBottomLeftRadius: '26px',
                 borderBottomRightRadius: '26px',
                 overflow: 'hidden',
@@ -2043,7 +2050,8 @@ export default function DetailModal({ item, allItems = [], onClose, onSelectWork
                   color: '#28588E',
                   margin: 0,
                   fontWeight: 500,
-                  whiteSpace: 'pre-line'
+                  whiteSpace: 'pre-line',
+                  textAlign: 'justify'
                 }}>
                   {descText || (lang === 'en' ? 'No description available for this project.' : 'Belum ada deskripsi untuk karya ini.')}
                 </p>

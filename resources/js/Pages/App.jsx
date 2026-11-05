@@ -372,25 +372,13 @@ function AppContent({ karyaId, docId }) {
     }, 100);
   };
 
-  // Background paling belakang per persona:
+  // GPU-Accelerated Zero-Lag Persona Background Cross-Fade Layers
   // - Graphic Design (MGD): gradient #005BAB ke #0088FF
-  // - Digital Product Design (DPD): gradient #FFE0AA ke #FFF3DD
   // - Multimedia (MS): #FFFFFF (putih bersih)
-  const appBg = persona === 'mgd'
-    ? 'linear-gradient(135deg, #005BAB 0%, #0088FF 100%)'
-    : persona === 'dpd'
-    ? 'linear-gradient(135deg, #FFE0AA 0%, #FFF3DD 100%)'
-    : '#FFFFFF';
-
-  // Warna pattern per persona (Option 3: Tech Dots & Isometric Grid)
-  const patternColor = persona === 'mgd'
-    ? 'rgba(255, 255, 255, 0.22)'
-    : persona === 'dpd'
-    ? 'rgba(0, 91, 171, 0.18)'
-    : 'rgba(0, 91, 171, 0.12)';
-
-  // SVG Option 3: Tech Matrix Dots + Isometric Geometric Grid
-  const patternSvg = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><g fill="${encodeURIComponent(patternColor)}" stroke="${encodeURIComponent(patternColor)}" stroke-width="1.2"><circle cx="30" cy="30" r="2.2" stroke="none"/><circle cx="0" cy="0" r="2" stroke="none"/><circle cx="60" cy="0" r="2" stroke="none"/><circle cx="0" cy="60" r="2" stroke="none"/><circle cx="60" cy="60" r="2" stroke="none"/><path d="M30 0 L60 17.32 L60 51.96 L30 60 L0 51.96 L0 17.32 Z" fill="none" opacity="0.6"/><path d="M30 0 L30 60 M0 17.32 L60 51.96 M0 51.96 L60 17.32" fill="none" opacity="0.3"/></g></svg>`;
+  // - Digital Product Design (DPD): gradient #FFE0AA ke #FFF3DD
+  const patternSvgMGD = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><g fill="${encodeURIComponent('rgba(255, 255, 255, 0.22)')}" stroke="${encodeURIComponent('rgba(255, 255, 255, 0.22)')}" stroke-width="1.2"><circle cx="30" cy="30" r="2.2" stroke="none"/><circle cx="0" cy="0" r="2" stroke="none"/><circle cx="60" cy="0" r="2" stroke="none"/><circle cx="0" cy="60" r="2" stroke="none"/><circle cx="60" cy="60" r="2" stroke="none"/><path d="M30 0 L60 17.32 L60 51.96 L30 60 L0 51.96 L0 17.32 Z" fill="none" opacity="0.6"/><path d="M30 0 L30 60 M0 17.32 L60 51.96 M0 51.96 L60 17.32" fill="none" opacity="0.3"/></g></svg>`;
+  const patternSvgMS  = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><g fill="${encodeURIComponent('rgba(0, 91, 171, 0.12)')}" stroke="${encodeURIComponent('rgba(0, 91, 171, 0.12)')}" stroke-width="1.2"><circle cx="30" cy="30" r="2.2" stroke="none"/><circle cx="0" cy="0" r="2" stroke="none"/><circle cx="60" cy="0" r="2" stroke="none"/><circle cx="0" cy="60" r="2" stroke="none"/><circle cx="60" cy="60" r="2" stroke="none"/><path d="M30 0 L60 17.32 L60 51.96 L30 60 L0 51.96 L0 17.32 Z" fill="none" opacity="0.6"/><path d="M30 0 L30 60 M0 17.32 L60 51.96 M0 51.96 L60 17.32" fill="none" opacity="0.3"/></g></svg>`;
+  const patternSvgDPD = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><g fill="${encodeURIComponent('rgba(0, 91, 171, 0.18)')}" stroke="${encodeURIComponent('rgba(0, 91, 171, 0.18)')}" stroke-width="1.2"><circle cx="30" cy="30" r="2.2" stroke="none"/><circle cx="0" cy="0" r="2" stroke="none"/><circle cx="60" cy="0" r="2" stroke="none"/><circle cx="0" cy="60" r="2" stroke="none"/><circle cx="60" cy="60" r="2" stroke="none"/><path d="M30 0 L60 17.32 L60 51.96 L30 60 L0 51.96 L0 17.32 Z" fill="none" opacity="0.6"/><path d="M30 0 L30 60 M0 17.32 L60 51.96 M0 51.96 L60 17.32" fill="none" opacity="0.3"/></g></svg>`;
 
   return (
     <div className="app-container" style={{
@@ -399,25 +387,70 @@ function AppContent({ karyaId, docId }) {
       flexDirection: 'column',
       position: 'relative',
       overflowX: 'hidden',
-      background: appBg,
-      transition: 'background 0.4s ease'
+      backgroundColor: '#FFFFFF',
     }}>
-      {/* Option 3: Tech Dots & Isometric Grid Pattern Overlay (Hardware Composited) */}
+      {/* 1. MGD Background Layer */}
       <div
         aria-hidden="true"
         style={{
           position: 'fixed',
           inset: 0,
-          backgroundImage: `url('${patternSvg}')`,
+          background: 'linear-gradient(135deg, #005BAB 0%, #0088FF 100%)',
+          opacity: persona === 'mgd' ? 1 : 0,
+          transition: 'opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
+          pointerEvents: 'none',
+          zIndex: 0,
+          transform: 'translateZ(0)',
+          willChange: 'opacity',
+        }}
+      />
+      {/* 2. DPD Background Layer */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'linear-gradient(135deg, #FFE0AA 0%, #FFF3DD 100%)',
+          opacity: persona === 'dpd' ? 1 : 0,
+          transition: 'opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
+          pointerEvents: 'none',
+          zIndex: 0,
+          transform: 'translateZ(0)',
+          willChange: 'opacity',
+        }}
+      />
+      {/* 3. MS Background Layer (White) */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'fixed',
+          inset: 0,
+          background: '#FFFFFF',
+          opacity: persona === 'ms' ? 1 : 0,
+          transition: 'opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
+          pointerEvents: 'none',
+          zIndex: 0,
+          transform: 'translateZ(0)',
+          willChange: 'opacity',
+        }}
+      />
+
+      {/* Pattern Overlays (GPU opacity cross-fade) */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundImage: `url('${persona === 'mgd' ? patternSvgMGD : persona === 'dpd' ? patternSvgDPD : patternSvgMS}')`,
           backgroundRepeat: 'repeat',
           backgroundSize: '60px 60px',
           pointerEvents: 'none',
           zIndex: 1,
           opacity: 0.95,
           transform: 'translateZ(0)',
-          willChange: 'transform',
+          willChange: 'transform, opacity',
           contain: 'strict',
-          transition: 'opacity 0.4s ease'
+          transition: 'opacity 0.35s ease'
         }}
       />
 

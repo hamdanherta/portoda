@@ -5,20 +5,32 @@ import { usePersona } from '../context/PersonaContext';
 import { infoService } from '../services/infoService';
 import WatermarkedImage from './WatermarkedImage';
 
-function AnimatedCounter({ end, duration = 1800 }) {
-  const [count, setCount] = React.useState(0);
+function AnimatedCounter({ end, duration = 1200 }) {
   const target = parseInt(end, 10) || 0;
+  const [count, setCount] = React.useState(() => target);
+  const prevTargetRef = React.useRef(target);
+  const isFirstMount = React.useRef(true);
 
   React.useEffect(() => {
+    // If target didn't change, do nothing
+    if (!isFirstMount.current && prevTargetRef.current === target) {
+      return;
+    }
+
+    const startVal = isFirstMount.current ? 0 : prevTargetRef.current;
+    isFirstMount.current = false;
+    prevTargetRef.current = target;
+
+    // Fast animation on subsequent switches to stay 60fps smooth
+    const animDuration = Math.min(duration, 600);
     let startTimestamp = null;
     let frameId = null;
 
     const step = (timestamp) => {
       if (!startTimestamp) startTimestamp = timestamp;
-      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-      // Ease out expo for smooth decelerating animation
+      const progress = Math.min((timestamp - startTimestamp) / animDuration, 1);
       const easeOut = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
-      const currentVal = Math.floor(easeOut * target);
+      const currentVal = Math.floor(startVal + (target - startVal) * easeOut);
       setCount(currentVal);
 
       if (progress < 1) {
@@ -121,7 +133,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
         {/* Main Herta Card Hero & Welcome Container (Overlaps on top of Navbar with premium shadow & no border) */}
         <div className="herta-card hero-main-card" style={{
           width: '100%',
-          padding: 'clamp(2rem, 4vw, 3.25rem) clamp(1.5rem, 4vw, 3.5rem)',
+          padding: 'clamp(2rem, 4vw, 3.25rem) clamp(1.5rem, 4vw, 3.5rem) clamp(3.75rem, 6vw, 5.5rem)',
           background: '#FFFFFF',
           borderRadius: '44px',
           border: 'none',

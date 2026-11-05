@@ -153,15 +153,17 @@ export default function PortfolioCard({ item, onClick, compact = false }) {
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          gap: compact ? '0.25rem' : '0.55rem',
+          gap: compact ? '0.15rem' : '0.55rem',
           width: '100%',
           marginBottom: compact ? '0.35rem' : '0.7rem'
         }}>
           <span style={{
-            fontSize: compact ? '0.65rem' : '0.92rem',
+            fontSize: compact ? 'clamp(0.46rem, 1.8vw, 0.56rem)' : '0.92rem',
             fontWeight: 700,
             color: '#005BAB',
-            whiteSpace: 'nowrap'
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
+            letterSpacing: compact ? '-0.02em' : 'normal',
           }}>
             {getCategoryLabel(item.category)}
           </span>
@@ -172,14 +174,16 @@ export default function PortfolioCard({ item, onClick, compact = false }) {
             height: '1px',
             background: '#005BAB',
             opacity: 0.65,
-            minWidth: compact ? '8px' : '16px'
+            minWidth: compact ? '4px' : '16px'
           }} />
 
           <span style={{
-            fontSize: compact ? '0.65rem' : '0.92rem',
+            fontSize: compact ? 'clamp(0.46rem, 1.8vw, 0.56rem)' : '0.92rem',
             fontWeight: 700,
             color: '#005BAB',
-            whiteSpace: 'nowrap'
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
+            letterSpacing: compact ? '-0.02em' : 'normal',
           }}>
             {subcatText}
           </span>

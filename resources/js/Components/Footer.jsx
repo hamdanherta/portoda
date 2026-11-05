@@ -196,8 +196,8 @@ export default function Footer({ onCategoryClick, onOpenAdmin, isLoggedIn }) {
                       width: '8px',
                       height: '8px',
                       borderRadius: '50%',
-                      backgroundColor: '#10B981',
-                      boxShadow: '0 0 6px #10B981',
+                      backgroundColor: '#FFFFFF',
+                      boxShadow: '0 0 6px #FFFFFF',
                       display: 'inline-block'
                     }}
                   />

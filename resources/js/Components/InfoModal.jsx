@@ -58,189 +58,159 @@ function ExpMediaCarousel({ mediaList, title }) {
   if (!mediaList || mediaList.length === 0) return null;
 
   return (
-    <div style={{ marginTop: '0.85rem', marginBottom: '0.85rem', borderRadius: '14px', overflow: 'hidden', border: '1.5px solid #E5E7EB', position: 'relative' }}>
-      {/* 16:9 Landscape Aspect Ratio with Blurred Backdrop & Contain Foreground */}
-      <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%', overflow: 'hidden', background: '#111827' }}>
-        {/* Sliding Track for Smooth Carousel Slide Animation */}
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: `${mediaList.length * 100}%`,
-          height: '100%',
-          display: 'flex',
-          transform: `translateX(-${(currentIndex * 100) / mediaList.length}%)`,
-          transition: 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)',
-          willChange: 'transform'
-        }}>
-          {mediaList.map((imgSrc, idx) => (
-            <div
-              key={idx}
+    <div style={{
+      position: 'relative',
+      width: '100%',
+      paddingTop: '62%',
+      borderBottomLeftRadius: '26px',
+      borderBottomRightRadius: '26px',
+      overflow: 'hidden',
+      background: '#111827',
+      boxShadow: '0 8px 24px rgba(0, 20, 60, 0.16)',
+      zIndex: 2
+    }}>
+      {/* Sliding Track */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: `${mediaList.length * 100}%`,
+        height: '100%',
+        display: 'flex',
+        transform: `translateX(-${(currentIndex * 100) / mediaList.length}%)`,
+        transition: 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)',
+        willChange: 'transform'
+      }}>
+        {mediaList.map((imgSrc, idx) => (
+          <div
+            key={idx}
+            style={{
+              position: 'relative',
+              width: `${100 / mediaList.length}%`,
+              height: '100%',
+              flexShrink: 0,
+              overflow: 'hidden',
+              background: '#111827'
+            }}
+          >
+            {/* Layer 1: Blurred Backdrop */}
+            <img
+              src={imgSrc}
+              alt=""
+              aria-hidden="true"
               style={{
-                position: 'relative',
-                width: `${100 / mediaList.length}%`,
+                position: 'absolute',
+                top: '-15%',
+                left: '-15%',
+                width: '130%',
+                height: '130%',
+                objectFit: 'cover',
+                filter: 'blur(20px) brightness(0.65) saturate(1.3)',
+                transform: 'scale(1.08)',
+                pointerEvents: 'none',
+                zIndex: 1
+              }}
+            />
+
+            {/* Layer 2: Main Contained Image */}
+            <WatermarkedImage
+              src={imgSrc}
+              alt={`${title} - Foto ${idx + 1}`}
+              objectFit="contain"
+              objectPosition="center center"
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
                 height: '100%',
-                flexShrink: 0,
-                overflow: 'hidden',
-                background: '#111827'
+                zIndex: 2
               }}
-            >
-              {/* Layer 1: Blurred Backdrop */}
-              <img
-                src={imgSrc}
-                alt=""
-                aria-hidden="true"
-                style={{
-                  position: 'absolute',
-                  top: '-10%',
-                  left: '-10%',
-                  width: '120%',
-                  height: '120%',
-                  objectFit: 'cover',
-                  filter: 'blur(20px) brightness(0.5) saturate(1.4)',
-                  transform: 'scale(1.05)',
-                  pointerEvents: 'none',
-                  zIndex: 1
-                }}
-              />
-
-              {/* Layer 2: Main Image contain (no crop) */}
-              <WatermarkedImage
-                src={imgSrc}
-                alt={`${title} - Foto ${idx + 1}`}
-                objectFit="contain"
-                objectPosition="center center"
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                  zIndex: 2
-                }}
-              />
-
-            </div>
-          ))}
-        </div>
-
-        {/* Navigation Buttons if > 1 photo */}
-        {mediaList.length > 1 && (
-          <>
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setCurrentIndex((prev) => (prev === 0 ? mediaList.length - 1 : prev - 1));
-              }}
-              style={{
-                position: 'absolute',
-                left: '0.75rem',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                background: '#FFFFFF',
-                color: '#005BAB',
-                border: '2px solid #005BAB',
-                borderRadius: '999px',
-                width: '34px',
-                height: '34px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
-                zIndex: 10
-              }}
-              title="Foto Sebelumnya"
-            >
-              <ChevronLeft size={20} />
-            </button>
-
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setCurrentIndex((prev) => (prev === mediaList.length - 1 ? 0 : prev + 1));
-              }}
-              style={{
-                position: 'absolute',
-                right: '0.75rem',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                background: '#FFFFFF',
-                color: '#005BAB',
-                border: '2px solid #005BAB',
-                borderRadius: '999px',
-                width: '34px',
-                height: '34px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
-                zIndex: 10
-              }}
-              title="Foto Selanjutnya"
-            >
-              <ChevronRight size={20} />
-            </button>
-
-            {/* Indicator Badge */}
-            <div style={{
-              position: 'absolute',
-              bottom: '8px',
-              right: '8px',
-              background: '#005BAB',
-              color: '#FFFFFF',
-              padding: '0.2rem 0.6rem',
-              borderRadius: '999px',
-              fontSize: '0.72rem',
-              fontWeight: 800,
-              border: '1px solid #FFFFFF',
-              zIndex: 10
-            }}>
-              {currentIndex + 1} / {mediaList.length}
-            </div>
-          </>
-        )}
+            />
+          </div>
+        ))}
       </div>
 
-      {/* Thumbnail strip if > 1 photo */}
+      {/* Navigation Buttons if > 1 photo */}
       {mediaList.length > 1 && (
-        <div style={{
-          display: 'flex',
-          gap: '0.4rem',
-          padding: '0.5rem',
-          background: '#FFFFFF',
-          borderTop: '1.5px solid #005BAB',
-          overflowX: 'auto'
-        }}>
-          {mediaList.map((img, idx) => (
-            <button
-              key={idx}
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setCurrentIndex(idx);
-              }}
-              style={{
-                width: '46px',
-                height: '46px',
-                borderRadius: '6px',
-                overflow: 'hidden',
-                border: idx === currentIndex ? '2.5px solid #005BAB' : '1px solid #005BAB',
-                opacity: idx === currentIndex ? 1 : 0.6,
-                transform: idx === currentIndex ? 'scale(1.05)' : 'scale(1)',
-                transition: 'all 0.2s ease',
-                padding: 0,
-                cursor: 'pointer',
-                flexShrink: 0
-              }}
-            >
-              <img src={img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            </button>
-          ))}
-        </div>
+        <>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setCurrentIndex((prev) => (prev === 0 ? mediaList.length - 1 : prev - 1));
+            }}
+            style={{
+              position: 'absolute',
+              left: '10px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              background: 'rgba(255, 255, 255, 0.9)',
+              color: '#005BAB',
+              border: '1.5px solid rgba(0, 91, 171, 0.25)',
+              borderRadius: '999px',
+              width: '36px',
+              height: '36px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+              backdropFilter: 'blur(4px)',
+              zIndex: 10
+            }}
+            title="Foto Sebelumnya"
+          >
+            <ChevronLeft size={20} strokeWidth={2.5} />
+          </button>
+
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setCurrentIndex((prev) => (prev === mediaList.length - 1 ? 0 : prev + 1));
+            }}
+            style={{
+              position: 'absolute',
+              right: '10px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              background: 'rgba(255, 255, 255, 0.9)',
+              color: '#005BAB',
+              border: '1.5px solid rgba(0, 91, 171, 0.25)',
+              borderRadius: '999px',
+              width: '36px',
+              height: '36px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+              backdropFilter: 'blur(4px)',
+              zIndex: 10
+            }}
+            title="Foto Selanjutnya"
+          >
+            <ChevronRight size={20} strokeWidth={2.5} />
+          </button>
+
+          {/* Indicator Badge */}
+          <div style={{
+            position: 'absolute',
+            bottom: '12px',
+            right: '12px',
+            background: 'rgba(0, 0, 0, 0.65)',
+            color: '#FFFFFF',
+            padding: '0.2rem 0.6rem',
+            borderRadius: '999px',
+            fontSize: '0.72rem',
+            fontWeight: 700,
+            backdropFilter: 'blur(4px)',
+            zIndex: 10
+          }}>
+            {currentIndex + 1} / {mediaList.length}
+          </div>
+        </>
       )}
     </div>
   );
@@ -408,9 +378,10 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
 
   if (!activeType) return null;
 
+  const isModernModal = activeType === 'pengalaman' || activeType === 'sertifikat';
   const modalBg = '#FFFFFF';
   const modalColor = '#005BAB';
-  const modalBorder = '2.5px solid #005BAB';
+  const modalBorder = isModernModal ? 'none' : '2.5px solid #005BAB';
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -419,15 +390,16 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
         className="herta-card animate-fade-in modal-no-scrollbar"
         style={{
           width: '100%',
-          maxWidth: activeType === 'pengalaman' ? '980px' : '840px',
-          maxHeight: '90vh',
+          maxWidth: isModernModal ? '860px' : '840px',
+          maxHeight: 'min(92vh, 92dvh)',
           overflowY: 'auto',
-          borderRadius: 'var(--radius-lg)',
+          borderRadius: isModernModal ? '36px' : 'var(--radius-lg)',
           background: modalBg,
           border: modalBorder,
           color: modalColor,
           position: 'relative',
-          padding: '2rem',
+          padding: isModernModal ? '1.75rem 1.75rem 2rem' : '2rem',
+          boxShadow: isModernModal ? '0 25px 60px -15px rgba(0, 0, 0, 0.28)' : '0 20px 45px rgba(0, 0, 0, 0.08)',
           scrollbarWidth: 'none',
           msOverflowStyle: 'none'
         }}
@@ -435,24 +407,36 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
         {/* Close Button */}
         <button
           onClick={onClose}
+          aria-label="Tutup modal"
           style={{
             position: 'absolute',
-            top: '1rem',
-            right: '1rem',
-            zIndex: 20,
-            background: '#FFFFFF',
-            color: '#005BAB',
-            border: '2px solid #005BAB',
-            width: '40px',
-            height: '40px',
-            borderRadius: '999px',
+            top: '1.25rem',
+            right: '1.25rem',
+            zIndex: 30,
+            background: isModernModal ? '#EF4444' : '#FFFFFF',
+            color: '#FFFFFF',
+            border: 'none',
+            width: '36px',
+            height: '36px',
+            borderRadius: '50%',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            cursor: 'pointer',
+            boxShadow: isModernModal ? '0 4px 14px rgba(239, 68, 68, 0.45)' : 'none',
+            transition: 'transform 0.18s ease, background 0.18s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'scale(1.08)';
+            if (isModernModal) e.currentTarget.style.background = '#DC2626';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'scale(1)';
+            if (isModernModal) e.currentTarget.style.background = '#EF4444';
           }}
           title="Tutup (ESC)"
         >
-          <X size={20} />
+          <X size={18} strokeWidth={2.8} />
         </button>
 
         {/* Loading Spinner State */}
@@ -703,16 +687,17 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
         {/* --- PENGALAMAN KERJA --- */}
         {activeType === 'pengalaman' && (
           <div>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', paddingBottom: '0.5rem', paddingRight: '3.6rem' }}>
-              <div style={{ padding: '0.6rem', borderRadius: '14px', background: '#FFFFFF', color: '#005BAB', border: '2px solid #005BAB', flexShrink: 0 }}>
-                <Briefcase size={28} />
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>{t('exp_title')}</h2>
-                <p style={{ fontSize: '0.88rem', color: '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
-                  {lang === 'en' ? 'Professional Track Record & Creative Career' : 'Rekam Jejak Profesional & Karir Kreatif'}
-                </p>
-              </div>
+            <div style={{ marginBottom: '1.5rem', paddingRight: '3.5rem' }}>
+              <h2 style={{
+                fontSize: '1.65rem',
+                fontWeight: 800,
+                color: '#005BAB',
+                lineHeight: 1.25,
+                margin: 0,
+                letterSpacing: '-0.02em',
+              }}>
+                Pengalaman dan Organisasi
+              </h2>
             </div>
 
             {/* Timeline Experience List Dynamic (2 columns desktop, 1 column mobile) */}
@@ -734,74 +719,216 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                       key={exp.id}
                       className="herta-card experience-card"
                       style={{
-                        padding: '1.35rem',
+                        padding: 0,
                         background: '#FFFFFF',
-                        border: '2px solid #005BAB',
+                        border: 'none',
+                        borderRadius: '28px',
+                        boxShadow: '0 8px 30px rgba(0, 40, 100, 0.08)',
                         display: 'flex',
                         flexDirection: 'column',
-                        justifyContent: 'space-between',
+                        overflow: 'hidden',
                         minWidth: 0
                       }}
                     >
-                      <div>
-                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.4rem' }}>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#005BAB', margin: 0, lineHeight: 1.35, wordBreak: 'break-word' }}>
-                            {getLocalizedField(exp, 'title')}
-                          </h3>
-
-                          {/* Tipe Pengalaman & Sub-Badge */}
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap', marginTop: '0.35rem' }}>
-                            {(() => {
-                              const type = exp.experience_type || 'Kerja';
-                              let bg = '#DCFCE7', color = '#15803D', border = '#16A34A';
-                              if (type === 'Magang') { bg = '#E0F2FE'; color = '#0284C7'; border = '#0284C7'; }
-                              else if (type === 'Organisasi') { bg = '#FEF3C7'; color = '#D97706'; border = '#D97706'; }
-                              else if (type === 'Freelance') { bg = '#F3E8FF'; color = '#7E22CE'; border = '#A855F7'; }
-
-                              return (
-                                <span style={{ fontSize: '0.72rem', fontWeight: 800, background: bg, color: color, border: `1.5px solid ${border}`, padding: '0.15rem 0.55rem', borderRadius: '999px' }}>
-                                  {type}
-                                </span>
-                              );
-                            })()}
-
-                            {/* Tipe Pekerjaan Sub-Badge (Khusus Tipe Kerja) */}
-                            {(exp.experience_type === 'Kerja' || !exp.experience_type) && exp.employment_type && (
-                              <span style={{ fontSize: '0.72rem', fontWeight: 800, background: '#FFFFFF', color: '#005BAB', border: '1.5px solid #005BAB', padding: '0.15rem 0.55rem', borderRadius: '999px' }}>
-                                {exp.employment_type}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Tahun (Period) + Copy Button — Selalu Tetap di Atas Kanan */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0, marginTop: '0.1rem' }}>
-                          <span style={{ fontSize: '0.78rem', fontWeight: 800, background: '#005BAB', color: '#FFFFFF', padding: '0.2rem 0.65rem', borderRadius: '999px', whiteSpace: 'nowrap' }}>
-                            {getLocalizedField(exp, 'period')}
-                          </span>
-                          <MetadataCopyBtn text={getLocalizedField(exp, 'title')} label="Judul" />
-                        </div>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.6rem' }}>
-                        <h4 style={{ fontSize: '0.9rem', fontWeight: 500, color: '#005BAB', opacity: 0.9, margin: 0 }}>
-                          {exp.company}
-                        </h4>
-                        <MetadataCopyBtn text={exp.company} label="Lokasi" />
-                      </div>
-
-                      {/* Media Dokumentasi Pengalaman Kerja (Ditukar di atas deskripsi) */}
+                      {/* Media Gambar Carousel di Paling Atas (Full Width, No Margin, No Padding) */}
                       {expMedia.length > 0 && (
                         <ExpMediaCarousel mediaList={expMedia} title={getLocalizedField(exp, 'title')} />
                       )}
 
-                      {/* Deskripsi Pengalaman Kerja (Ditukar di bawah gambar) */}
-                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem', marginTop: expMedia.length > 0 ? '0.6rem' : '0' }}>
-                        <p style={{ fontSize: '0.88rem', color: '#005BAB', fontWeight: 400, lineHeight: 1.6, whiteSpace: 'pre-line', margin: 0, flex: 1 }}>
-                          {getLocalizedField(exp, 'description')}
-                        </p>
-                        <MetadataCopyBtn text={getLocalizedField(exp, 'description')} label="Deskripsi" />
-                      </div>
+                      {/* Body Konten Card Pengalaman */}
+                      <div style={{ padding: '1.25rem 1.25rem 1.65rem 1.25rem', display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                        
+                        {/* Baris Strip Periode / Waktu */}
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.65rem',
+                          width: '100%'
+                        }}>
+                          <span style={{
+                            fontSize: '0.86rem',
+                            fontWeight: 700,
+                            color: '#005BAB',
+                            whiteSpace: 'nowrap'
+                          }}>
+                            {getLocalizedField(exp, 'period') || 'Okt 2024 – Okt 2026'}
+                          </span>
+
+                          <div style={{
+                            flex: 1,
+                            height: '1.5px',
+                            background: '#005BAB',
+                            opacity: 0.65
+                          }} />
+                        </div>
+
+                        {/* Judul Posisi / Pekerjaan */}
+                        <h3 style={{
+                          fontSize: '1.35rem',
+                          fontWeight: 900,
+                          color: '#005BAB',
+                          margin: 0,
+                          lineHeight: 1.25,
+                          letterSpacing: '-0.02em',
+                          wordBreak: 'break-word'
+                        }}>
+                          {getLocalizedField(exp, 'title')}
+                        </h3>
+
+                        {/* Pill Badges: Tipe Pengalaman & Tipe Pekerjaan Sesuai Skema Warna Lampiran */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
+                          {/* Badge Tipe Pengalaman */}
+                          {(() => {
+                            const rawType = (exp.experience_type || 'Kerja').trim();
+                            const typeLower = rawType.toLowerCase();
+
+                            let bg = '#D0FF97'; // default Kerja
+                            if (typeLower.includes('magang') || typeLower.includes('intern')) {
+                              bg = '#FFF455';
+                            } else if (typeLower.includes('organisasi') || typeLower.includes('org')) {
+                              bg = '#62B6FF';
+                            } else if (typeLower.includes('freelance')) {
+                              bg = '#E1E1E1';
+                            } else if (typeLower.includes('kerja') || typeLower.includes('work')) {
+                              bg = '#D0FF97';
+                            }
+
+                            return (
+                              <span style={{
+                                fontSize: '0.88rem',
+                                fontWeight: 800,
+                                background: bg,
+                                color: '#005BAB',
+                                border: 'none',
+                                padding: '0.38rem 1.15rem',
+                                borderRadius: '999px',
+                                letterSpacing: '-0.01em',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+                              }}>
+                                {rawType}
+                              </span>
+                            );
+                          })()}
+
+                          {/* Badge Tipe Pekerjaan */}
+                          {exp.employment_type && (() => {
+                            const rawEmp = exp.employment_type.trim();
+                            const empLower = rawEmp.toLowerCase();
+
+                            // Localization mapping: Full Time -> Penuh Waktu jika bahasa ID
+                            let label = rawEmp;
+                            if (lang !== 'en') {
+                              if (empLower === 'full time' || empLower === 'fulltime') label = 'Penuh Waktu';
+                            }
+
+                            let bg = '#D0FF97'; // default Penuh Waktu
+                            if (empLower.includes('kontrak') || empLower.includes('contract')) {
+                              bg = '#FFF455';
+                            } else if (empLower.includes('remote')) {
+                              bg = '#62B6FF';
+                            } else if (empLower.includes('penuh waktu') || empLower.includes('full time') || empLower.includes('fulltime')) {
+                              bg = '#D0FF97';
+                            } else if (empLower.includes('part time') || empLower.includes('paruh waktu')) {
+                              bg = '#E1E1E1';
+                            }
+
+                            return (
+                              <span style={{
+                                fontSize: '0.88rem',
+                                fontWeight: 800,
+                                background: bg,
+                                color: '#005BAB',
+                                border: 'none',
+                                padding: '0.38rem 1.15rem',
+                                borderRadius: '999px',
+                                letterSpacing: '-0.01em',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+                              }}>
+                                {label}
+                              </span>
+                            );
+                          })()}
+
+                          {/* Nama Instansi / Perusahaan jika ada */}
+                          {exp.company && (
+                            <span style={{
+                              fontSize: '0.82rem',
+                              fontWeight: 700,
+                              background: '#F0F7FF',
+                              color: '#005BAB',
+                              border: '1.5px solid rgba(0, 91, 171, 0.25)',
+                              padding: '0.35rem 1rem',
+                              borderRadius: '999px',
+                              letterSpacing: '-0.01em'
+                            }}>
+                              {exp.company}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Deskripsi List Pengalaman Berurutan */}
+                        {getLocalizedField(exp, 'description') && (
+                          <div style={{ marginTop: '0.4rem' }}>
+                            {(() => {
+                              const rawDesc = getLocalizedField(exp, 'description') || '';
+                              const lines = rawDesc
+                                .split(/\r?\n/)
+                                .map(l => l.trim())
+                                .filter(Boolean);
+
+                              if (lines.length > 1) {
+                                return (
+                                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                                    {lines.map((line, idx) => {
+                                      const cleanText = line.replace(/^\d+[.)]\s*/, '');
+                                      return (
+                                        <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.45rem' }}>
+                                          <span style={{
+                                            fontSize: '0.88rem',
+                                            fontWeight: 600,
+                                            color: '#28588E',
+                                            lineHeight: 1.55,
+                                            flexShrink: 0
+                                          }}>
+                                            {idx + 1}.
+                                          </span>
+                                          <p style={{
+                                            fontSize: '0.88rem',
+                                            fontWeight: 500,
+                                            color: '#28588E',
+                                            lineHeight: 1.55,
+                                            margin: 0
+                                          }}>
+                                            {cleanText}
+                                          </p>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                );
+                              }
+
+                              return (
+                                <p style={{
+                                  fontSize: '0.88rem',
+                                  fontWeight: 500,
+                                  color: '#28588E',
+                                  lineHeight: 1.55,
+                                  whiteSpace: 'pre-line',
+                                  margin: 0
+                                }}>
+                                  {rawDesc}
+                                </p>
+                              );
+                            })()}
+                          </div>
+                        )}
                       </div>
                     </div>
                   );
@@ -917,16 +1044,17 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
         {/* --- SERTIFIKAT --- */}
         {activeType === 'sertifikat' && (
           <div>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '1.5rem', paddingBottom: '0.5rem', paddingRight: '3.6rem' }}>
-              <div style={{ padding: '0.6rem', borderRadius: '14px', background: '#FFFFFF', color: '#005BAB', border: '2px solid #005BAB', flexShrink: 0 }}>
-                <Award size={28} />
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#005BAB', lineHeight: 1.3, wordBreak: 'break-word', margin: 0 }}>Sertifikat & Penghargaan</h2>
-                <p style={{ fontSize: '0.88rem', color: '#005BAB', fontWeight: 700, marginTop: '0.25rem' }}>
-                  Daftar sertifikat keahlian, penghargaan visual, dan lisensi pelatihan resmi Hamdani.
-                </p>
-              </div>
+            <div style={{ marginBottom: '1.5rem', paddingRight: '3.5rem' }}>
+              <h2 style={{
+                fontSize: '1.65rem',
+                fontWeight: 800,
+                color: '#005BAB',
+                lineHeight: 1.25,
+                margin: 0,
+                letterSpacing: '-0.02em',
+              }}>
+                Penghargaan & Sertifikasi
+              </h2>
             </div>
 
             {/* Grid Certificate Cards */}
@@ -937,44 +1065,48 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                 description={lang === 'en' ? 'Certificates and awards will appear here.' : 'Daftar sertifikat keahlian, lisensi pelatihan, dan penghargaan visual Hamdani akan tampil di sini.'}
               />
             ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1.25rem', marginBottom: '1.5rem' }}>
-                {certificatesList.map((cert) => (
-                  <div
-                    key={cert.id}
-                    className="herta-card"
-                    onClick={() => {
-                      if (onSelectCertificate) {
-                        onSelectCertificate({ ...cert, isCertificate: true });
-                      }
-                    }}
-                    style={{
-                      padding: '1.25rem',
-                      background: '#FFFFFF',
-                      borderRadius: '20px',
-                      border: '2.5px solid #005BAB',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'space-between',
-                      cursor: 'pointer',
-                      transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-                      gap: '1rem'
-                    }}
-                  >
-                    <div>
-                      {/* Media Cover Image — 16:9 Aspect Ratio with Blurred Backdrop & Contained Image */}
-                      {(() => {
-                        const coverImg = cert.cover || (Array.isArray(cert.gallery) && cert.gallery[0]) || null;
-                        return coverImg ? (
-                          <div style={{
-                            position: 'relative',
-                            width: '100%',
-                            paddingTop: '56.25%',
-                            borderRadius: '14px',
-                            overflow: 'hidden',
-                            border: 'none',
-                            marginBottom: '0.85rem',
-                            backgroundColor: '#111827'
-                          }}>
+              <div className="experience-grid" style={{ marginBottom: '1.5rem' }}>
+                {certificatesList.map((cert) => {
+                  const coverImg = cert.cover || (Array.isArray(cert.gallery) && cert.gallery[0]) || null;
+
+                  return (
+                    <div
+                      key={cert.id}
+                      className="herta-card certificate-card"
+                      onClick={() => {
+                        if (onSelectCertificate) {
+                          onSelectCertificate({ ...cert, isCertificate: true });
+                        }
+                      }}
+                      style={{
+                        padding: 0,
+                        background: '#FFFFFF',
+                        borderRadius: '28px',
+                        border: 'none',
+                        boxShadow: '0 8px 30px rgba(0, 40, 100, 0.08)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        overflow: 'hidden',
+                        cursor: 'pointer',
+                        position: 'relative'
+                      }}
+                    >
+                      {/* 1. Container Image Full Frame (w-full, no padding di atas) */}
+                      <div
+                        style={{
+                          position: 'relative',
+                          width: '100%',
+                          paddingTop: '62%',
+                          borderBottomLeftRadius: '26px',
+                          borderBottomRightRadius: '26px',
+                          overflow: 'hidden',
+                          background: '#111827',
+                          boxShadow: '0 8px 24px rgba(0, 20, 60, 0.16)',
+                          zIndex: 2
+                        }}
+                      >
+                        {coverImg ? (
+                          <>
                             {/* Layer 1: Blurred Backdrop */}
                             <img
                               src={coverImg}
@@ -982,13 +1114,13 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                               aria-hidden="true"
                               style={{
                                 position: 'absolute',
-                                top: '-10%',
-                                left: '-10%',
-                                width: '120%',
-                                height: '120%',
+                                top: '-15%',
+                                left: '-15%',
+                                width: '130%',
+                                height: '130%',
                                 objectFit: 'cover',
-                                filter: 'blur(18px) brightness(0.6) saturate(1.4)',
-                                transform: 'scale(1.05)',
+                                filter: 'blur(20px) brightness(0.65) saturate(1.3)',
+                                transform: 'scale(1.08)',
                                 pointerEvents: 'none',
                                 userSelect: 'none',
                                 zIndex: 1
@@ -1009,57 +1141,141 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                                 zIndex: 2
                               }}
                             />
+                          </>
+                        ) : (
+                          <div style={{
+                            position: 'absolute',
+                            inset: 0,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            background: 'linear-gradient(135deg, #005BAB 0%, #003d73 100%)',
+                            color: '#FFFFFF'
+                          }}>
+                            <Award size={48} />
                           </div>
-                        ) : null;
-                      })()}
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem', flexWrap: 'wrap' }}>
-                        <span style={{ fontSize: '0.72rem', fontWeight: 800, background: '#005BAB', color: '#FFFFFF', padding: '0.15rem 0.55rem', borderRadius: '999px' }}>
-                          {cert.category || 'Sertifikasi'}
-                        </span>
-                        {cert.year && (
-                          <span style={{ fontSize: '0.72rem', fontWeight: 800, background: '#FFFFFF', color: '#005BAB', padding: '0.15rem 0.55rem', borderRadius: '999px', border: '1px solid #005BAB' }}>
-                            {cert.year}
-                          </span>
                         )}
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.4rem' }}>
-                        <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#005BAB', margin: 0, lineHeight: 1.35, flex: 1 }}>
-                          {cert.title}
-                        </h3>
-                        <MetadataCopyBtn text={cert.title} label="Judul" />
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                        <div style={{ fontSize: '0.82rem', fontWeight: 400, color: '#005BAB', opacity: 0.85, flex: 1 }}>
-                          {cert.institution}
-                        </div>
-                        <MetadataCopyBtn text={cert.institution} label="Instansi" />
-                      </div>
-                      {cert.description && (
-                        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.4rem' }}>
-                          <p style={{ fontSize: '0.82rem', color: '#005BAB', fontWeight: 400, opacity: 0.8, lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', margin: 0, flex: 1 }}>
-                            {cert.description}
-                          </p>
-                          <MetadataCopyBtn text={cert.description} label="Deskripsi" />
-                        </div>
-                      )}
-                    </div>
 
-                    <button
-                      className="btn-primary"
-                      style={{
-                        width: '100%',
-                        justifyContent: 'center',
-                        padding: '0.6rem 1rem',
-                        fontSize: '0.85rem',
-                        borderRadius: '12px',
-                        gap: '0.4rem'
-                      }}
-                    >
-                      <span>Lihat Detail Sertifikat</span>
-                      <ExternalLink size={15} />
-                    </button>
-                  </div>
-                ))}
+                      {/* 2. Body Konten Card Sertifikat */}
+                      <div style={{ padding: '1.25rem 1.25rem 1.5rem 1.25rem', display: 'flex', flexDirection: 'column', gap: '0.75rem', flex: 1, justifyContent: 'space-between' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                          {/* Strip: Kategori ─────── Tahun */}
+                          <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.65rem',
+                            width: '100%'
+                          }}>
+                            <span style={{
+                              fontSize: '0.86rem',
+                              fontWeight: 700,
+                              color: '#005BAB',
+                              whiteSpace: 'nowrap'
+                            }}>
+                              {cert.category || 'Penghargaan'}
+                            </span>
+
+                            <div style={{
+                              flex: 1,
+                              height: '1.5px',
+                              background: '#005BAB',
+                              opacity: 0.65
+                            }} />
+
+                            {cert.year && (
+                              <span style={{
+                                fontSize: '0.86rem',
+                                fontWeight: 700,
+                                color: '#005BAB',
+                                whiteSpace: 'nowrap'
+                              }}>
+                                {cert.year}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Judul Sertifikat / Penghargaan */}
+                          <h3 style={{
+                            fontSize: '1.28rem',
+                            fontWeight: 900,
+                            color: '#005BAB',
+                            margin: 0,
+                            lineHeight: 1.25,
+                            letterSpacing: '-0.02em',
+                            wordBreak: 'break-word'
+                          }}>
+                            {cert.title}
+                          </h3>
+
+                          {/* Pill Badge Institusi Hijau Muda */}
+                          {cert.institution && (
+                            <div>
+                              <span style={{
+                                display: 'inline-block',
+                                fontSize: '0.84rem',
+                                fontWeight: 800,
+                                background: '#D0FF97',
+                                color: '#005BAB',
+                                border: 'none',
+                                padding: '0.35rem 1.15rem',
+                                borderRadius: '999px',
+                                letterSpacing: '-0.01em',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+                              }}>
+                                {cert.institution}
+                              </span>
+                            </div>
+                          )}
+
+                          {/* Deskripsi Singkat */}
+                          {cert.description && (
+                            <p style={{
+                              fontSize: '0.88rem',
+                              fontWeight: 500,
+                              color: '#28588E',
+                              lineHeight: 1.55,
+                              display: '-webkit-box',
+                              WebkitLineClamp: 3,
+                              WebkitBoxOrient: 'vertical',
+                              overflow: 'hidden',
+                              margin: 0
+                            }}>
+                              {cert.description}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Tombol Lihat Detail Biru */}
+                        <div style={{ marginTop: '0.5rem' }}>
+                          <button
+                            type="button"
+                            style={{
+                              width: '100%',
+                              padding: '0.72rem 1rem',
+                              borderRadius: '999px',
+                              background: '#005BAB',
+                              color: '#FFFFFF',
+                              border: 'none',
+                              fontSize: '0.92rem',
+                              fontWeight: 800,
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              boxShadow: '0 4px 14px rgba(0, 91, 171, 0.25)',
+                              transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; }}
+                          >
+                            {lang === 'en' ? 'View Details' : 'Lihat Detail'}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>

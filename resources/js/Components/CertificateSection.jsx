@@ -87,177 +87,221 @@ export default function CertificateSection({ onSelectCertificate }) {
           gridTemplateColumns: 'repeat(auto-fill, minmax(310px, 1fr))',
           gap: '1.5rem'
         }}>
-          {certificates.map((cert) => (
-            <div
-              key={cert.id}
-              className="herta-card"
-              onClick={() => onSelectCertificate && onSelectCertificate({ ...cert, isCertificate: true })}
-              style={{
-                padding: '1.35rem',
-                background: '#FFFFFF',
-                borderRadius: '32px',
-                border: '2.5px solid #005BAB',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                cursor: 'pointer',
-                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-                position: 'relative'
-              }}
-            >
-              <div>
-                {/* Cover Image Preview — 16:9 Aspect Ratio with Blurred Backdrop & Contained Image */}
-                {cert.cover && (
-                  <div style={{
+          {certificates.map((cert) => {
+            const rawCat = (cert.category || 'Penghargaan').trim();
+            const catLower = rawCat.toLowerCase();
+            let catBg = '#D0FF97';
+            if (catLower.includes('sertifikasi') || catLower.includes('certif')) {
+              catBg = '#FFF455';
+            } else if (catLower.includes('pelatihan') || catLower.includes('training') || catLower.includes('course')) {
+              catBg = '#62B6FF';
+            } else if (catLower.includes('penghargaan') || catLower.includes('award')) {
+              catBg = '#D0FF97';
+            }
+
+            return (
+              <div
+                key={cert.id}
+                className="herta-card certificate-card"
+                onClick={() => onSelectCertificate && onSelectCertificate({ ...cert, isCertificate: true })}
+                style={{
+                  padding: 0,
+                  background: '#FFFFFF',
+                  borderRadius: '28px',
+                  border: 'none',
+                  boxShadow: '0 8px 30px rgba(0, 40, 100, 0.08)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  overflow: 'hidden',
+                  cursor: 'pointer',
+                  position: 'relative'
+                }}
+              >
+                {/* 1. Container Image Full Frame (w-full, no padding di atas) */}
+                <div
+                  style={{
                     position: 'relative',
                     width: '100%',
-                    paddingTop: '56.25%',
-                    borderRadius: '16px',
+                    paddingTop: '62%',
+                    borderBottomLeftRadius: '26px',
+                    borderBottomRightRadius: '26px',
                     overflow: 'hidden',
-                    border: 'none',
-                    marginBottom: '1rem',
-                    backgroundColor: '#111827'
-                  }}>
-                    {/* Layer 1: Blurred Backdrop */}
-                    <img
-                      src={cert.cover}
-                      alt=""
-                      aria-hidden="true"
-                      style={{
-                        position: 'absolute',
-                        top: '-10%',
-                        left: '-10%',
-                        width: '120%',
-                        height: '120%',
-                        objectFit: 'cover',
-                        filter: 'blur(18px) brightness(0.6) saturate(1.4)',
-                        transform: 'scale(1.05)',
-                        pointerEvents: 'none',
-                        userSelect: 'none',
-                        zIndex: 1
-                      }}
-                    />
-                    {/* Layer 2: Main Contained Image */}
-                    <WatermarkedImage
-                      src={cert.cover}
-                      alt={cert.title}
-                      objectFit="contain"
-                      objectPosition="center center"
-                      style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        zIndex: 2
-                      }}
-                    />
-                  </div>
-                )}
-
-                {/* Badges Row */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.6rem', flexWrap: 'wrap' }}>
-                  <span style={{
-                    fontSize: '0.74rem',
-                    fontWeight: 800,
-                    background: '#005BAB',
-                    color: '#FFFFFF',
-                    padding: '0.2rem 0.65rem',
-                    borderRadius: '999px'
-                  }}>
-                    {cert.category || 'Sertifikasi'}
-                  </span>
-                  {cert.year && (
-                    <span style={{
-                      fontSize: '0.74rem',
-                      fontWeight: 800,
-                      background: '#FFF3DD',
-                      color: '#005BAB',
-                      padding: '0.2rem 0.65rem',
-                      borderRadius: '999px',
-                      border: '1.5px solid #005BAB',
-                      display: 'inline-flex',
+                    background: '#111827',
+                    boxShadow: '0 8px 24px rgba(0, 20, 60, 0.16)',
+                    zIndex: 2
+                  }}
+                >
+                  {cert.cover ? (
+                    <>
+                      {/* Layer 1: Blurred Backdrop */}
+                      <img
+                        src={cert.cover}
+                        alt=""
+                        aria-hidden="true"
+                        style={{
+                          position: 'absolute',
+                          top: '-15%',
+                          left: '-15%',
+                          width: '130%',
+                          height: '130%',
+                          objectFit: 'cover',
+                          filter: 'blur(20px) brightness(0.65) saturate(1.3)',
+                          transform: 'scale(1.08)',
+                          pointerEvents: 'none',
+                          userSelect: 'none',
+                          zIndex: 1
+                        }}
+                      />
+                      {/* Layer 2: Main Contained Image */}
+                      <WatermarkedImage
+                        src={cert.cover}
+                        alt={cert.title}
+                        objectFit="contain"
+                        objectPosition="center center"
+                        style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: '100%',
+                          zIndex: 2
+                        }}
+                      />
+                    </>
+                  ) : (
+                    <div style={{
+                      position: 'absolute',
+                      inset: 0,
+                      display: 'flex',
                       alignItems: 'center',
-                      gap: '0.25rem'
+                      justifyContent: 'center',
+                      background: 'linear-gradient(135deg, #005BAB 0%, #003d73 100%)',
+                      color: '#FFFFFF'
                     }}>
-                      <Calendar size={12} />
-                      {cert.year}
-                    </span>
+                      <Award size={48} />
+                    </div>
                   )}
                 </div>
 
-                {/* Title */}
-                <h3 style={{
-                  fontSize: '1.15rem',
-                  fontWeight: 800,
-                  color: '#005BAB',
-                  lineHeight: 1.35,
-                  marginBottom: '0.4rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  flexWrap: 'wrap'
-                }}>
-                  <span>{cert.title}</span>
-                  <MetadataCopyBtn text={cert.title} label="Judul" />
-                </h3>
-
-                {/* Institution */}
-                <div style={{
-                  fontSize: '0.85rem',
-                  fontWeight: 700,
-                  color: '#005BAB',
-                  opacity: 0.85,
-                  marginBottom: '0.65rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                  flexWrap: 'wrap'
-                }}>
-                  <Building2 size={14} />
-                  <span>{cert.institution}</span>
-                  <MetadataCopyBtn text={cert.institution} label="Instansi" />
-                </div>
-
-                {/* Description snippet */}
-                {cert.description && (
-                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.4rem', marginBottom: '1rem' }}>
-                    <p style={{
-                      fontSize: '0.84rem',
-                      color: '#005BAB',
-                      opacity: 0.8,
-                      lineHeight: 1.5,
-                      display: '-webkit-box',
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: 'vertical',
-                      overflow: 'hidden',
-                      margin: 0,
-                      flex: 1
+                {/* 2. Body Konten Card Sertifikat */}
+                <div style={{ padding: '1.25rem 1.25rem 1.5rem 1.25rem', display: 'flex', flexDirection: 'column', gap: '0.75rem', flex: 1, justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    {/* Strip: Kategori ─────── Tahun */}
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.65rem',
+                      width: '100%'
                     }}>
-                      {cert.description}
-                    </p>
-                    <MetadataCopyBtn text={cert.description} label="Deskripsi" />
-                  </div>
-                )}
-              </div>
+                      <span style={{
+                        fontSize: '0.86rem',
+                        fontWeight: 700,
+                        color: '#005BAB',
+                        whiteSpace: 'nowrap'
+                      }}>
+                        {cert.category || 'Penghargaan'}
+                      </span>
 
-              {/* Action Button */}
-              <button
-                className="btn-primary"
-                style={{
-                  width: '100%',
-                  justifyContent: 'center',
-                  padding: '0.65rem 1rem',
-                  fontSize: '0.88rem',
-                  borderRadius: '12px',
-                  gap: '0.5rem',
-                  marginTop: '0.5rem'
-                }}
-              >
-                <span>Lihat Detail Sertifikat</span>
-                <ExternalLink size={16} />
-              </button>
-            </div>
-          ))}
+                      <div style={{
+                        flex: 1,
+                        height: '1.5px',
+                        background: '#005BAB',
+                        opacity: 0.65
+                      }} />
+
+                      {cert.year && (
+                        <span style={{
+                          fontSize: '0.86rem',
+                          fontWeight: 700,
+                          color: '#005BAB',
+                          whiteSpace: 'nowrap'
+                        }}>
+                          {cert.year}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Judul Sertifikat / Penghargaan */}
+                    <h3 style={{
+                      fontSize: '1.28rem',
+                      fontWeight: 900,
+                      color: '#005BAB',
+                      margin: 0,
+                      lineHeight: 1.25,
+                      letterSpacing: '-0.02em',
+                      wordBreak: 'break-word'
+                    }}>
+                      {cert.title}
+                    </h3>
+
+                    {/* Pill Badge Institusi Hijau */}
+                    {cert.institution && (
+                      <div>
+                        <span style={{
+                          display: 'inline-block',
+                          fontSize: '0.84rem',
+                          fontWeight: 800,
+                          background: '#D0FF97',
+                          color: '#005BAB',
+                          border: 'none',
+                          padding: '0.35rem 1.15rem',
+                          borderRadius: '999px',
+                          letterSpacing: '-0.01em',
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+                        }}>
+                          {cert.institution}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Deskripsi Singkat */}
+                    {cert.description && (
+                      <p style={{
+                        fontSize: '0.88rem',
+                        fontWeight: 500,
+                        color: '#28588E',
+                        lineHeight: 1.55,
+                        display: '-webkit-box',
+                        WebkitLineClamp: 3,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                        margin: 0
+                      }}>
+                        {cert.description}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Tombol Lihat Detail Biru */}
+                  <div style={{ marginTop: '0.5rem' }}>
+                    <button
+                      type="button"
+                      style={{
+                        width: '100%',
+                        padding: '0.72rem 1rem',
+                        borderRadius: '999px',
+                        background: '#005BAB',
+                        color: '#FFFFFF',
+                        border: 'none',
+                        fontSize: '0.92rem',
+                        fontWeight: 800,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 4px 14px rgba(0, 91, 171, 0.25)',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; }}
+                    >
+                      {lang === 'en' ? 'View Details' : 'Lihat Detail'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

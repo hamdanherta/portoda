@@ -178,110 +178,162 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
                 : 'Hamdani Memiliki Tiga Jenis Portofolio. Silakan Pilih Kategori Di Bawah Ini Untuk Melihat Masing-Masing Karya'}
             </p>
 
-            {/* Persona Switch Track */}
-            <div
-              className="persona-switch-track"
-              style={{
-                position: 'relative',
-                display: 'flex',
-                alignItems: 'center',
-                background: '#FFFFFF',
-                borderRadius: '999px',
-                padding: '6px',
-                border: '2.5px solid #005BAB',
-                boxShadow: '0 8px 24px rgba(0, 91, 171, 0.12)',
-                width: '100%',
-                maxWidth: '780px',
-                transition: 'all 0.3s ease'
-              }}
-            >
-              {/* Option 1: Graphic Design (MGD) */}
-              <button
-                type="button"
-                onClick={() => setPersona('mgd')}
-                style={{
-                  flex: 1,
-                  position: 'relative',
-                  zIndex: 2,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.45rem',
-                  padding: '0.65rem 0.85rem',
-                  borderRadius: '999px',
-                  fontSize: '0.88rem',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  transition: 'all 0.25s ease',
-                  textAlign: 'center',
-                  background: persona === 'mgd' ? '#005BAB' : 'transparent',
-                  color: persona === 'mgd' ? '#FFFFFF' : '#005BAB',
-                  border: persona === 'mgd' ? '2.5px solid #005BAB' : '2.5px solid transparent',
-                  boxShadow: persona === 'mgd' ? '0 4px 14px rgba(0, 91, 171, 0.25)' : 'none'
-                }}
-              >
-                <Paintbrush size={16} style={{ flexShrink: 0 }} />
-                <span>Graphic Design</span>
-              </button>
+            {/* Persona Selector — 100% Persis Gambar Referensi dengan Container Shadow & Smooth Sliding Animation */}
+            {/* ===== DESKTOP VIEW ===== */}
+            {(() => {
+              const personas = [
+                { key: 'mgd', label: 'Graphic Design' },
+                { key: 'ms',  label: 'Multimedia' },
+                { key: 'dpd', label: 'Digital Product Design' },
+              ];
+              const activeIndex = Math.max(0, personas.findIndex(p => p.key === persona));
 
-              {/* Option 2: Multimedia (MS) */}
-              <button
-                type="button"
-                onClick={() => setPersona('ms')}
-                style={{
-                  flex: 1,
-                  position: 'relative',
-                  zIndex: 2,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.45rem',
-                  padding: '0.65rem 0.85rem',
-                  borderRadius: '999px',
-                  fontSize: '0.88rem',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  transition: 'all 0.25s ease',
-                  textAlign: 'center',
-                  background: persona === 'ms' ? '#005BAB' : 'transparent',
-                  color: persona === 'ms' ? '#FFFFFF' : '#005BAB',
-                  border: persona === 'ms' ? '2.5px solid #005BAB' : '2.5px solid transparent',
-                  boxShadow: persona === 'ms' ? '0 4px 14px rgba(0, 91, 171, 0.25)' : 'none'
-                }}
-              >
-                <Video size={16} style={{ flexShrink: 0 }} />
-                <span>Multimedia</span>
-              </button>
+              return (
+                <div
+                  className="persona-switch-desktop"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'stretch',
+                    background: '#FFFFFF',
+                    borderRadius: '999px',
+                    padding: '0',
+                    width: '100%',
+                    maxWidth: '920px',
+                    height: '68px',
+                    boxSizing: 'border-box',
+                    position: 'relative',
+                    boxShadow: '0 8px 30px rgba(0, 91, 171, 0.10), 0 2px 10px rgba(0, 0, 0, 0.04)',
+                  }}
+                >
+                  {/* Sliding Active Pill Background with Smooth Transition & Shadows */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      bottom: 0,
+                      left: `${(activeIndex * 100) / 3}%`,
+                      width: '33.333333%',
+                      background: '#FFFFFF',
+                      borderRadius: '999px',
+                      boxShadow: '6px 0 16px -2px rgba(0, 0, 0, 0.12), -6px 0 16px -2px rgba(0, 0, 0, 0.12)',
+                      transition: 'all 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
+                      pointerEvents: 'none',
+                      zIndex: 2,
+                    }}
+                  />
 
-              {/* Option 3: Digital Product Design (DPD) */}
-              <button
-                type="button"
-                onClick={() => setPersona('dpd')}
-                style={{
-                  flex: 1,
-                  position: 'relative',
-                  zIndex: 2,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.45rem',
-                  padding: '0.65rem 0.85rem',
-                  borderRadius: '999px',
-                  fontSize: '0.88rem',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  transition: 'all 0.25s ease',
-                  textAlign: 'center',
-                  background: persona === 'dpd' ? '#005BAB' : 'transparent',
-                  color: persona === 'dpd' ? '#FFFFFF' : '#005BAB',
-                  border: persona === 'dpd' ? '2.5px solid #005BAB' : '2.5px solid transparent',
-                  boxShadow: persona === 'dpd' ? '0 4px 14px rgba(0, 91, 171, 0.25)' : 'none'
-                }}
-              >
-                <Monitor size={16} style={{ flexShrink: 0 }} />
-                <span>Digital Product Design</span>
-              </button>
-            </div>
+                  {personas.map((p) => {
+                    const isActive = persona === p.key;
+                    return (
+                      <button
+                        key={p.key}
+                        type="button"
+                        onClick={() => setPersona(p.key)}
+                        style={{
+                          flex: 1,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          height: '100%',
+                          borderRadius: '999px',
+                          fontSize: '1.05rem',
+                          fontWeight: isActive ? 700 : 600,
+                          cursor: 'pointer',
+                          transition: 'color 0.25s ease',
+                          textAlign: 'center',
+                          background: 'transparent',
+                          color: isActive ? '#005BAB' : '#C5C5C5',
+                          border: 'none',
+                          position: 'relative',
+                          zIndex: 3,
+                          outline: 'none',
+                        }}
+                      >
+                        {p.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              );
+            })()}
+
+            {/* ===== MOBILE VIEW ===== */}
+            {(() => {
+              const personas = [
+                { key: 'mgd', label: 'Graphic Design' },
+                { key: 'ms',  label: 'Multimedia' },
+                { key: 'dpd', label: 'Digital Product Design' },
+              ];
+              const activeIndex = Math.max(0, personas.findIndex(p => p.key === persona));
+
+              return (
+                <div
+                  className="persona-switch-mobile"
+                  style={{
+                    background: '#FFFFFF',
+                    borderRadius: '34px',
+                    width: '100%',
+                    maxWidth: '310px',
+                    boxSizing: 'border-box',
+                    flexDirection: 'column',
+                    alignItems: 'stretch',
+                    position: 'relative',
+                    boxShadow: '0 10px 30px rgba(0, 91, 171, 0.12), 0 3px 12px rgba(0, 0, 0, 0.05)',
+                  }}
+                >
+                  {/* Sliding Active Card Background with Smooth Transition & Bottom Shadow */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: `${activeIndex * 62}px`,
+                      left: 0,
+                      right: 0,
+                      height: '66px',
+                      background: '#FFFFFF',
+                      borderRadius: '34px',
+                      boxShadow: '0 8px 18px -2px rgba(0, 0, 0, 0.12)',
+                      transition: 'top 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
+                      pointerEvents: 'none',
+                      zIndex: 2,
+                    }}
+                  />
+
+                  {personas.map((p) => {
+                    const isActive = persona === p.key;
+                    return (
+                      <button
+                        key={p.key}
+                        type="button"
+                        onClick={() => setPersona(p.key)}
+                        onTouchEnd={() => setPersona(p.key)}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          width: '100%',
+                          height: '62px',
+                          textAlign: 'center',
+                          fontSize: isActive ? '1.05rem' : '0.98rem',
+                          fontWeight: isActive ? 700 : 600,
+                          color: isActive ? '#005BAB' : '#C5C5C5',
+                          background: 'transparent',
+                          border: 'none',
+                          cursor: 'pointer',
+                          transition: 'color 0.25s ease',
+                          borderRadius: '34px',
+                          position: 'relative',
+                          zIndex: 3,
+                          outline: 'none',
+                          WebkitTapHighlightColor: 'transparent',
+                        }}
+                      >
+                        {p.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              );
+            })()}
           </div>
 
           {/* TOP WELCOME SECTION: Foto Muka & Bio Info */}
@@ -411,7 +463,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
                       fontSize: '0.92rem',
                       fontWeight: 800,
                       borderRadius: '999px',
-                      background: '#16A34A',
+                      background: '#D0FF97',
                       color: '#FFFFFF',
                       display: 'inline-flex',
                       alignItems: 'center',

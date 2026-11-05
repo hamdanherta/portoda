@@ -1,8 +1,2 @@
-Write-Host "Running pnpm build..." -ForegroundColor Cyan
-pnpm build
-if ($LASTEXITCODE -eq 0) {
-    Write-Host "`nStarting Laravel server..." -ForegroundColor Green
-    php artisan serve
-} else {
-    Write-Host "`n[ERROR] pnpm build failed! Aborting php artisan serve." -ForegroundColor Red
-}
+Write-Host "Starting Vite Dev Server and Laravel server concurrently..." -ForegroundColor Cyan
+npx concurrently --kill-others -n "VITE,LARAVEL" -c "cyan,green" "pnpm dev" "php artisan serve"

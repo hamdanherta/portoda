@@ -152,7 +152,7 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            gap: '0.65rem',
+            gap: '1.5rem', 
             textAlign: 'center',
             width: '100%'
           }}>
@@ -176,18 +176,33 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
             </h2>
 
             {/* Explanation Text */}
-            <p style={{
-              fontSize: 'clamp(0.78rem, 1.5vw, 1.00rem)',
+            <p className="hero-subtitle-text" style={{
+              fontSize: 'clamp(0.80rem, 1.25vw, 0.98rem)',
               fontWeight: 600,
               color: '#005BAB',
-              margin: 0,
-              lineHeight: 1.45,
-              maxWidth: '850px',
-              opacity: 0.95
+              margin: '0 auto',
+              lineHeight: 1.55,
+              maxWidth: '920px',
+              opacity: 0.95,
+              textAlign: 'center',
             }}>
-              {lang === 'en'
-                ? 'Hamdani has three types of portfolios. Please select a category below to view the respective works.'
-                : 'Hamdani Memiliki Tiga Jenis Portofolio. Silakan Pilih Kategori Di Bawah Ini Untuk Melihat Masing-Masing Karya'}
+              {lang === 'en' ? (
+                <>
+                  <span className="hero-sub-part">Hamdani has three types of&nbsp;portfolios.</span>{' '}
+                  <span className="hero-sub-part">
+                    <span className="hero-sub-chunk">Please select a category&nbsp;below</span>{' '}
+                    <span className="hero-sub-chunk">to view each type&nbsp;of&nbsp;work.</span>
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="hero-sub-part">Hamdani Memiliki Tiga&nbsp;Jenis&nbsp;Portofolio.</span>{' '}
+                  <span className="hero-sub-part">
+                    <span className="hero-sub-chunk">Silakan Pilih Kategori Di&nbsp;Bawah&nbsp;Ini</span>{' '}
+                    <span className="hero-sub-chunk">Untuk Melihat Masing-Masing&nbsp;Jenis&nbsp;Karya</span>
+                  </span>
+                </>
+              )}
             </p>
 
             {/* Persona Selector — 100% Persis Gambar Referensi dengan Container Shadow & Smooth Sliding Animation */}

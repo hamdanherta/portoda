@@ -574,11 +574,47 @@ img, video, iframe, canvas {
   }
   /* Khusus Container Utama Hero: Padding atas dan bawah lapang agar tombol Lihat Selengkapnya tidak mepet */
   .hero-main-card {
-    padding: 2.5rem 1.15rem 5rem !important;
+    padding: 2.5rem 1rem 5rem !important;
   }
   .btn-primary, .btn-secondary, .btn-white, .btn-danger {
     padding: 0.5rem 1rem !important;
     font-size: 0.85rem !important;
+  }
+}
+
+/* Hero Subtitle responsive balanced typography */
+.hero-subtitle-text {
+  max-width: 920px;
+  margin: 0 auto;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.hero-sub-part {
+  display: inline;
+}
+
+.hero-sub-chunk {
+  display: inline;
+}
+
+@media (max-width: 991px) {
+  .hero-sub-part {
+    display: inline-block;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-subtitle-text {
+    font-size: clamp(0.76rem, 3.1vw, 0.88rem) !important;
+    line-height: 1.45 !important;
+  }
+  .hero-sub-part {
+    display: block !important;
+    margin-bottom: 0.18rem;
+  }
+  .hero-sub-chunk {
+    display: block !important;
   }
 }
 

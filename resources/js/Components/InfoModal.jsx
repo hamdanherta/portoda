@@ -295,6 +295,38 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
   }, [activeType]);
 
   const [copiedDocId, setCopiedDocId] = useState(null);
+  const [copiedCertId, setCopiedCertId] = useState(null);
+
+  const handleShareCertificate = (cert) => {
+    if (!cert || !cert.id) return;
+    const shareUrl = `${window.location.origin}/?cert=${cert.id}`;
+
+    const copyFallback = (text) => {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        setCopiedCertId(cert.id);
+        setTimeout(() => setCopiedCertId(null), 3000);
+      } catch (err) {
+        console.error('Fallback copy failed', err);
+      }
+      document.body.removeChild(textArea);
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        setCopiedCertId(cert.id);
+        setTimeout(() => setCopiedCertId(null), 3000);
+      }).catch(() => {
+        copyFallback(shareUrl);
+      });
+    } else {
+      copyFallback(shareUrl);
+    }
+  };
 
   const handleShareDocument = (doc) => {
     if (!doc || !doc.id) return;
@@ -1174,17 +1206,22 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                             );
                           })()}
 
-                          {/* Nama Instansi / Perusahaan jika ada */}
+                          {/* Nama Instansi / Perusahaan jika ada — Persis Desain Lampiran 1 */}
                           {exp.company && (
                             <span style={{
-                              fontSize: '0.82rem',
-                              fontWeight: 700,
-                              background: '#F0F7FF',
-                              color: '#005BAB',
-                              border: '1.5px solid rgba(0, 91, 171, 0.25)',
-                              padding: '0.35rem 1rem',
+                              fontSize: '0.88rem',
+                              fontWeight: 800,
+                              background: '#005BAB',
+                              color: '#FFFFFF',
+                              border: 'none',
+                              padding: '0.38rem 1.25rem',
                               borderRadius: '999px',
-                              letterSpacing: '-0.01em'
+                              letterSpacing: '-0.01em',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              boxShadow: '0 2px 8px rgba(0, 91, 171, 0.22)',
+                              whiteSpace: 'nowrap'
                             }}>
                               {exp.company}
                             </span>
@@ -1667,30 +1704,83 @@ export default function InfoModal({ activeType, onClose, onSelectCertificate }) 
                           )}
                         </div>
 
-                        {/* Tombol Lihat Detail Biru */}
-                        <div style={{ marginTop: '0.5rem' }}>
+                        {/* Tombol Aksi: Lihat Detail & Bagikan — Persis Desain Lampiran 2 */}
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.65rem',
+                          marginTop: '0.65rem'
+                        }}>
+                          {/* Tombol Lihat Detail Biru */}
                           <button
                             type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (onSelectCertificate) {
+                                onSelectCertificate({ ...cert, isCertificate: true });
+                              }
+                            }}
                             style={{
-                              width: '100%',
-                              padding: '0.72rem 1rem',
+                              flex: 1,
+                              padding: '0.72rem 1.25rem',
                               borderRadius: '999px',
                               background: '#005BAB',
                               color: '#FFFFFF',
                               border: 'none',
-                              fontSize: '0.92rem',
+                              fontSize: '0.95rem',
                               fontWeight: 800,
                               cursor: 'pointer',
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
                               boxShadow: '0 4px 14px rgba(0, 91, 171, 0.25)',
-                              transition: 'all 0.2s ease'
+                              transition: 'all 0.18s ease'
                             }}
-                            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; }}
-                            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.transform = 'translateY(-1px)';
+                              e.currentTarget.style.filter = 'brightness(1.06)';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.transform = 'translateY(0)';
+                              e.currentTarget.style.filter = 'none';
+                            }}
                           >
                             {lang === 'en' ? 'View Details' : 'Lihat Detail'}
+                          </button>
+
+                          {/* Tombol Bagikan dengan Icon Send Biru */}
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleShareCertificate(cert);
+                            }}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              background: '#005BAB',
+                              color: '#FFFFFF',
+                              border: 'none',
+                              borderRadius: '999px',
+                              width: '46px',
+                              height: '46px',
+                              minWidth: '46px',
+                              cursor: 'pointer',
+                              boxShadow: '0 4px 14px rgba(0, 91, 171, 0.25)',
+                              transition: 'all 0.18s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.transform = 'translateY(-1px)';
+                              e.currentTarget.style.filter = 'brightness(1.06)';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.transform = 'translateY(0)';
+                              e.currentTarget.style.filter = 'none';
+                            }}
+                            title={copiedCertId === cert.id ? (lang === 'en' ? 'Link Copied!' : 'Tautan Tersalin!') : (lang === 'en' ? 'Share Certificate' : 'Bagikan Sertifikat')}
+                          >
+                            {copiedCertId === cert.id ? <Check size={18} strokeWidth={2.8} /> : <Send size={18} strokeWidth={2.4} />}
                           </button>
                         </div>
                       </div>

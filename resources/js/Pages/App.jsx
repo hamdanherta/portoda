@@ -150,13 +150,17 @@ function AppContent({ karyaId, docId }) {
     }
   };
 
-  // Auto-open Document Modal if ?doc=... or ?document=... is accessed
+  // Auto-open Document / Certificate Modal if ?doc=... or ?cert=... is accessed
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
       const targetDocId = docId || urlParams.get('doc') || urlParams.get('document');
       if (targetDocId) {
         setActiveNavModal('dokumen');
+      }
+      const targetCertId = urlParams.get('cert') || urlParams.get('certificate');
+      if (targetCertId) {
+        setActiveNavModal('sertifikat');
       }
     }
   }, [docId]);

@@ -489,7 +489,7 @@ export default function GalleryModal({ items = [], onClose, onSelectWork }) {
         /* Responsive Mobile View — Extra padding-top agar judul & konten tidak menabrak tombol close */
         @media (max-width: 768px) {
           .gallery-modal-card {
-            padding-top: 3.5rem !important;
+            padding-top: 2.25rem !important;
             padding-left: 1.15rem !important;
             padding-right: 1.15rem !important;
             padding-bottom: 2rem !important;

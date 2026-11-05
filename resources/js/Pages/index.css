@@ -562,7 +562,7 @@ img, video, iframe, canvas {
   /* Padding lapang khusus modal info modern (Pengalaman, Dokumen, Sertifikat, Kontak, Profil, Karya) di Mobile */
   .info-modal-card,
   .gallery-modal-card {
-    padding-top: 3.5rem !important;
+    padding-top: 1.7rem !important;
     padding-left: 1.25rem !important;
     padding-right: 1.25rem !important;
     padding-bottom: 2.25rem !important;

@@ -1248,7 +1248,7 @@ export default function AdminDashboard({ isOpen, onClose, items, onCreateItem, o
     if (s.includes('banner')) return { maxCover: 1, maxGallery: 1, hasVideo: false, hasPrototype: false };
     if (s.includes('poster')) return { maxCover: 1, maxGallery: 1, hasVideo: false, hasPrototype: false };
     if (s.includes('kemasan') || s.includes('packaging')) return { maxCover: 1, maxGallery: 3, hasVideo: false, hasPrototype: false };
-    if (s.includes('feed')) return { maxCover: 1, maxGallery: 9, hasVideo: false, hasPrototype: false };
+    if (s.includes('feed')) return { maxCover: 1, maxGallery: 5, hasVideo: false, hasPrototype: false };
     if (s.includes('lain')) return { maxCover: 1, maxGallery: 1, hasVideo: false, hasPrototype: false };
 
     // MULTIMEDIA

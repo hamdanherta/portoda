@@ -475,40 +475,7 @@ function AppContent({ karyaId, docId }) {
             }}
             items={allItems}
             onSelectWork={(item) => setSelectedItem(item)}
-          >
-            <CategoryFilter
-              activeCategory={activeCategory}
-              setActiveCategory={setActiveCategory}
-              activeSubcategory={activeSubcategory}
-              setActiveSubcategory={setActiveSubcategory}
-              searchQuery={searchQuery}
-              setSearchQuery={(q) => {
-                setSearchQuery(q);
-                if (q.trim()) {
-                  setIsFullGallery(true);
-                }
-              }}
-              itemCount={filteredItems.length}
-              onOpenGallery={() => setIsGalleryOpen(true)}
-            />
-
-            <main style={{ flex: 1, position: 'relative', zIndex: 5, width: '100%' }}>
-              <PortfolioGrid
-                items={filteredItems}
-                loading={loading}
-                onItemClick={(item) => setSelectedItem(item)}
-                onResetFilter={handleResetFilter}
-                isFullGallery={isFullGallery}
-                isExpanded={isExpandedBeranda}
-                currentPage={currentPage}
-                onPageChange={(page) => {
-                  setCurrentPage(page);
-                  scrollToGallery();
-                }}
-                onViewMore={handleViewMoreWorks}
-              />
-            </main>
-          </Hero>
+          />
         </div>
       )}
 

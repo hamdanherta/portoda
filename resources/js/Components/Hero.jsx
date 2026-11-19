@@ -518,17 +518,13 @@ export default function Hero({
                 {/* Button 1: Lihat Semua Karya — Persis Mockup Referensi (Hijau Muda Segar + Icon CalendarMinus2 + 2 Baris Teks) */}
                 <button
                   onClick={() => {
-                    if (persona === 'mgd') {
-                      const el = document.getElementById('seluruh-karya-desain');
-                      if (el) {
-                        el.scrollIntoView({ behavior: 'smooth' });
-                        return;
-                      }
+                    const el = document.getElementById('seluruh-karya-desain');
+                    if (el) {
+                      el.scrollIntoView({ behavior: 'smooth' });
+                      return;
                     }
                     if (onExploreClick) {
                       onExploreClick();
-                    } else if (onOpenGallery) {
-                      onOpenGallery();
                     }
                   }}
                   className="hero-cta-gallery hero-cta-works"
@@ -882,16 +878,17 @@ export default function Hero({
               borderTop: '2px solid rgba(0, 91, 171, 0.15)',
               position: 'relative',
               zIndex: 1,
-              scrollMarginTop: '80px'
+              scrollMarginTop: '80px',
+              paddingLeft: 'clamp(0.5rem, 1.2vw, 1rem)',
+              paddingRight: 'clamp(0.5rem, 1.2vw, 1rem)',
+              boxSizing: 'border-box'
             }}>
               {/* Header Klien */}
               <div style={{
                 display: 'flex',
                 alignItems: 'flex-start',
                 gap: '0.75rem',
-                marginBottom: '1.25rem',
-                marginLeft: 'clamp(0.5rem, 1.2vw, 1rem)',
-                marginRight: 'clamp(0.5rem, 1.2vw, 1rem)'
+                marginBottom: '1.25rem'
               }}>
                 <div style={{ flex: 1 }}>
                   <h3 style={{
@@ -899,9 +896,13 @@ export default function Hero({
                     fontWeight: 800,
                     color: '#005BAB',
                     margin: 0,
-                    lineHeight: 1.25
+                    lineHeight: 1.25,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.65rem'
                   }}>
-                    {lang === 'en' ? "Hamdani's Clients" : 'Klien Hamdani'}
+                    <Building2 size={24} strokeWidth={2.4} style={{ color: '#005BAB', flexShrink: 0 }} />
+                    <span>{lang === 'en' ? "Hamdani's Clients" : 'Klien Hamdani'}</span>
                   </h3>
                   <p style={{
                     margin: '0.25rem 0 0 0',
@@ -1010,13 +1011,12 @@ export default function Hero({
             </div>
           )}
 
-          {/* SELURUH KARYA DESAIN SECTION (Khusus Persona Graphic Design 'mgd') */}
-          {persona === 'mgd' && (
-            <DesignWorksSection
-              items={items}
-              onSelectWork={onSelectWork}
-            />
-          )}
+          {/* SELURUH KARYA DESAIN SECTION */}
+          <DesignWorksSection
+            items={items}
+            onSelectWork={onSelectWork}
+            persona={persona}
+          />
 
           {/* GALLERY & WORKS (Dimasukkan langsung ke dalam Container Utama) */}
           {children && (

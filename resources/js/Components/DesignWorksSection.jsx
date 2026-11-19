@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { Search, X, Info, Palette, Video, Smartphone } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
-// ── Whitelist subkategori yang BOLEH tampil ──────────────────────────────
-// Hanya: Logo, Banner, Poster, Kemasan, Feed, Lainnya
-// TIDAK termasuk: Fotografi, Motion Graphic, Videografi, Film, Mobile, Web, UI/UX
-const ALLOWED_SUBCATEGORY_KEYWORDS = [
+// ── Whitelist Subkategori Graphic Design (MGD) ──────────────────────────────
+const ALLOWED_MGD_KEYWORDS = [
   'logo',
   'banner',
   'poster',
   'kemasan',
+  'packaging',
   'feed',
   'lain',
   'other',
@@ -20,88 +20,56 @@ const ALLOWED_SUBCATEGORY_KEYWORDS = [
   'brand',
 ];
 
-/** Cek apakah subcategory ada di whitelist */
-function isAllowedSubcategory(subcategory) {
+function isAllowedMgdSubcategory(subcategory) {
   const key = (subcategory || '').toLowerCase().trim();
-  if (!key || key === '') return true; // kosong → masuk ke "Lainnya"
-  return ALLOWED_SUBCATEGORY_KEYWORDS.some((k) => key.includes(k));
+  if (!key || key === '') return true;
+  return ALLOWED_MGD_KEYWORDS.some((k) => key.includes(k));
 }
 
-const SUBCATEGORY_META = {
-  'logo':       { id: 'Desain Logo',       en: 'Logo Design' },
-  'poster':     { id: 'Desain Poster',     en: 'Poster Design' },
-  'banner':     { id: 'Desain Banner',     en: 'Banner & Ads' },
-  'kemasan':    { id: 'Desain Kemasan',    en: 'Product Packaging' },
-  'feed':       { id: 'Desain Feed',       en: 'Feed Design' },
-  'infografis': { id: 'Infografis',        en: 'Infographic' },
-  'editorial':  { id: 'Editorial & Layout',en: 'Editorial & Layout' },
-  'stationery': { id: 'Stationery & Brand',en: 'Stationery & Brand' },
-  'lain':       { id: 'Desain Lainnya',    en: 'Other Works' },
+// ── Definisi Subkategori per Persona (Hanya sub-sub kategori, tanpa "Semua") ──
+const PERSONA_SUBCATEGORIES = {
+  mgd: [
+    { key: 'feed',    id: 'Desain Feed',    en: 'Feed Design' },
+    { key: 'poster',  id: 'Desain Poster',  en: 'Poster Design' },
+    { key: 'banner',  id: 'Desain Banner',  en: 'Banner & Ads' },
+    { key: 'kemasan', id: 'Desain Kemasan', en: 'Product Packaging' },
+    { key: 'logo',    id: 'Desain Logo',    en: 'Logo Design' },
+    { key: 'lain',    id: 'Desain Lainnya', en: 'Other Works' },
+  ],
+  ms: [
+    { key: 'foto',   id: 'Fotografi',      en: 'Photography' },
+    { key: 'video',  id: 'Videografi',     en: 'Videography' },
+    { key: 'motion', id: 'Motion Graphic', en: 'Motion Graphic' },
+    { key: 'film',   id: 'Film & Sinema',  en: 'Film & Cinema' },
+  ],
+  dpd: [
+    { key: 'uiux',   id: 'UI/UX Design',   en: 'UI/UX Design' },
+    { key: 'mobile', id: 'Mobile App',     en: 'Mobile App' },
+    { key: 'web',    id: 'Web Design',     en: 'Web Design' },
+  ],
 };
 
-/** Resolve subcategory string ke meta label */
-function resolveMeta(subcategory, lang) {
-  const key = (subcategory || '').toLowerCase().trim();
-  for (const [k, meta] of Object.entries(SUBCATEGORY_META)) {
-    if (key === k || key.includes(k) || k.includes(key)) {
-      return {
-        label: lang === 'en' ? meta.en : meta.id,
-      };
-    }
-  }
-  return {
-    label: subcategory || (lang === 'en' ? 'Other' : 'Desain Lainnya'),
-  };
-}
-
-function getCanonicalSubcategoryKey(subcategory) {
+function getCanonicalSubcategoryKey(subcategory, persona = 'mgd') {
   const s = (subcategory || '').toLowerCase().trim();
+  if (persona === 'ms') {
+    if (s.includes('foto') || s.includes('photo')) return 'foto';
+    if (s.includes('video')) return 'video';
+    if (s.includes('motion')) return 'motion';
+    if (s.includes('film')) return 'film';
+    return 'foto';
+  }
+  if (persona === 'dpd') {
+    if (s.includes('mobile')) return 'mobile';
+    if (s.includes('web')) return 'web';
+    return 'uiux';
+  }
+  // MGD
   if (s.includes('logo')) return 'logo';
   if (s.includes('banner') || s.includes('iklan')) return 'banner';
   if (s.includes('poster')) return 'poster';
   if (s.includes('kemasan') || s.includes('packaging')) return 'kemasan';
   if (s.includes('feed')) return 'feed';
-  if (s.includes('infografis') || s.includes('infographic')) return 'infografis';
-  if (s.includes('editorial')) return 'editorial';
-  if (s.includes('stationery') || s.includes('brand')) return 'stationery';
   return 'lain';
-}
-
-// Urutan prioritas subkategori:
-// Desain Feed -> Poster -> Banner -> Kemasan -> Logo -> Lainnya
-const SUBCATEGORY_ORDER = ['feed', 'poster', 'banner', 'kemasan', 'logo', 'lain'];
-
-/** Group items by canonical subcategory, sort by newest year first, and order categories. */
-function groupBySubcategory(items) {
-  const map = new Map();
-  items.forEach((item) => {
-    const key = getCanonicalSubcategoryKey(item.subcategory);
-    if (!map.has(key)) map.set(key, []);
-    map.get(key).push(item);
-  });
-
-  // Urutkan grup kategori sesuai urutan: Feed -> Poster -> Banner -> Kemasan -> Logo -> Lainnya
-  const sortedEntries = Array.from(map.entries()).sort(([keyA], [keyB]) => {
-    const indexA = SUBCATEGORY_ORDER.indexOf(keyA);
-    const indexB = SUBCATEGORY_ORDER.indexOf(keyB);
-    const posA = indexA === -1 ? 99 : indexA;
-    const posB = indexB === -1 ? 99 : indexB;
-    return posA - posB;
-  });
-
-  return sortedEntries.map(([subcategoryKey, grpItems]) => {
-    // Urutkan item dari tahun terbaru ke terlama (2026, 2025, 2024, ...)
-    const sortedItems = [...grpItems].sort((a, b) => {
-      const yearA = parseInt(a.year, 10) || 0;
-      const yearB = parseInt(b.year, 10) || 0;
-      if (yearB !== yearA) {
-        return yearB - yearA; // descending (terbaru dulu)
-      }
-      return (b.id || 0) > (a.id || 0) ? 1 : -1;
-    });
-
-    return { subcategory: subcategoryKey, items: sortedItems };
-  });
 }
 
 // ── Custom Hook untuk Menghitung Jumlah Kolom Responsif ──
@@ -112,7 +80,7 @@ function useResponsiveColumnCount(isLogo = false) {
     const updateCount = () => {
       const width = window.innerWidth;
       if (width <= 650) {
-        setColCount(2); // Mobile: 2 kolom untuk semua
+        setColCount(2); // Mobile: 2 kolom
       } else if (width <= 900) {
         setColCount(isLogo ? 3 : 4); // Tablet: 3 (logo) atau 4
       } else {
@@ -176,7 +144,7 @@ function GalleryImageCard({ item, onLoadAspect, onSelectWork }) {
     >
       <img
         src={imgSrc}
-        alt={item.title || 'Karya Graphic Design'}
+        alt={item.title || 'Karya Portofolio'}
         decoding="async"
         loading="lazy"
         onLoad={handleLoad}
@@ -192,14 +160,122 @@ function GalleryImageCard({ item, onLoadAspect, onSelectWork }) {
   );
 }
 
-// ── Subcategory Section dengan Greedy Shortest-Column Masonry ──
-function SubcategorySection({ subcategory, items, lang, onSelectWork }) {
-  const meta = resolveMeta(subcategory, lang);
-  const isLogo = subcategory === 'logo' || (meta.label && meta.label.toLowerCase().includes('logo'));
+// ── Main DesignWorksSection Component ──
+export default function DesignWorksSection({ items = [], onSelectWork, persona = 'mgd' }) {
+  const { lang } = useLanguage();
+
+  // Daftar subkategori sesuai persona aktif
+  const availableSubcategories = useMemo(() => {
+    return PERSONA_SUBCATEGORIES[persona] || PERSONA_SUBCATEGORIES.mgd;
+  }, [persona]);
+
+  // Default kategori adalah 'feed' untuk MGD, atau elemen pertama untuk persona lainnya
+  const [activeSubcategory, setActiveSubcategory] = useState('feed');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Sinkronisasi kategori default saat persona berganti
+  useEffect(() => {
+    if (persona === 'mgd') {
+      setActiveSubcategory('feed');
+    } else if (persona === 'ms') {
+      setActiveSubcategory('foto');
+    } else if (persona === 'dpd') {
+      setActiveSubcategory('uiux');
+    }
+    setSearchQuery('');
+  }, [persona]);
+
+  // Filter karya sesuai persona & whitelist
+  const personaItems = useMemo(() => {
+    return items.filter((i) => {
+      const p = (i.persona || '').trim().toLowerCase();
+      const cat = (i.category || '').trim().toLowerCase();
+      const sub = (i.subcategory || '').trim().toLowerCase();
+
+      if (persona === 'ms') {
+        return p === 'ms' || cat === 'multimedia' || sub.includes('foto') || sub.includes('video');
+      }
+      if (persona === 'dpd') {
+        return p === 'dpd' || cat === 'aplikasi' || sub.includes('ui') || sub.includes('app');
+      }
+
+      // Persona MGD (Graphic Design)
+      if (p === 'ms' || p === 'dpd') return false;
+      const isMgd = p === 'mgd' || cat === 'desain-grafis' || sub.includes('feed');
+      if (!isMgd) return false;
+
+      return isAllowedMgdSubcategory(i.subcategory);
+    });
+  }, [items, persona]);
+
+  // Ambil karya untuk subkategori yang sedang di-select
+  const subcategoryItems = useMemo(() => {
+    const list = personaItems.filter((item) => {
+      const key = getCanonicalSubcategoryKey(item.subcategory, persona);
+      return key === activeSubcategory;
+    });
+
+    // Urutkan tahun terbaru
+    return list.sort((a, b) => {
+      const yearA = parseInt(a.year, 10) || 0;
+      const yearB = parseInt(b.year, 10) || 0;
+      if (yearB !== yearA) return yearB - yearA;
+      return (b.id || 0) > (a.id || 0) ? 1 : -1;
+    });
+  }, [personaItems, activeSubcategory, persona]);
+
+  // Filter karya berdasarkan kata kunci pencarian
+  const filteredItems = useMemo(() => {
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return subcategoryItems;
+
+    return subcategoryItems.filter((item) => {
+      const title = (item.title || '').toLowerCase();
+      const desc = (item.description || '').toLowerCase();
+      const client = (item.client || '').toLowerCase();
+      const institution = (item.institution || '').toLowerCase();
+      const year = String(item.year || '');
+      return (
+        title.includes(q) ||
+        desc.includes(q) ||
+        client.includes(q) ||
+        institution.includes(q) ||
+        year.includes(q)
+      );
+    });
+  }, [subcategoryItems, searchQuery]);
+
+  // Meta label subkategori aktif
+  const currentSubcatMeta = useMemo(() => {
+    const found = availableSubcategories.find((s) => s.key === activeSubcategory);
+    if (found) {
+      return { label: lang === 'en' ? found.en : found.id };
+    }
+    return { label: lang === 'en' ? 'Works' : 'Karya' };
+  }, [availableSubcategories, activeSubcategory, lang]);
+
+  // Icon & Title Judul Utama sesuai persona
+  const sectionTitle = useMemo(() => {
+    if (persona === 'ms') {
+      return lang === 'en' ? 'All Multimedia Works' : 'Seluruh Karya Multimedia';
+    }
+    if (persona === 'dpd') {
+      return lang === 'en' ? 'All Application Works' : 'Seluruh Karya Aplikasi';
+    }
+    return lang === 'en' ? 'All Design Works' : 'Seluruh Karya Desain';
+  }, [persona, lang]);
+
+  const SectionIcon = useMemo(() => {
+    if (persona === 'ms') return Video;
+    if (persona === 'dpd') return Smartphone;
+    return Palette;
+  }, [persona]);
+
+  // Masonry calculation untuk subkategori aktif
+  const isLogo = activeSubcategory === 'logo';
   const columnCount = useResponsiveColumnCount(isLogo);
   const [imageHeights, setImageHeights] = useState({});
 
-  // Simpan rasio aspek alami gambar saat selesai dimuat
   const handleImageLoad = useCallback((id, aspect) => {
     setImageHeights((prev) => {
       if (prev[id] === aspect) return prev;
@@ -207,14 +283,11 @@ function SubcategorySection({ subcategory, items, lang, onSelectWork }) {
     });
   }, []);
 
-  // Distribusikan gambar:
-  // - Baris pertama (index < columnCount): Masuk urut ke kolom 0, 1, 2, ...
-  // - Baris berikutnya: Masuk ke kolom yang saat itu paling pendek (tanpa ruang kosong)
   const columns = useMemo(() => {
     const cols = Array.from({ length: columnCount }, () => []);
     const heights = new Array(columnCount).fill(0);
 
-    items.forEach((item, index) => {
+    filteredItems.forEach((item, index) => {
       let targetCol;
       if (index < columnCount) {
         targetCol = index;
@@ -235,105 +308,7 @@ function SubcategorySection({ subcategory, items, lang, onSelectWork }) {
     });
 
     return cols;
-  }, [items, columnCount, imageHeights]);
-
-  return (
-    <div style={{ marginBottom: '2.5rem' }}>
-      {/* Header subkategori — Judul + Garis Horizontal + Badge Kuning */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.85rem',
-        marginBottom: '1.15rem',
-        width: '100%',
-      }}>
-        <h4 style={{
-          margin: 0,
-          fontSize: 'clamp(1.05rem, 2vw, 1.25rem)',
-          fontWeight: 700,
-          color: '#005BAB',
-          lineHeight: 1.2,
-          letterSpacing: '-0.01em',
-          whiteSpace: 'nowrap',
-        }}>
-          {meta.label}
-        </h4>
-
-        {/* Garis Horizontal Penghubung */}
-        <div style={{
-          flex: 1,
-          height: '1.5px',
-          background: '#005BAB',
-          opacity: 0.65,
-        }} />
-
-        {/* Badge jumlah karya warna kuning */}
-        <span style={{
-          fontSize: '0.84rem',
-          fontWeight: 800,
-          color: '#005BAB',
-          background: '#FFF455',
-          borderRadius: '999px',
-          padding: '0.3rem 0.95rem',
-          border: 'none',
-          whiteSpace: 'nowrap',
-          boxShadow: '0 2px 6px rgba(0, 0, 0, 0.04)',
-          letterSpacing: '-0.01em',
-        }}>
-          {items.length} {lang === 'en' ? (items.length === 1 ? 'Work' : 'Works') : 'Karya'}
-        </span>
-      </div>
-
-      {/* True Masonry Columns */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))`,
-          gap: columnCount === 2 ? '0.5rem' : '0.65rem',
-          alignItems: 'start',
-        }}
-      >
-        {columns.map((colItems, colIdx) => (
-          <div key={colIdx} style={{ display: 'flex', flexDirection: 'column' }}>
-            {colItems.map((item) => (
-              <GalleryImageCard
-                key={item.id}
-                item={item}
-                onLoadAspect={handleImageLoad}
-                onSelectWork={onSelectWork}
-              />
-            ))}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ── Main DesignWorksSection Component ──
-export default function DesignWorksSection({ items = [], onSelectWork }) {
-  const { lang } = useLanguage();
-
-  // Filter STRICT:
-  // 1. Khusus Graphic Design: persona 'mgd' ATAU category 'desain-grafis' ATAU subkategori Feed
-  //    (selama bukan persona ms atau dpd)
-  // 2. subcategory HARUS masuk whitelist (Logo, Banner, Poster, Kemasan, Feed, Lainnya)
-  const mgdItems = useMemo(() => {
-    return items.filter((i) => {
-      const p = (i.persona || '').trim().toLowerCase();
-      const cat = (i.category || '').trim().toLowerCase();
-      const sub = (i.subcategory || '').trim().toLowerCase();
-
-      if (p === 'ms' || p === 'dpd') return false;
-
-      const isMgd = p === 'mgd' || cat === 'desain-grafis' || sub.includes('feed');
-      if (!isMgd) return false;
-
-      return isAllowedSubcategory(i.subcategory);
-    });
-  }, [items]);
-
-  const groups = useMemo(() => groupBySubcategory(mgdItems), [mgdItems]);
+  }, [filteredItems, columnCount, imageHeights]);
 
   return (
     <div
@@ -345,14 +320,15 @@ export default function DesignWorksSection({ items = [], onSelectWork }) {
         position: 'relative',
         zIndex: 1,
         width: '100%',
+        paddingLeft: 'clamp(0.5rem, 1.2vw, 1rem)',
+        paddingRight: 'clamp(0.5rem, 1.2vw, 1rem)',
+        boxSizing: 'border-box',
         scrollMarginTop: '80px',
       }}
     >
-      {/* Header Judul Bagian Utama */}
+      {/* ── Header Judul Bagian Utama dengan Icon Minimalist Modern ── */}
       <div style={{
-        marginBottom: '1.5rem',
-        marginLeft: 'clamp(0.5rem, 1.2vw, 1rem)',
-        marginRight: 'clamp(0.5rem, 1.2vw, 1rem)',
+        marginBottom: '1.4rem',
       }}>
         <h3 style={{
           fontSize: '1.4rem',
@@ -361,33 +337,261 @@ export default function DesignWorksSection({ items = [], onSelectWork }) {
           margin: 0,
           lineHeight: 1.25,
           letterSpacing: '-0.02em',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '0.65rem',
         }}>
-          {lang === 'en' ? 'All Design Works' : 'Seluruh Karya Desain'}
+          <SectionIcon size={24} strokeWidth={2.4} style={{ color: '#005BAB', flexShrink: 0 }} />
+          <span>{sectionTitle}</span>
         </h3>
       </div>
 
-      {/* Konten Subkategori & Karya */}
-      {mgdItems.length === 0 ? (
-        <div style={{
-          textAlign: 'center',
-          padding: '2.5rem 1rem',
-          color: '#4B6B9A',
-          fontSize: '1rem',
-          fontWeight: 600,
-        }}>
-          {lang === 'en' ? 'No graphic design works found.' : 'Belum ada karya Graphic Design yang ditemukan.'}
-        </div>
-      ) : (
-        groups.map(({ subcategory, items: grpItems }) => (
-          <SubcategorySection
-            key={subcategory}
-            subcategory={subcategory}
-            items={grpItems}
-            lang={lang}
-            onSelectWork={onSelectWork}
+      {/* ── Toolbar: Search Bar Compact + Sub-Sub Kategori Pills ── */}
+      <div style={{
+        marginBottom: '1.6rem',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '0.85rem',
+      }}>
+        {/* Kolom Search Karya Desain (Ukuran Pas & Compact) */}
+        <div style={{ position: 'relative', width: '100%', maxWidth: '340px' }}>
+          <Search
+            size={18}
+            strokeWidth={2.4}
+            style={{
+              position: 'absolute',
+              left: '16px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              color: '#005BAB',
+              pointerEvents: 'none',
+            }}
           />
-        ))
-      )}
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={
+              lang === 'en'
+                ? `Search in ${currentSubcatMeta.label}...`
+                : `Cari di ${currentSubcatMeta.label}...`
+            }
+            style={{
+              width: '100%',
+              height: '42px',
+              paddingLeft: '2.75rem',
+              paddingRight: searchQuery ? '2.5rem' : '1.25rem',
+              borderRadius: '999px',
+              border: '2px solid #005BAB',
+              background: '#FFFFFF',
+              color: '#005BAB',
+              fontWeight: 700,
+              fontSize: '0.9rem',
+              boxSizing: 'border-box',
+              boxShadow: '0 2px 8px rgba(0, 91, 171, 0.05)',
+              outline: 'none',
+              transition: 'box-shadow 0.18s ease',
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.boxShadow = '0 0 0 3px rgba(0, 91, 171, 0.18)';
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 91, 171, 0.05)';
+            }}
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              title="Hapus pencarian"
+              style={{
+                position: 'absolute',
+                right: '10px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: '#FFF3DD',
+                border: '1.5px solid #005BAB',
+                borderRadius: '50%',
+                width: '24px',
+                height: '24px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#005BAB',
+                cursor: 'pointer',
+                padding: 0,
+              }}
+            >
+              <X size={13} strokeWidth={2.6} />
+            </button>
+          )}
+        </div>
+
+        {/* Sub-Sub Kategori Pills (Satu-satunya selector kategori) */}
+        <div style={{
+          display: 'flex',
+          gap: '0.5rem',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+        }}>
+          {availableSubcategories.map((sub) => {
+            const isActive = activeSubcategory === sub.key;
+            return (
+              <button
+                key={sub.key}
+                onClick={() => setActiveSubcategory(sub.key)}
+                style={{
+                  padding: '0.42rem 1.15rem',
+                  borderRadius: '999px',
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  border: '1.5px solid #005BAB',
+                  background: isActive ? '#005BAB' : '#FFFFFF',
+                  color: isActive ? '#FFFFFF' : '#005BAB',
+                  cursor: 'pointer',
+                  transition: 'all 0.18s ease',
+                  boxShadow: isActive
+                    ? '0 4px 14px rgba(0, 91, 171, 0.28)'
+                    : '0 2px 6px rgba(0, 91, 171, 0.04)',
+                  transform: isActive ? 'scale(1.02)' : 'scale(1)',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {lang === 'en' ? sub.en : sub.id}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Baris 3: Tulisan Kecil: "Klik Karya mana saja untuk melihat Detail Karya." */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.45rem',
+          fontSize: '0.82rem',
+          fontWeight: 600,
+          color: '#005BAB',
+          opacity: 0.85,
+          marginTop: '-0.1rem',
+        }}>
+          <Info size={15} strokeWidth={2.2} style={{ flexShrink: 0, color: '#005BAB' }} />
+          <span>
+            {lang === 'en'
+              ? 'Click on any work to view work details.'
+              : 'Klik Karya mana saja untuk melihat Detail Karya.'}
+          </span>
+        </div>
+      </div>
+
+      {/* ── Subkategori Konten yang Terpilih Saja yang Muncul ── */}
+      <div style={{ marginBottom: '1.5rem' }}>
+        {/* Header Subkategori (Judul + Garis Horizontal + Badge Kuning Total Karya) */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.85rem',
+          marginBottom: '1.15rem',
+          width: '100%',
+        }}>
+          <h4 style={{
+            margin: 0,
+            fontSize: 'clamp(1.05rem, 2vw, 1.25rem)',
+            fontWeight: 700,
+            color: '#005BAB',
+            lineHeight: 1.2,
+            letterSpacing: '-0.01em',
+            whiteSpace: 'nowrap',
+          }}>
+            {currentSubcatMeta.label}
+          </h4>
+
+          {/* Garis Horizontal Penghubung */}
+          <div style={{
+            flex: 1,
+            height: '1.5px',
+            background: '#005BAB',
+            opacity: 0.65,
+          }} />
+
+          {/* Badge Jumlah Karya Warna Kuning */}
+          <span style={{
+            fontSize: '0.84rem',
+            fontWeight: 800,
+            color: '#005BAB',
+            background: '#FFF455',
+            borderRadius: '999px',
+            padding: '0.3rem 0.95rem',
+            border: 'none',
+            whiteSpace: 'nowrap',
+            boxShadow: '0 2px 6px rgba(0, 0, 0, 0.04)',
+            letterSpacing: '-0.01em',
+          }}>
+            {filteredItems.length} {lang === 'en' ? (filteredItems.length === 1 ? 'Work' : 'Works') : 'Karya'}
+          </span>
+        </div>
+
+        {/* Masonry Grid Karya */}
+        {filteredItems.length === 0 ? (
+          <div style={{
+            textAlign: 'center',
+            padding: '3rem 1.5rem',
+            color: '#005BAB',
+            background: '#F0F5FA',
+            borderRadius: '20px',
+            marginTop: '0.75rem',
+          }}>
+            <p style={{ margin: 0, fontWeight: 700, fontSize: '0.96rem' }}>
+              {searchQuery
+                ? (lang === 'en'
+                    ? `No design works found in "${currentSubcatMeta.label}" matching "${searchQuery}".`
+                    : `Tidak ada karya desain pada "${currentSubcatMeta.label}" yang cocok dengan "${searchQuery}".`)
+                : (lang === 'en'
+                    ? `No works found in "${currentSubcatMeta.label}".`
+                    : `Belum ada karya untuk kategori "${currentSubcatMeta.label}".`)}
+            </p>
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                style={{
+                  marginTop: '0.85rem',
+                  padding: '0.45rem 1.2rem',
+                  borderRadius: '999px',
+                  background: '#005BAB',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  fontWeight: 700,
+                  fontSize: '0.84rem',
+                  cursor: 'pointer',
+                  transition: 'opacity 0.18s ease',
+                }}
+              >
+                {lang === 'en' ? 'Reset Search' : 'Reset Pencarian'}
+              </button>
+            )}
+          </div>
+        ) : (
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))`,
+              gap: columnCount === 2 ? '0.5rem' : '0.65rem',
+              alignItems: 'start',
+            }}
+          >
+            {columns.map((colItems, colIdx) => (
+              <div key={colIdx} style={{ display: 'flex', flexDirection: 'column' }}>
+                {colItems.map((item) => (
+                  <GalleryImageCard
+                    key={item.id}
+                    item={item}
+                    onLoadAspect={handleImageLoad}
+                    onSelectWork={onSelectWork}
+                  />
+                ))}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

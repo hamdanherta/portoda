@@ -1,6 +1,7 @@
 import React from 'react';
 import { Sparkles, Palette, Video, Code, ArrowRight, MapPin, Mail, MessageSquare, Clock, Briefcase, Award, Building2, Paintbrush, Monitor, Images } from 'lucide-react';
 import BrushDesignIcon from './Icons/BrushDesignIcon';
+import DesignWorksSection from './DesignWorksSection';
 import { useLanguage } from '../context/LanguageContext';
 import { usePersona } from '../context/PersonaContext';
 import { infoService } from '../services/infoService';
@@ -50,7 +51,15 @@ function AnimatedCounter({ end, duration = 1200 }) {
   return <span>{count}</span>;
 }
 
-export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, onOpenGallery, children }) {
+export default function Hero({
+  onExploreClick,
+  totalItems = 0,
+  onOpenContact,
+  onOpenGallery,
+  items = [],
+  onSelectWork,
+  children
+}) {
   const { lang, t } = useLanguage();
   const { persona, setPersona } = usePersona();
   const [profile, setProfile] = React.useState({});
@@ -509,9 +518,14 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
                 {/* Button 1: Lihat Semua Karya — Persis Mockup Referensi (Hijau Muda Segar + Icon CalendarMinus2 + 2 Baris Teks) */}
                 <button
                   onClick={() => {
-                    if (persona === 'mgd' && onOpenGallery) {
-                      onOpenGallery();
-                    } else if (onExploreClick) {
+                    if (persona === 'mgd') {
+                      const el = document.getElementById('seluruh-karya-desain');
+                      if (el) {
+                        el.scrollIntoView({ behavior: 'smooth' });
+                        return;
+                      }
+                    }
+                    if (onExploreClick) {
                       onExploreClick();
                     } else if (onOpenGallery) {
                       onOpenGallery();
@@ -867,7 +881,8 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
               paddingTop: '2rem',
               borderTop: '2px solid rgba(0, 91, 171, 0.15)',
               position: 'relative',
-              zIndex: 1
+              zIndex: 1,
+              scrollMarginTop: '80px'
             }}>
               {/* Header Klien */}
               <div style={{
@@ -993,6 +1008,14 @@ export default function Hero({ onExploreClick, totalItems = 0, onOpenContact, on
                 })}
               </div>
             </div>
+          )}
+
+          {/* SELURUH KARYA DESAIN SECTION (Khusus Persona Graphic Design 'mgd') */}
+          {persona === 'mgd' && (
+            <DesignWorksSection
+              items={items}
+              onSelectWork={onSelectWork}
+            />
           )}
 
           {/* GALLERY & WORKS (Dimasukkan langsung ke dalam Container Utama) */}

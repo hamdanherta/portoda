@@ -10,7 +10,6 @@ import Footer from '../Components/Footer';
 import MaintenanceModal from '../Components/MaintenanceModal';
 import ContentNoticeModal from '../Components/ContentNoticeModal';
 import ClientShowcase from '../Components/ClientShowcase';
-import GalleryModal from '../Components/GalleryModal';
 import { portfolioService } from '../services/portfolioService';
 import { infoService } from '../services/infoService';
 import { LanguageProvider } from '../context/LanguageContext';
@@ -470,7 +469,12 @@ function AppContent({ karyaId, docId }) {
             onExploreClick={scrollToGallery}
             totalItems={allItems.length > 0 ? allItems.length : filteredItems.length}
             onOpenContact={() => setActiveNavModal('kontak')}
-            onOpenGallery={() => setIsGalleryOpen(true)}
+            onOpenGallery={() => {
+              const el = document.getElementById('seluruh-karya-desain');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            items={allItems}
+            onSelectWork={(item) => setSelectedItem(item)}
           >
             <CategoryFilter
               activeCategory={activeCategory}
@@ -573,15 +577,6 @@ function AppContent({ karyaId, docId }) {
         onClose={() => setActiveNavModal(null)}
         onSelectCertificate={(cert) => setSelectedItem(cert)}
       />
-
-      {/* Modal Seluruh Karya Graphic Design */}
-      {isGalleryOpen && (
-        <GalleryModal
-          items={allItems}
-          onClose={() => setIsGalleryOpen(false)}
-          onSelectWork={(item) => setSelectedItem(item)}
-        />
-      )}
 
       <DetailModal
         item={selectedItem}
